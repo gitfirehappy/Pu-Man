@@ -2,7 +2,7 @@
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class SimplePlayerController : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public float runSpeed = 5f;
 

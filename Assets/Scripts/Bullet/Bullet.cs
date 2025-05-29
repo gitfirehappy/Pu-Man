@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
@@ -8,23 +8,19 @@ public class Bullet : MonoBehaviour
     public float lifeTime = 3f;
     public float size = 1f;
 
-    [Header("碰撞检测")]
-    public LayerMask targetLayers;
-    public float hitRadius = 0.5f;
-
     protected Vector2 direction;
     protected bool isInitialized;
 
     private void OnEnable()
     {
         isInitialized = false;
-        Invoke(nameof(ReturnToPool), lifeTime);
+        Invoke(nameof(ReturnToPool), lifeTime); // 3秒后自动回收
     }
 
     public virtual void Initialize(Vector2 dir, float damage, float speed, float size)
     {
         if (isInitialized) return;
-        
+
         this.damage = damage;
         this.speed = speed;
         this.direction = dir.normalized;
@@ -36,32 +32,23 @@ public class Bullet : MonoBehaviour
     {
         if (!isInitialized) return;
         transform.Translate(direction * speed * Time.deltaTime);
-        
-        // 碰撞检测
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, hitRadius, targetLayers);
-        if (hit != null)
-        {
-            OnHit(hit);
-        }
     }
 
-    protected virtual void OnHit(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        // 处理伤害
-        IDamageable damageable = other.GetComponent<IDamageable>();
-        damageable?.TakeDamage(damage);
-        
-        ReturnToPool();
+        // 只对敌人造成伤害（避免打到自己或玩家时消失）
+        if (other.CompareTag("Enemy")) // 确保敌人标签是 "Enemy"
+        {
+            if (other.TryGetComponent<IDamageable>(out var enemy))
+            {
+                enemy.TakeDamage(damage);
+                ReturnToPool(); // 打中敌人才回收
+            }
+        }
     }
 
     private void ReturnToPool()
     {
         ObjectPoolManager.ReturnObjectToPool(gameObject);
     }
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, hitRadius);
-    }
-} 
+}
