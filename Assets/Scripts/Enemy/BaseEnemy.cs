@@ -3,11 +3,11 @@ using UnityEngine.Pool;
 
 public abstract class BaseEnemy : MonoBehaviour, IDamageable, IPoolable
 {
-    [Header("Basic Properties")]
-    public float maxHealth = 100f;
-    public float moveSpeed = 3f;
-    public float collisionDamage = 10f;
-    public float collisionImmunityDuration = 1f;
+    [Header("基础属性")]
+    [Header("血量上限")] public float maxHealth = 100f;
+    [Header("移动速度")] public float moveSpeed = 3f;
+    [Header("碰撞伤害")] public float collisionDamage = 10f;
+    [Header("受击无敌")] public float collisionImmunityDuration = 1f;
     [Tooltip("敌人攻击检测半径")]
     public float attackRadius = 1.5f;
     [Tooltip("检测间隔（秒）")]
@@ -64,12 +64,18 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IPoolable
         }
     }
 
+    /// <summary>
+    /// 追击玩家
+    /// </summary>
     protected virtual void MoveTowardsPlayer()
     {
         Vector2 direction = (playerTransform.position - transform.position).normalized;
         rb.velocity = direction * moveSpeed;
     }
 
+    /// <summary>
+    /// 碰撞造成伤害
+    /// </summary>
     protected virtual void DetectAndDamagePlayer()
     {
         // 使用OverlapCircle检测范围内的玩家

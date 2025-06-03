@@ -2,53 +2,86 @@
 
 public class Bullet : MonoBehaviour
 {
-    [Header("基础属性")]
-    public float damage = 10f;
-    public float speed = 10f;
-    public float lifeTime = 3f;
-    public float size = 1f;
+    // 移除所有基础属性，只保留必要的引用
+    private float _damage;
+    private float _knockbackForce;
+    private bool _isAoeDamage;
+    private float _aoeRadius;
+    private Vector2 _direction;
+    private float _speed;
 
-    protected Vector2 direction;
-    protected bool isInitialized;
-
-    private void OnEnable()
+    public void Initialize(BulletConfig config, Vector2 direction)
     {
-        isInitialized = false;
-        Invoke(nameof(ReturnToPool), lifeTime); // 3秒后自动回收
+        _damage = config.damage;
+        _knockbackForce = config.knockback;
+        _isAoeDamage = config.isAoeDamage;
+        _aoeRadius = config.aoeRadius;
+        _speed = config.speed;
+        _direction = direction.normalized;
+
+        transform.localScale = Vector3.one * config.size;
+        Invoke(nameof(ReturnToPool), config.lifeTime);
     }
 
-    public virtual void Initialize(Vector2 dir, float damage, float speed, float size)
+    private void Update()
     {
-        if (isInitialized) return;
-
-        this.damage = damage;
-        this.speed = speed;
-        this.direction = dir.normalized;
-        transform.localScale = Vector3.one * size;
-        isInitialized = true;
-    }
-
-    protected virtual void Update()
-    {
-        if (!isInitialized) return;
-        transform.Translate(direction * speed * Time.deltaTime);
+        transform.Translate(_direction * _speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 只对敌人造成伤害（避免打到自己或玩家时消失）
-        if (other.CompareTag("Enemy")) // 确保敌人标签是 "Enemy"
+        if (other.CompareTag("Enemy"))
         {
-            if (other.TryGetComponent<IDamageable>(out var enemy))
+            HandleEnemyHit(other);
+            ReturnToPool();
+        }
+        else if (other.CompareTag("Obstacle"))
+        {
+            ReturnToPool();
+        }
+    }
+
+    private void HandleEnemyHit(Collider2D enemyCollider)
+    {
+        // 单个目标伤害
+        if (enemyCollider.TryGetComponent<IDamageable>(out var enemy))
+        {
+            enemy.TakeDamage(_damage);
+
+            // 击退效果
+            if (_knockbackForce > 0 && enemyCollider.TryGetComponent<Rigidbody2D>(out var rb))
             {
-                enemy.TakeDamage(damage);
-                ReturnToPool(); // 打中敌人才回收
+                Vector2 knockbackDirection = (enemyCollider.transform.position - transform.position).normalized;
+                rb.AddForce(knockbackDirection * _knockbackForce, ForceMode2D.Impulse);
+            }
+        }
+
+        // AOE伤害
+        if (_isAoeDamage)
+        {
+            Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, _aoeRadius, LayerMask.GetMask("Enemy"));
+            foreach (var hit in hitEnemies)
+            {
+                if (hit != enemyCollider && hit.TryGetComponent<IDamageable>(out var aoeEnemy))
+                {
+                    aoeEnemy.TakeDamage(_damage * 0.5f); // AOE伤害减半
+                }
             }
         }
     }
 
     private void ReturnToPool()
     {
+        CancelInvoke(nameof(ReturnToPool));
         ObjectPoolManager.ReturnObjectToPool(gameObject);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (_isAoeDamage)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, _aoeRadius);
+        }
     }
 }

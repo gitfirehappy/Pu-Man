@@ -137,8 +137,9 @@ GameObject:
   - component: {fileID: 317822836}
   - component: {fileID: 317822829}
   - component: {fileID: 317822833}
-  - component: {fileID: 317822834}
   - component: {fileID: 317822835}
+  - component: {fileID: 317822838}
+  - component: {fileID: 317822837}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -266,27 +267,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   runSpeed: 10
---- !u!114 &317822834
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317822828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad34019aa23f50d4cb65eedffd966f65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
-  firePoint: {fileID: 317822831}
-  fireRate: 1
-  bulletDamage: 10
-  bulletSpeed: 20
-  bulletSize: 1
-  bulletCount: 1
-  spreadAngle: 0
-  autoFire: 1
 --- !u!114 &317822835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,10 +279,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7e565603faae544a98584244f3964ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseMaxHealth: 100
+  baseArmor: 0
+  baseHealthRegen: 0.5
+  baseDodgeChance: 0
+  basecollisionDamage: 10
   maxHealth: 100
+  currentHealth: 0
+  armor: 0
+  healthRegen: 0
+  dodgeChance: 0
   collisionDamage: 10
   collisionImmunityDuration: 1.5
-  currentHealth: 0
+  hasCheatDeath: 0
 --- !u!58 &317822836
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -338,6 +327,47 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &317822837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317822828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11420ee93aa94e64991c2bfba59bc247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &317822838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317822828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7c48b6231bb0324aba1edfbd037e8d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseDamage: 10
+  baseFireRate: 0.2
+  baseKnockback: 0
+  baseProjectileCount: 1
+  baseProjectileSize: 1
+  baseProjectileLifeTime: 3
+  baseProjectileSpeed: 20
+  damage: 0
+  fireRate: 0
+  knockback: 0
+  projectileCount: 0
+  projectileSize: 0
+  isAoeDamage: 0
+  aoeRadius: 1.5
+  projectileSpeed: 0
+  bulletPrefab: {fileID: 0}
+  firePoint: {fileID: 0}
 --- !u!1 &346737747
 GameObject:
   m_ObjectHideFlags: 0

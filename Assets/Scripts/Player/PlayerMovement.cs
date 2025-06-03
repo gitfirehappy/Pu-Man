@@ -33,6 +33,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Move();
+    }
+
+    /// <summary>
+    /// 人物移动
+    /// </summary>
+    public void Move()
+    {
         rb.velocity = new Vector2(inputDirection.x * runSpeed, inputDirection.y * runSpeed); // 四向
     }
 }

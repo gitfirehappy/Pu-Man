@@ -120,7 +120,17 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 
     #region 🔄 对象生命周期钩子
 
-    private static void OnGetObject(GameObject obj) { }
+    private static void OnGetObject(GameObject obj) 
+    {
+        // 重置所有可能影响对象状态的组件
+        var bullet = obj.GetComponent<Bullet>();
+        if (bullet != null)
+        {
+            bullet.StopAllCoroutines();
+        }
+
+        obj.SetActive(true);
+    }
 
     protected static void OnReleaseObject(GameObject obj)
     {
