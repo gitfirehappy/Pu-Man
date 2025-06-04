@@ -43,4 +43,6 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = new Vector2(inputDirection.x * runSpeed, inputDirection.y * runSpeed); // 四向
     }
+
+    public void AddSpeed(float amount) => runSpeed += amount;
 }

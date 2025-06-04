@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
@@ -18,7 +19,6 @@ public class PlayerShooting : MonoBehaviour
     [Header("弹道数量")] public int projectileCount;
     [Header("子弹大小")] public float projectileSize;
     [Header("范围伤害")] public bool isAoeDamage;
-    [Header("AOE范围")] public float aoeRadius = 1.5f;
     [Header("飞行速度")] public float projectileSpeed;
 
     [Header("设置")]
@@ -26,7 +26,23 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private Transform firePoint;
 
     private float nextFireTime;
-    private bool isShooting;
+    private PlayerInput playerInput;
+    private InputAction fireAction;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInput();
+        fireAction = playerInput.Player.Fire;
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Enable();
+    }
+    private void OnDisable()
+    {
+        playerInput.Disable();
+    }
 
     private void Start()
     {
@@ -44,19 +60,10 @@ public class PlayerShooting : MonoBehaviour
         isAoeDamage = false;
     }
 
-    public void StartShooting()
-    {
-        isShooting = true;
-    }
-
-    public void StopShooting()
-    {
-        isShooting = false;
-    }
 
     private void Update()
     {
-        if (isShooting && Time.time >= nextFireTime)
+        if (fireAction.IsPressed() && Time.time >= nextFireTime)
         {
             Shoot();
             nextFireTime = Time.time + 1f / fireRate;
@@ -73,7 +80,6 @@ public class PlayerShooting : MonoBehaviour
             damage = damage,
             knockback = knockback,
             isAoeDamage = isAoeDamage,
-            aoeRadius = aoeRadius,
             size = projectileSize,
             lifeTime = baseProjectileLifeTime,
             speed = projectileSpeed,
@@ -97,7 +103,7 @@ public class PlayerShooting : MonoBehaviour
     public void AddProjectileCount(int amount) => projectileCount = Mathf.Min(projectileCount + amount, 5);
     public void AddProjectileSize(float amount) => projectileSize += amount;
     public void SetAoeDamage(bool value) => isAoeDamage = value;
-    public void SetAoeRadius(float radius) => aoeRadius = radius;
+
 }
 
 /// <summary>
@@ -109,7 +115,6 @@ public struct BulletConfig
     public float damage;
     public float knockback;
     public bool isAoeDamage;
-    public float aoeRadius;
     public float speed;
     public float size;
     public float lifeTime;

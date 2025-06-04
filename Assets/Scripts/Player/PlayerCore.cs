@@ -8,13 +8,16 @@ public class PlayerCore : MonoBehaviour
     private PlayerMovement movementSystem;
     private PlayerAbilities abilitySystem;
 
+
     private void Awake()
     {
         healthSystem = GetComponent<PlayerHealth>();
         shootingSystem = GetComponent<PlayerShooting>();
         movementSystem = GetComponent<PlayerMovement>();
         abilitySystem = GetComponent<PlayerAbilities>();
+
     }
+
 
     // 提供给外部访问的接口
     public PlayerHealth Health => healthSystem;
