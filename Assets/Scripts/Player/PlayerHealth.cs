@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
@@ -17,8 +18,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [Header("闪避率")]   public float dodgeChance;
     [Header("碰撞伤害")]   public float collisionDamage;
     [Header("碰撞受击无敌时间")] public float collisionImmunityDuration = 1.5f;
-    [Header("是否有名刀")]   public bool hasCheatDeath; // 稀有增益效果
-    
+
+    [Header("无敌效果")]
+    public bool isInvincible; // 当前是否无敌
+    public float invincibleDuration; // 无敌剩余时间
+
+    PlayerAbilities playerAbilities;
+
     //碰撞
     private float lastCollisionDamageTime;
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
@@ -58,6 +64,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     /// <param name="damage">原伤害</param>
     public void TakeDamage(float damage)
     {
+        //无敌判定
+        if (isInvincible) return;
+
         // 闪避判定
         if (Random.value < dodgeChance)
         {
@@ -69,10 +78,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         float damageTaken = damage - armor; 
 
         // 致命伤害检查
-        if (hasCheatDeath && damageTaken >= currentHealth)
+        if (damageTaken >= currentHealth)
         {
-            currentHealth = 1f;
-            hasCheatDeath = false;
+            playerAbilities.TryApplyCheatDeath();
             Debug.Log("Cheat death activated!");
             // 这里可以触发无敌效果
             return;
@@ -110,11 +118,42 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         // 游戏结束逻辑
     }
 
+    /// <summary>
+    /// 添加无敌效果
+    /// </summary>
+    /// <param name="duration">无敌持续时间(秒)，-1表示永久</param>
+    public void AddInvincible(float duration)
+    {
+        isInvincible = true;
+
+        if (duration > 0)
+        {
+            StartCoroutine(InvincibleTimerRoutine());
+        }
+    }
+
+    private IEnumerator InvincibleTimerRoutine()
+    {
+        yield return new WaitForSeconds(invincibleDuration);
+        isInvincible = false;
+        invincibleDuration = 0;
+    }
+
+    /// <summary>
+    /// 取消无敌效果
+    /// </summary>
+    public void RemoveInvincible()
+    {
+        isInvincible = false;
+        invincibleDuration = 0;
+        StopCoroutine("InvincibleTimerRoutine");
+    }
+
     // 增益效果相关方法
     public void AddMaxHealth(float amount) => maxHealth += amount;
     public void AddArmor(float amount) => armor += amount;
     public void AddHealthRegen(float amount) => healthRegen += amount;
     public void AddCollitionDamage(float amount) => collisionDamage += amount;
     public void AddDodgeChance(float amount) => dodgeChance = Mathf.Min(dodgeChance + amount, 0.6f);
-    public void SetCheatDeath(bool value) => hasCheatDeath = value;
+    public void SetCheatDeath(bool value) => playerAbilities.hasCheatDeath = value;
 }

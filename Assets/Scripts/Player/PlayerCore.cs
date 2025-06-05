@@ -25,15 +25,23 @@ public class PlayerCore : MonoBehaviour
     public PlayerMovement Movement => movementSystem;
     public PlayerAbilities Abilities => abilitySystem;
 
-    // 应用增益效果
+    /// <summary>
+    /// 应用增益效果
+    /// </summary>
+    /// <param name="buff"></param>
     public void ApplyBuff(PlayerBuff buff)
     {
         buff.Apply(this);
     }
 
-    // 移除增益效果
+    /// <summary>
+    /// 移除增益效果
+    /// </summary>
+    /// <param name="buff"></param>
     public void RemoveBuff(PlayerBuff buff)
     {
         buff.Remove(this);
     }
+
+
 }

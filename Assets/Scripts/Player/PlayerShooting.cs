@@ -70,6 +70,9 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 射击
+    /// </summary>
     private void Shoot()
     {
         float angleStep = projectileCount > 1 ? 15f / (projectileCount - 1) : 0f;

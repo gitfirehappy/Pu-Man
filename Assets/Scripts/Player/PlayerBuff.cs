@@ -155,9 +155,11 @@ public class PlayerBuff : ScriptableObject
 
     private void ApplySpecialEffects(PlayerCore player)
     {
+        //名刀
         if (grantCheatDeath)
             player.Health.SetCheatDeath(true);
 
+        //叠甲
         if (convertHealthToArmor)
         {
             float healthReduction = player.Health.maxHealth - 1;
@@ -166,8 +168,8 @@ public class PlayerBuff : ScriptableObject
         }
 
         // 其他特殊效果需要在游戏管理器或生成系统中实现
-        // if (reduceEnemySpawn) EnemySpawner.ReduceSpawnRate();
-        // if (replaceAbilityWithChainKill) player.Abilities.ReplaceWithChainKill();
-        // if (randomizeAbility) player.Abilities.RandomizeAbility();
+        // if (reduceEnemySpawn) EnemySpawner.ReduceSpawnRate();//减少生成
+        // if (replaceAbilityWithChainKill) player.Abilities.ReplaceWithChainKill();//亵渎
+        // if (randomizeAbility) player.Abilities.RandomizeAbility();//随机技能
     }
 }
