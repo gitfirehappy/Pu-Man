@@ -26,21 +26,19 @@ public class PlayerCore : MonoBehaviour
     public PlayerAbilities Abilities => abilitySystem;
 
     /// <summary>
-    /// 应用增益效果
+    /// 应用Buff效果（新版本）
     /// </summary>
-    /// <param name="buff"></param>
-    public void ApplyBuff(PlayerBuff buff)
+    public void ApplyBuff(BuffSO buffData)
     {
-        buff.Apply(this);
+        buffData.Apply(this); // 直接调用BuffSO的Apply
     }
 
     /// <summary>
-    /// 移除增益效果
+    /// 移除Buff效果（新版本）
     /// </summary>
-    /// <param name="buff"></param>
-    public void RemoveBuff(PlayerBuff buff)
+    public void RemoveBuff(BuffSO buffData)
     {
-        buff.Remove(this);
+        buffData.Remove(this); // 直接调用BuffSO的Remove
     }
 
 

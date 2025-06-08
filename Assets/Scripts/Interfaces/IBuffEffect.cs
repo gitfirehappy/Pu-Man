@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// IBuffEffect.cs
 public interface IBuffEffect
 {
-    void Apply(PlayerCore player);
-    void Remove(PlayerCore player); // 可选，用于移除Buff
+    void Apply(BuffSO buffData, PlayerCore player);
+    void Remove(BuffSO buffData, PlayerCore player);
 }
 
