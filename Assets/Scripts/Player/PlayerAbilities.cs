@@ -10,6 +10,7 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public enum AbilityType
     {
+        None,
         Classic,    // 经典吐豆人：获得无敌
         Berserk,    // 狂暴吐豆人：短时间大幅提升攻速
         Skilled,    // 会玩的吐豆人：刷新次数+1
@@ -115,7 +116,16 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void ResetAbilityCooldown()
     {
-        nextAvailableWave = currentWave++;//选择增益时应该是下个波次前，根据情况调整
+        nextAvailableWave = currentWave++;
+    }
+
+    /// <summary>
+    /// 减少技能冷却
+    /// </summary>
+    /// <param name="reduceWave"></param>
+    public void ReduceAbilityCooldown(int reduceWave)
+    {
+        nextAvailableWave -= reduceWave;
     }
 
     /// <summary>

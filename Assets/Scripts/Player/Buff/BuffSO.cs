@@ -28,13 +28,15 @@ public class BuffSO : ScriptableObject
     [Header("稀有")]
     [Header("额外选择次数")] public int extraBuff;
     [Header("刷新次数")] public int extraRefreshChance;
-    [Header("重置技能冷却")] public bool resetAbilityCooldown;
+    [Header("减少技能冷却")] public int reduceAbilityCooldown;
+    [Header("随机x个普通增益")] public int randomNormalBuff;
 
     [Header("史诗")]
     [Header("亵渎")] public bool replaceAbilityWithChainKill;
     [Header("随机技能")] public bool randomizeAbility;
     [Header("名刀")] public bool grantCheatDeath;
     [Header("范围伤害")] public bool aoeShot;
+    [Header("全属性提升")] public float allNormalBuffModifier;
 
     [Header("传说")]
     [Header("减少出怪")] public bool reduceEnemy;
@@ -77,7 +79,7 @@ public enum BuffID
     ExtraBuff,//下次获得额外buff
     ExtraRefreshChance,//额外刷新机会
     RandomNormalBuff,//随机两个普通buff
-    ResetAbilityCooldown,//重置技能冷却
+    ReduceAbilityCooldown,//减少技能冷却
 
     //史诗
     CheatDeath,//名刀

@@ -21,14 +21,35 @@ public class BuffSOEditor : Editor
 
         switch (buffID)
         {
+            //普通
             case BuffID.MaxHealthUp:
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("healthModifier"),
-                    new GUIContent("生命值增加量"));
+                    new GUIContent("生命值增加"));
                 break;
 
             case BuffID.ArmorUp:
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("armorModifier"),
-                    new GUIContent("护甲增加量"));
+                    new GUIContent("护甲增加"));
+                break;
+
+            case BuffID.HealthRegenUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("healthRegenModifier"),
+                    new GUIContent("生命恢复增加"));
+                break;
+
+            case BuffID.DogeChanceUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("dodgeChanceModifier"),
+                    new GUIContent("闪避率增加"));
+                break;
+
+            case BuffID.CollitionDamageUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("collisionDamageModifier"),
+                    new GUIContent("碰撞伤害增加"));
+                break;
+
+            case BuffID.FireDamageUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("damageModifier"),
+                    new GUIContent("子弹伤害增加"));
                 break;
 
             case BuffID.FireRateUp:
@@ -36,12 +57,92 @@ public class BuffSOEditor : Editor
                     new GUIContent("射速提升"));
                 break;
 
+            case BuffID.KnockbackUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("knockbackModifier"),
+                    new GUIContent("击退幅度提升"));
+                break;
+
+            case BuffID.ProjectileCountUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("projectileCountModifier"),
+                    new GUIContent("增加弹道"));
+                break;
+
+            case BuffID.ProjectileSizeUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("projectileSizeModifier"),
+                    new GUIContent("增加子弹大小"));
+                break;
+
+            case BuffID.SpeedUp:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("speedModifier"),
+                    new GUIContent("增加移速"));
+                break;
+
+            //稀有
+
+            case BuffID.ExtraBuff:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("extraBuff"),
+                    new GUIContent("增加下次选择buff数量"));
+                break;
+
+            case BuffID.ExtraRefreshChance:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("extraRefreshChance"),
+                    new GUIContent("增加刷新次数"));
+                break;
+
+            case BuffID.ReduceAbilityCooldown:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("reduceAbilityCooldown"),
+                    new GUIContent("减少技能冷却"));
+                break;
+
+            case BuffID.RandomNormalBuff:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("randomNormalBuff"),
+                    new GUIContent("随机获得x个普通增益"));
+                break;
+
+            //史诗
+
             case BuffID.CheatDeath:
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("grantCheatDeath"),
                     new GUIContent("启用名刀效果"));
                 break;
 
-                // 添加其他类型...
+            case BuffID.AoeShot:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("aoeShot"),
+                    new GUIContent("范围伤害"));
+                break;
+
+            case BuffID.ChainKillSkill:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("replaceAbilityWithChainKill"),
+                    new GUIContent("技能换为教科书般的清屏"));
+                break;
+
+            case BuffID.ChangeSkill:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("randomizeAbility"),
+                    new GUIContent("替换为随机技能"));
+                break;
+
+            case BuffID.AllNormalBuff:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("allNormalBuffModifier"),
+                    new GUIContent("全属性提升百分比"));
+                break;
+
+            //传说
+
+            case BuffID.ReduceEnemy:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("reduceEnemy"),
+                    new GUIContent("减少出怪"));
+                break;
+
+            case BuffID.HealthToArmor:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("healthToArmor"),
+                    new GUIContent("血量转护甲"));
+                break;
+
+            case BuffID.Barserk:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("barserkMode"),
+                    new GUIContent("强化攻击，弱化防御"));
+                break;
+
         }
 
         serializedObject.ApplyModifiedProperties();

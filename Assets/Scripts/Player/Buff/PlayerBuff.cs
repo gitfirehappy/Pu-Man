@@ -9,6 +9,7 @@ public class PlayerBuff : IBuffEffect
     {
         switch (buffData.buffID)
         {
+            // ========== 普通增益 ==========
             case BuffID.MaxHealthUp:
                 player.Health.AddMaxHealth(buffData.healthModifier);
                 break;
@@ -17,11 +18,103 @@ public class PlayerBuff : IBuffEffect
                 player.Health.AddArmor(buffData.armorModifier);
                 break;
 
+            case BuffID.HealthRegenUp:
+                player.Health.AddHealthRegen(buffData.healthRegenModifier);
+                break;
+
+            case BuffID.DogeChanceUp:
+                player.Health.AddDodgeChance(buffData.dodgeChanceModifier);
+                break;
+
+            case BuffID.CollitionDamageUp:
+                player.Health.AddCollitionDamage(buffData.collisionDamageModifier);
+                break;
+
+            case BuffID.FireDamageUp:
+                player.Shooting.AddDamage(buffData.damageModifier);
+                break;
+
+            case BuffID.FireRateUp:
+                player.Shooting.AddFireRate(buffData.fireRateModifier);
+                break;
+
+            case BuffID.KnockbackUp:
+                player.Shooting.AddKnockback(buffData.knockbackModifier);
+                break;
+
+            case BuffID.ProjectileCountUp:
+                player.Shooting.AddProjectileCount(buffData.projectileCountModifier);
+                break;
+
+            case BuffID.ProjectileSizeUp:
+                player.Shooting.AddProjectileSize(buffData.projectileSizeModifier);
+                break;
+
+            case BuffID.SpeedUp:
+                player.Movement.AddSpeed(buffData.speedModifier);
+                break;
+
+            // ========== 稀有增益 ==========
+            case BuffID.ExtraBuff:
+                // 需要在关卡管理器中实现
+                // GameManager.Instance.AddExtraBuffChoices(buffData.extraBuff);
+                break;
+
+            case BuffID.ExtraRefreshChance:
+                // 需要在UI系统中实现
+                // BuffSelectionUI.Instance.AddRefreshChances(buffData.extraRefreshChance);
+                break;
+
+            case BuffID.ReduceAbilityCooldown:
+                player.Abilities.ReduceAbilityCooldown(buffData.reduceAbilityCooldown);
+                break;
+
+            case BuffID.RandomNormalBuff:
+                // 需要在BuffManager中实现随机选择
+                // BuffManager.Instance.ApplyRandomBuffs(buffData.randomNormalBuff);
+                break;
+
+            // ========== 史诗增益 ==========
             case BuffID.CheatDeath:
                 player.Health.SetCheatDeath(buffData.grantCheatDeath);
                 break;
 
-                // 其他效果...
+            case BuffID.AoeShot:
+                player.Shooting.SetAoeDamage(buffData.aoeShot);
+                break;
+
+            case BuffID.ChainKillSkill:
+                player.Abilities.ChangeAbility(PlayerAbilities.AbilityType.ChainKill);
+                break;
+
+            case BuffID.ChangeSkill:
+                player.Abilities.RandomizeAbility();
+                break;
+
+            case BuffID.AllNormalBuff:
+                // 小幅度提升所有属性
+                AddAllNormalBuff(player, buffData);
+                break;
+
+            // ========== 传说增益 ==========
+            case BuffID.HealthToArmor:
+                ApplyHealthToArmor(player, buffData);
+                break;
+
+            case BuffID.ReduceEnemy:
+                // 需要在敌人生成器中实现
+                // EnemySpawner.Instance.ReduceSpawnRate();
+                player.Abilities.ChangeAbility(PlayerAbilities.AbilityType.None); // 禁用技能
+                break;
+
+            case BuffID.Barserk:
+                // 狂暴模式：伤害翻倍，护甲减半
+                ApplyBerserkMode(player, buffData);
+                break;
+
+            default:
+                Debug.LogWarning($"未实现的Buff类型: {buffData.buffID}");
+                break;
         }
     }
 
@@ -29,4 +122,62 @@ public class PlayerBuff : IBuffEffect
     {
         // 反向操作（如减少血量等）
     }
+
+    #region case调用
+
+    /// <summary>
+    /// 提升全属性
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="buffData"></param>
+    private void AddAllNormalBuff(PlayerCore player, BuffSO buffData)
+    {
+        float smallBoost = buffData.allNormalBuffModifier;
+        player.Health.AddMaxHealth(player.Health.maxHealth * smallBoost);
+        player.Health.AddArmor(player.Health.armor * smallBoost);
+        player.Health.AddHealthRegen(player.Health.healthRegen * smallBoost);
+        player.Health.AddDodgeChance(player.Health.dodgeChance * smallBoost);
+        player.Health.AddCollitionDamage(player.Health.collisionDamage * smallBoost);
+
+        player.Shooting.AddDamage(player.Shooting.damage * smallBoost);
+        player.Shooting.AddFireRate(player.Shooting.fireRate * smallBoost);
+        player.Shooting.AddKnockback(player.Shooting.knockback * smallBoost);
+        player.Shooting.AddProjectileCount(player.Shooting.projectileCount);
+        player.Shooting.AddProjectileSize(player.Shooting.projectileSize * smallBoost);
+
+        player.Movement.AddSpeed(player.Movement.runSpeed * smallBoost);
+    }
+
+    /// <summary>
+    /// 应用狂暴增益
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="buffData"></param>
+    private void ApplyBerserkMode(PlayerCore player, BuffSO buffData)
+    {
+        if (buffData.barserkMode)
+        {
+            player.Shooting.AddDamage(player.Shooting.damage);
+            player.Shooting.AddFireRate(player.Shooting.fireRate);
+            player.Health.AddArmor(-player.Health.armor * 0.9f);
+        }
+    }
+
+    /// <summary>
+    /// 应用血转护甲
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="buffData"></param>
+    private void ApplyHealthToArmor(PlayerCore player, BuffSO buffData)
+    {
+        if (buffData.healthToArmor)
+        {
+            float healthReduction = player.Health.maxHealth - 1;
+            player.Health.AddMaxHealth(-healthReduction);
+            player.Health.AddArmor(healthReduction);
+        }
+    }
+
+    #endregion
+
 }
