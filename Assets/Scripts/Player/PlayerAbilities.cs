@@ -14,7 +14,7 @@ public class PlayerAbilities : MonoBehaviour
         Classic,    // 经典吐豆人：获得无敌
         Berserk,    // 狂暴吐豆人：短时间大幅提升攻速
         Skilled,    // 会玩的吐豆人：刷新次数+1
-        CheatDeath,  // 名刀效果：每波次触发一次免死，通过buff获得
+        CheatDeath,  // 名刀效果：每波次触发一次免死，通过buff获得（可能要改）
         ChainKill,  //亵渎清场,通过buff获取
     }
 
@@ -28,7 +28,7 @@ public class PlayerAbilities : MonoBehaviour
     [SerializeField] private float berserkFireRateMultiplier = 2f;
 
     [Header("被动效果")]
-    [SerializeField] private int extraRefreshChancesPerWave = 1; // 每波增加的刷新次数
+    //[SerializeField] private int extraRefreshChancesPerWave = 1; // 每波增加的刷新次数(可以在刷新中检测技能Type）
     public bool hasCheatDeath; // 名刀效果
     public int cheatDeathCooldownWaves = 1; // 名刀冷却波次
 

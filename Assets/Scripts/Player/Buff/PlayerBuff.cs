@@ -69,10 +69,6 @@ public class PlayerBuff : IBuffEffect
                 player.Abilities.ReduceAbilityCooldown(buffData.reduceAbilityCooldown);
                 break;
 
-            case BuffID.RandomNormalBuff:
-                // 需要在BuffManager中实现随机选择
-                // BuffManager.Instance.ApplyRandomBuffs(buffData.randomNormalBuff);
-                break;
 
             // ========== 史诗增益 ==========
             case BuffID.CheatDeath:
@@ -88,7 +84,10 @@ public class PlayerBuff : IBuffEffect
                 break;
 
             case BuffID.ChangeSkill:
-                player.Abilities.RandomizeAbility();
+                if (buffData.randomizeAbility)
+                {
+                    player.Abilities.RandomizeAbility();
+                }
                 break;
 
             case BuffID.AllNormalBuff:

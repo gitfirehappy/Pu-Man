@@ -29,9 +29,9 @@ public class BuffSO : ScriptableObject
     [Header("额外选择次数")] public int extraBuff;
     [Header("刷新次数")] public int extraRefreshChance;
     [Header("减少技能冷却")] public int reduceAbilityCooldown;
-    [Header("随机x个普通增益")] public int randomNormalBuff;
 
-    [Header("史诗")]
+
+    [Header("史诗")]//bool类只能获得一次
     [Header("亵渎")] public bool replaceAbilityWithChainKill;
     [Header("随机技能")] public bool randomizeAbility;
     [Header("名刀")] public bool grantCheatDeath;
@@ -78,7 +78,6 @@ public enum BuffID
     //稀有
     ExtraBuff,//下次获得额外buff
     ExtraRefreshChance,//额外刷新机会
-    RandomNormalBuff,//随机两个普通buff
     ReduceAbilityCooldown,//减少技能冷却
 
     //史诗

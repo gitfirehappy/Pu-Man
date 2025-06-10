@@ -31,7 +31,15 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     private static Dictionary<GameObject, ObjectPool<GameObject>> _objectPools;
     private static Dictionary<GameObject, GameObject> _cloneToPrefabMap;
 
-    public enum PoolType { ParticleSystems, GameObjects, SoundFX }
+    public enum PoolType 
+    {
+        ParticleSystems, 
+        GameObjects, 
+        SoundFX,
+        PlayerBullet,
+        Enemy,
+        EnemyBullet,
+    }
     public static PoolType PoolingType;
 
     #endregion

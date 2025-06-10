@@ -94,10 +94,6 @@ public class BuffSOEditor : Editor
                     new GUIContent("减少技能冷却"));
                 break;
 
-            case BuffID.RandomNormalBuff:
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("randomNormalBuff"),
-                    new GUIContent("随机获得x个普通增益"));
-                break;
 
             //史诗
 

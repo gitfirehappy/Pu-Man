@@ -109,16 +109,3 @@ public class PlayerShooting : MonoBehaviour
 
 }
 
-/// <summary>
-/// 子弹属性
-/// </summary>
-[System.Serializable]
-public struct BulletConfig
-{
-    public float damage;
-    public float knockback;
-    public bool isAoeDamage;
-    public float speed;
-    public float size;
-    public float lifeTime;
-}

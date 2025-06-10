@@ -3,6 +3,9 @@ using UnityEngine.Pool;
 
 public abstract class BaseEnemy : MonoBehaviour, IDamageable, IPoolable
 {
+    //需要修改架构
+    //敌人内部只处理逻辑，数据由SO读取
+
     [Header("基础属性")]
     [Header("血量上限")] public float maxHealth = 100f;
     [Header("移动速度")] public float moveSpeed = 3f;
@@ -97,6 +100,10 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IPoolable
         }
     }
 
+    /// <summary>
+    /// 造成伤害(核心)
+    /// </summary>
+    /// <param name="damage"></param>
     public virtual void TakeDamage(float damage)
     {
         currentHealth -= damage;
@@ -116,11 +123,6 @@ public abstract class BaseEnemy : MonoBehaviour, IDamageable, IPoolable
         return true;
     }
 
-    // 保留原有的OnTriggerEnter2D以防其他碰撞需求
-    protected virtual void OnTriggerEnter2D(Collider2D other)
-    {
-        // 其他碰撞逻辑（如子弹）可以放在这里
-    }
 
     protected virtual void Die()
     {

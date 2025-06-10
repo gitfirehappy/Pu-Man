@@ -90,7 +90,7 @@ public class Bullet : MonoBehaviour
     private void ReturnToPool()
     {
         CancelInvoke(nameof(ReturnToPool));
-        ObjectPoolManager.ReturnObjectToPool(gameObject);
+        ObjectPoolManager.ReturnObjectToPool(gameObject,ObjectPoolManager.PoolType.PlayerBullet);
     }
 
     private void OnDrawGizmosSelected()
@@ -98,4 +98,18 @@ public class Bullet : MonoBehaviour
         Gizmos.color = _isAoeDamage ? Color.yellow : Color.red;
         Gizmos.DrawWireSphere(transform.position, _detectionRadius);
     }
+}
+
+/// <summary>
+/// 子弹属性
+/// </summary>
+[System.Serializable]
+public struct BulletConfig
+{
+    public float damage;
+    public float knockback;
+    public bool isAoeDamage;
+    public float speed;
+    public float size;
+    public float lifeTime;
 }
