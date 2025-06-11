@@ -4,32 +4,56 @@
 public class EnemySO : ScriptableObject
 {
     public EnemyType enemyType;
-    public Rarity rarity;
+
     [TextArea] public string description;
 
     [Header("基础属性")]
-    [Header("血量上限")] public float maxHealth;
     [Header("移动速度")] public float moveSpeed;
+    [Header("血量上限")] public float maxHealth;
     [Header("碰撞伤害")] public float collisionDamage;
     [Header("受击无敌")] public float collisionImmunityDuration;
-    [Tooltip("敌人碰撞检测半径")]
-    public float attackRadius;
-    [Tooltip("检测间隔（秒）")]
-    public float detectionInterval;
+    [Header("敌人碰撞检测半径")] public float attackRadius;
+    [Header("检测间隔（秒）")] public float detectionInterval;
 
-    [Header("远程敌人属性")]
-    [Header("子弹伤害")]public float bulletDamage;
-    [Header("子弹速度")] public float bulletSpeed;
-    [Header("子弹速度")] public float bulletSize;
 
-    [Header("冲撞敌人属性")]
-    [Header("发起冲撞距离")]public float seekRadius;
-    [Header("冲撞速度")]public float clashSpeed;
+    // 条件显示的数据块
+    [System.Serializable]
+    public class ShootingConfig
+    {
+        [Header("敌人子弹预制体")]public GameObject bulletPrefab;
+        [Header("子弹伤害")]public float bulletDamage;
+        [Header("子弹速度")] public float bulletSpeed;
+        [Header("子弹大小")] public float bulletSize;
+        [Header("射速")] public float shootRate;
+    }
 
-    [Header("Boss敌人属性")]
+    [System.Serializable]
+    public class ClashConfig
+    {
+        [Header("发起冲撞距离")] public float seekRadius;
+        [Header("冲撞速度")] public float clashSpeed;
+        [Header("冲撞冷却")] public float clashCooldown;
+    }
 
-    [Header("弹道数量")] public int projectileCount;//之后会随波次增加（在Boss逻辑会写）
+    [System.Serializable]
+    public class RewardConfig
+    {
+        [Header("回血")] public float healthUp;
+        [Header("增加刷新次数")] public int extraRefreshChance;
+    }
 
+    [System.Serializable]
+    public class BossConfig
+    {
+        [Header("弹道数量")] public int projectileCount;//之后会随波次增加（在Boss逻辑会写）
+    }
+
+
+    // 按需显示的配置
+    public ShootingConfig shootingConfig;
+    public ClashConfig clashConfig;
+    public RewardConfig rewardConfig;
+    public BossConfig bossConfig;
 }
 
 public enum EnemyType
