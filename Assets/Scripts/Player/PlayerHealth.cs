@@ -40,6 +40,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         RegenerateHealth();
     }
 
+    /// <summary>
+    /// 玩家血量系统初始化
+    /// </summary>
     public void ResetToBaseStats()
     {
         maxHealth = baseMaxHealth;
@@ -49,6 +52,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         collisionDamage = basecollisionDamage;
     }
 
+    /// <summary>
+    /// 生命恢复
+    /// </summary>
     private void RegenerateHealth()
     {
         if (currentHealth < maxHealth)
@@ -149,11 +155,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         StopCoroutine("InvincibleTimerRoutine");
     }
 
-    // 增益效果相关方法
+    #region 增益效果相关方法
+
     public void AddMaxHealth(float amount) => maxHealth += amount;
     public void AddArmor(float amount) => armor += amount;
     public void AddHealthRegen(float amount) => healthRegen += amount;
     public void AddCollitionDamage(float amount) => collisionDamage += amount;
     public void AddDodgeChance(float amount) => dodgeChance = Mathf.Min(dodgeChance + amount, 0.6f);
     public void SetCheatDeath(bool value) => playerAbilities.hasCheatDeath = value;
+
+    #endregion
+
 }

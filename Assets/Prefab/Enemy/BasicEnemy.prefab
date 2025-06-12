@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4225181432506997977}
   - component: {fileID: 2290163428169906220}
   - component: {fileID: 2434167446748542864}
-  - component: {fileID: 4471489742930348751}
   m_Layer: 7
   m_Name: BasicEnemy
   m_TagString: Enemy
@@ -149,21 +148,3 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &4471489742930348751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4221185578653224041}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef97920f5e085c64da8608f891c329b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  moveSpeed: 3
-  collisionDamage: 10
-  collisionImmunityDuration: 1
-  attackRadius: 0.5
-  detectionInterval: 0.2
