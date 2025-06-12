@@ -27,6 +27,9 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     private static GameObject _particleSystemsEmpty;
     private static GameObject _gameObjectsEmpty;
     private static GameObject _soundFXEmpty;
+    private static GameObject _playerBulletEmpty;
+    private static GameObject _enemyEmpty;
+    private static GameObject _enemyBulletEmpty;
 
     private static Dictionary<GameObject, ObjectPool<GameObject>> _objectPools;
     private static Dictionary<GameObject, GameObject> _cloneToPrefabMap;
@@ -66,6 +69,16 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 
         _soundFXEmpty = new GameObject("Sound FX");
         _soundFXEmpty.transform.SetParent(_emptyHolder.transform);
+
+        // 新增分类
+        _playerBulletEmpty = new GameObject("Player Bullets");
+        _playerBulletEmpty.transform.SetParent(_emptyHolder.transform);
+
+        _enemyEmpty = new GameObject("Enemies");
+        _enemyEmpty.transform.SetParent(_emptyHolder.transform);
+
+        _enemyBulletEmpty = new GameObject("Enemy Bullets");
+        _enemyBulletEmpty.transform.SetParent(_emptyHolder.transform);
 
         if (_addToDontDestroyOnLoad)
             DontDestroyOnLoad(_emptyHolder);
@@ -160,6 +173,9 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
             PoolType.ParticleSystems => _particleSystemsEmpty,
             PoolType.GameObjects => _gameObjectsEmpty,
             PoolType.SoundFX => _soundFXEmpty,
+            PoolType.PlayerBullet => _playerBulletEmpty,
+            PoolType.Enemy => _enemyEmpty,
+            PoolType.EnemyBullet => _enemyBulletEmpty,
             _ => null,
         };
     }

@@ -4,6 +4,7 @@ public class EnemyMovement : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private EnemyClash enemyClash;
 
     [SerializeField][Header("移动速度")] private float moveSpeed;
     private Transform playerTransform;
@@ -20,7 +21,8 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        if (playerTransform == null) return;
+        if (playerTransform == null || (enemyClash != null && enemyClash.IsClashing)) 
+            return;
         MoveTowardsPlayer();
     }
 

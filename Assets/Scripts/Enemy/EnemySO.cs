@@ -25,6 +25,8 @@ public class EnemySO : ScriptableObject
         [Header("子弹速度")] public float bulletSpeed;
         [Header("子弹大小")] public float bulletSize;
         [Header("射速")] public float shootRate;
+        [Header("开始射击距离")] public float shootRadius;
+        [Header("弹道数量")] public int projectileCount;
     }
 
     [System.Serializable]
@@ -42,18 +44,12 @@ public class EnemySO : ScriptableObject
         [Header("增加刷新次数")] public int extraRefreshChance;
     }
 
-    [System.Serializable]
-    public class BossConfig
-    {
-        [Header("弹道数量")] public int projectileCount;//之后会随波次增加（在Boss逻辑会写）
-    }
-
 
     // 按需显示的配置
     public ShootingConfig shootingConfig;
     public ClashConfig clashConfig;
     public RewardConfig rewardConfig;
-    public BossConfig bossConfig;
+
 }
 
 public enum EnemyType

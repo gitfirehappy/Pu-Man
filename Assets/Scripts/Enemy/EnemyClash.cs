@@ -1,25 +1,112 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyClash : MonoBehaviour
 {
+    [Header("References")]
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private EnemyMovement movement;
 
+    private float seekRadius;
+    private float clashSpeed;
+    private float clashCooldown;
 
+    private float lastClashTime;
+    private bool isClashing;
+    private Vector2 clashTarget;
+    private Transform playerTransform;
 
-
-
-
-
-
-
+    public bool IsClashing => isClashing; // 暴露冲撞状态
 
     /// <summary>
-    /// 敌人冲撞系统初始化
+    /// 冲撞系统初始化
     /// </summary>
-    /// <param name="data"></param>
     public void Initialize(EnemySO data)
     {
+        if (data.clashConfig == null)
+        {
+            Debug.LogError("Missing clash config for enemy!");
+            return;
+        }
 
+        seekRadius = data.clashConfig.seekRadius;
+        clashSpeed = data.clashConfig.clashSpeed;
+        clashCooldown = data.clashConfig.clashCooldown;
+
+        playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+        movement = GetComponent<EnemyMovement>();
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        if (playerTransform == null || isClashing)
+            return;
+
+        // 冷却检查
+        if (Time.time - lastClashTime < clashCooldown)
+            return;
+
+        // 距离检查
+        if (Vector2.Distance(transform.position, playerTransform.position) <= seekRadius)
+        {
+            StartClash();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isClashing) return;
+
+        // 冲撞移动（直线运动）
+        Vector2 direction = (clashTarget - (Vector2)transform.position).normalized;
+        rb.velocity = direction * clashSpeed;
+
+        // 检查是否到达目标点
+        if (Vector2.Distance(transform.position, clashTarget) < 0.1f)
+        {
+            EndClash();
+        }
+    }
+
+    /// <summary>
+    /// 开始冲撞
+    /// </summary>
+    private void StartClash()
+    {
+        isClashing = true;
+        clashTarget = playerTransform.position; // 锁定冲撞时的玩家位置
+        lastClashTime = Time.time;
+
+        // 禁用普通移动
+        if (movement != null)
+            movement.enabled = false;
+    }
+
+    /// <summary>
+    /// 结束冲撞
+    /// </summary>
+    private void EndClash()
+    {
+        isClashing = false;
+        rb.velocity = Vector2.zero;
+
+        // 重新启用普通移动
+        if (movement != null)
+            movement.enabled = true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (seekRadius > 0)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(transform.position, seekRadius);
+        }
+
+        if (isClashing)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(transform.position, clashTarget);
+        }
     }
 }

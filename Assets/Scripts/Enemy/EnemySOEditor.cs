@@ -55,10 +55,6 @@ public class EnemySOEditor : Editor
 
             case EnemyType.Boss:
                 EditorGUILayout.PropertyField(
-                    serializedObject.FindProperty("bossConfig"),
-                    new GUIContent("Boss配置"),
-                    true);
-                EditorGUILayout.PropertyField(
                     serializedObject.FindProperty("shootingConfig"),
                     new GUIContent("射击配置"),
                     true);

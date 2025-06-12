@@ -355,7 +355,7 @@ MonoBehaviour:
   baseDamage: 10
   baseFireRate: 1
   baseKnockback: 0
-  baseProjectileCount: 1
+  baseProjectileCount: 3
   baseProjectileSize: 2
   baseProjectileLifeTime: 3
   baseProjectileSpeed: 20
@@ -696,7 +696,7 @@ MonoBehaviour:
   _addToDontDestroyOnLoad: 0
   _defaultPoolCapacity: 10
   _maxPoolSize: 20
-  _showDebugInfo: 0
+  _showDebugInfo: 1
 --- !u!4 &1257875563
 Transform:
   m_ObjectHideFlags: 0

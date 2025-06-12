@@ -87,10 +87,26 @@ public class Bullet : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 玩家子弹回收
+    /// </summary>
     private void ReturnToPool()
     {
         CancelInvoke(nameof(ReturnToPool));
-        ObjectPoolManager.ReturnObjectToPool(gameObject,ObjectPoolManager.PoolType.PlayerBullet);
+
+        // 添加null检查
+        if (this == null || gameObject == null) return;
+
+        // 确保ObjectPoolManager实例存在
+        if (ObjectPoolManager.Instance != null)
+        {
+            ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.PlayerBullet);
+        }
+        else
+        {
+            Debug.LogWarning("ObjectPoolManager is not available. Skipping return to pool.");
+            Destroy(gameObject);
+        }
     }
 
     private void OnDrawGizmosSelected()
