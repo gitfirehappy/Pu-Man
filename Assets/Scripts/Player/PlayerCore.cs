@@ -1,45 +1,70 @@
-﻿using UnityEngine;
+﻿using UnityEngine.Pool;
+using UnityEngine;
 
-[RequireComponent(typeof(PlayerHealth), typeof(PlayerShooting), typeof(PlayerMovement))]
+[DisallowMultipleComponent]
 public class PlayerCore : MonoBehaviour
 {
-    private PlayerHealth healthSystem;
-    private PlayerShooting shootingSystem;
-    private PlayerMovement movementSystem;
-    private PlayerAbilities abilitySystem;
-
+    [SerializeField] private PlayerSO playerData;
 
     private void Awake()
     {
-        healthSystem = GetComponent<PlayerHealth>();
-        shootingSystem = GetComponent<PlayerShooting>();
-        movementSystem = GetComponent<PlayerMovement>();
-        abilitySystem = GetComponent<PlayerAbilities>();
+        if (playerData == null)
+        {
+            Debug.LogError("PlayerSO not assigned!");
+            return;
+        }
 
+        InitializeComponents();
     }
 
+    private void InitializeComponents()
+    {
+        // 确保所有必须组件存在
+        if (!TryGetComponent<PlayerHealth>(out var health))
+            health = gameObject.AddComponent<PlayerHealth>();
+
+        if (!TryGetComponent<PlayerShooting>(out var shooting))
+            shooting = gameObject.AddComponent<PlayerShooting>();
+
+        if (!TryGetComponent<PlayerMovement>(out var movement))
+            movement = gameObject.AddComponent<PlayerMovement>();
+
+        if (!TryGetComponent<PlayerAbilities>(out var abilities))
+            abilities = gameObject.AddComponent<PlayerAbilities>();
+
+        // 初始化所有组件
+        GetComponent<PlayerHealth>().Initialize(playerData);
+        GetComponent<PlayerShooting>().Initialize(playerData);
+        GetComponent<PlayerMovement>().Initialize(playerData);
+        GetComponent<PlayerAbilities>().Initialize(playerData);
+    }
+
+    /// <summary>
+    /// 恢复状态,每波结束或开始前调用
+    /// </summary>
+    public void ResetState()
+    {
+        // 重置状态（给每波结束后可以调用，主要是回血和重置临时增益）
+        GetComponent<PlayerHealth>().ResetHealth();
+        GetComponent<PlayerHealth>().RemoveInvincible();
+        GetComponent<PlayerShooting>().ResetToBaseStats();
+        GetComponent<PlayerMovement>().ResetToBaseStats();
+    }
+
+    /// <summary>
+    /// 重新全部按SO初始化
+    /// </summary>
+    public void ReInitialize()
+    {
+        // 重新初始化
+        InitializeComponents();
+    }
+
+    public PlayerType GetPlayerType() => playerData.playerType;
 
     // 提供给外部访问的接口
-    public PlayerHealth Health => healthSystem;
-    public PlayerShooting Shooting => shootingSystem;
-    public PlayerMovement Movement => movementSystem;
-    public PlayerAbilities Abilities => abilitySystem;
-
-    /// <summary>
-    /// 应用Buff效果（新版本）
-    /// </summary>
-    public void ApplyBuff(BuffSO buffData)
-    {
-        buffData.Apply(this); // 直接调用BuffSO的Apply
-    }
-
-    /// <summary>
-    /// 移除Buff效果（新版本）
-    /// </summary>
-    public void RemoveBuff(BuffSO buffData)
-    {
-        buffData.Remove(this); // 直接调用BuffSO的Remove
-    }
-
-
+    public PlayerHealth Health => GetComponent<PlayerHealth>();
+    public PlayerShooting Shooting => GetComponent<PlayerShooting>();
+    public PlayerMovement Movement => GetComponent<PlayerMovement>();
+    public PlayerAbilities Abilities => GetComponent<PlayerAbilities>();
 }

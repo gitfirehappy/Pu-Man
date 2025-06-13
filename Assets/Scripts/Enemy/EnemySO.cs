@@ -15,6 +15,12 @@ public class EnemySO : ScriptableObject
     [Header("敌人碰撞检测半径")] public float attackRadius;
     [Header("检测间隔（秒）")] public float detectionInterval;
 
+    // 按需显示的配置
+    public ShootingConfig shootingConfig;
+    public ClashConfig clashConfig;
+    public RewardConfig rewardConfig;
+
+
 
     // 条件显示的数据块
     [System.Serializable]
@@ -43,12 +49,6 @@ public class EnemySO : ScriptableObject
         [Header("回血")] public float healthUp;
         [Header("增加刷新次数")] public int extraRefreshChance;
     }
-
-
-    // 按需显示的配置
-    public ShootingConfig shootingConfig;
-    public ClashConfig clashConfig;
-    public RewardConfig rewardConfig;
 
 }
 

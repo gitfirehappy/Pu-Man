@@ -4,20 +4,7 @@ using DG.Tweening.Core.Easing;
 using UnityEngine.InputSystem;
 
 public class PlayerAbilities : MonoBehaviour
-{
-    /// <summary>
-    /// 角色技能种类
-    /// </summary>
-    public enum AbilityType
-    {
-        None,
-        Classic,    // 经典吐豆人：获得无敌
-        Berserk,    // 狂暴吐豆人：短时间大幅提升攻速
-        Skilled,    // 会玩的吐豆人：刷新次数+1
-        CheatDeath,  // 名刀效果：每波次触发一次免死，通过buff获得（可能要改）
-        ChainKill,  //亵渎清场,通过buff获取
-    }
-
+{ 
     [Header("主动技能冷却")]
     public AbilityType currentAbility;
     [SerializeField] private int classicCooldownWaves = 5;
@@ -50,6 +37,17 @@ public class PlayerAbilities : MonoBehaviour
 
     }
 
+    public void Initialize(PlayerSO playerData)
+    {
+        currentAbility = playerData.abilitiesConfig.startingAbility;
+        classicCooldownWaves = playerData.abilitiesConfig.classicCooldownWaves;
+        berserkCooldownWaves = playerData.abilitiesConfig.berserkCooldownWaves;
+        chainkillCooldownWaves = playerData.abilitiesConfig.chainkillCooldownWaves;
+        classicDuration = playerData.abilitiesConfig.classicDuration;
+        berserkDuration = playerData.abilitiesConfig.berserkDuration;
+        berserkFireRateMultiplier = playerData.abilitiesConfig.berserkFireRateMultiplier;
+        cheatDeathCooldownWaves = playerData.abilitiesConfig.cheatDeathCooldownWaves;
+    }
 
     /// <summary>
     /// 使用主动技能
@@ -94,10 +92,10 @@ public class PlayerAbilities : MonoBehaviour
     private IEnumerator BerserkAbilityRoutine()
     {
         Debug.Log("释放了狂暴技能！");
-        float originalFireRate = playerCore.Shooting.fireRate;
+        float originalFireRate = playerCore.Shooting.FireRate;
         playerCore.Shooting.AddFireRate(originalFireRate * berserkFireRateMultiplier);
         yield return new WaitForSeconds(berserkDuration);
-        playerCore.Shooting.ResetToBaseStats();
+        playerCore.Shooting.AddFireRate(-originalFireRate * berserkFireRateMultiplier);
         isAbilityActive = false;
     }
 
@@ -162,6 +160,10 @@ public class PlayerAbilities : MonoBehaviour
         ChangeAbility(newAbility);
     }
 
+    /// <summary>
+    /// 更换技能
+    /// </summary>
+    /// <param name="newAbility"></param>
     public void ChangeAbility(AbilityType newAbility)
     {
         if (isAbilityActive && activeAbilityCoroutine != null)
@@ -174,14 +176,34 @@ public class PlayerAbilities : MonoBehaviour
         Debug.Log("当前技能:"+currentAbility);
     }
 
+    /// <summary>
+    /// 中断技能
+    /// </summary>
     private void DeactivateAbility()
     {
         switch (currentAbility)
         {
             case AbilityType.Berserk:
+                //重置射击
                 playerCore.Shooting.ResetToBaseStats();
+                break;
+            case AbilityType.Classic:
+                playerCore.Health.RemoveInvincible();
                 break;
         }
         isAbilityActive = false;
     }
+}
+
+/// <summary>
+/// 角色技能种类
+/// </summary>
+public enum AbilityType
+{
+    None,
+    Classic,    // 经典吐豆人：获得无敌
+    Berserk,    // 狂暴吐豆人：短时间大幅提升攻速
+    Skilled,    // 会玩的吐豆人：刷新次数+1
+    CheatDeath,  // 名刀效果：每波次触发一次免死，通过buff获得（可能要改）
+    ChainKill,  //亵渎清场,通过buff获取
 }

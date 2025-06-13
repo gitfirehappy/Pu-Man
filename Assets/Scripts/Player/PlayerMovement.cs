@@ -4,7 +4,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    public float runSpeed = 5f;
+    private float baserunSpeed;
+
+    [SerializeField]private float runSpeed;
 
     private Vector2 inputDirection;
     private Rigidbody2D rb;
@@ -37,6 +39,17 @@ public class PlayerMovement : MonoBehaviour
     }
 
     /// <summary>
+    /// 玩家移动系统初始化
+    /// </summary>
+    /// <param name="playerData"></param>
+    public void Initialize(PlayerSO playerData)
+    {
+        baserunSpeed = playerData.movementConfig.runSpeed;
+
+        runSpeed = baserunSpeed;
+    }
+
+    /// <summary>
     /// 人物移动
     /// </summary>
     public void Move()
@@ -44,5 +57,21 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2(inputDirection.x * runSpeed, inputDirection.y * runSpeed); // 四向
     }
 
-    public void AddSpeed(float amount) => runSpeed += amount;
+    /// <summary>
+    /// 恢复移速状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        runSpeed = baserunSpeed;
+    }
+
+    #region 公共属性
+    public float RunSpeed => baserunSpeed;
+
+    #endregion
+
+    #region 增益接口
+    public void AddSpeed(float amount) => baserunSpeed += amount;
+
+    #endregion
 }

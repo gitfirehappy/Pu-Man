@@ -3,21 +3,14 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    [Header("基础属性")]
-    [SerializeField] private float baseMaxHealth = 100f;//血量上限
-    [SerializeField] private float baseArmor = 0f;      //护甲值
-    [SerializeField] private float baseHealthRegen = 0.5f;//生命恢复
-    [SerializeField] private float baseDodgeChance = 0f;//闪避率
-    [SerializeField] private float basecollisionDamage = 10f;//碰撞伤害
-
-    [Header("当前属性")]
-    [Header("血量上限")] public float maxHealth;
-    [Header("当前血量")] public float currentHealth;
-    [Header("护甲值")]   public float armor;
-    [Header("生命恢复")] public float healthRegen;
-    [Header("闪避率")]   public float dodgeChance;
-    [Header("碰撞伤害")]   public float collisionDamage;
-    [Header("碰撞受击无敌时间")] public float collisionImmunityDuration = 1.5f;
+    [Header("属性")]
+    [SerializeField][Header("当前血量")] private float currentHealth;
+    [SerializeField][Header("血量上限")] private float maxHealth;
+    [SerializeField][Header("护甲值")]   private float armor;
+    [SerializeField][Header("生命恢复")] private float healthRegen;
+    [SerializeField][Header("闪避率")]   private float dodgeChance;
+    [SerializeField][Header("碰撞伤害")]   private float collisionDamage;
+    [SerializeField][Header("碰撞受击无敌时间")] private float collisionImmunityDuration;
 
     [Header("无敌效果")]
     public bool isInvincible; // 当前是否无敌
@@ -29,12 +22,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private float lastCollisionDamageTime;
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
-    private void Start()
-    {
-        ResetToBaseStats();
-        currentHealth = maxHealth;
-    }
-
     private void Update()
     {
         RegenerateHealth();
@@ -43,13 +30,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     /// <summary>
     /// 玩家血量系统初始化
     /// </summary>
-    public void ResetToBaseStats()
+    public void Initialize(PlayerSO playerData)
     {
-        maxHealth = baseMaxHealth;
-        armor = baseArmor;
-        healthRegen = baseHealthRegen;
-        dodgeChance = baseDodgeChance;
-        collisionDamage = basecollisionDamage;
+        maxHealth = playerData.healthConfig.maxHealth;
+        armor = playerData.healthConfig.armor;
+        healthRegen = playerData.healthConfig.healthRegen;
+        dodgeChance = playerData.healthConfig.dodgeChance;
+        collisionDamage = playerData.healthConfig.collisionDamage;
+        collisionImmunityDuration = playerData.healthConfig.collisionImmunityDuration;
+
+        currentHealth = maxHealth;
     }
 
     /// <summary>
@@ -154,6 +144,24 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         invincibleDuration = 0;
         StopCoroutine("InvincibleTimerRoutine");
     }
+
+    /// <summary>
+    /// 重置血量状态
+    /// </summary>
+    public void ResetHealth()
+    {
+        currentHealth = maxHealth;
+    }
+
+    #region 公共属性
+    public float MaxHealth => maxHealth;
+    public float Armor => armor;
+    public float HealthRegen => healthRegen;
+    public float DodgeChance => dodgeChance;
+    public float CollisionDamage => collisionDamage;
+
+
+    #endregion
 
     #region 增益效果相关方法
 

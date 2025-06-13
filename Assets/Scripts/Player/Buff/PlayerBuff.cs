@@ -80,7 +80,7 @@ public class PlayerBuff : IBuffEffect
                 break;
 
             case BuffID.ChainKillSkill:
-                player.Abilities.ChangeAbility(PlayerAbilities.AbilityType.ChainKill);
+                player.Abilities.ChangeAbility(AbilityType.ChainKill);
                 break;
 
             case BuffID.ChangeSkill:
@@ -103,7 +103,7 @@ public class PlayerBuff : IBuffEffect
             case BuffID.ReduceEnemy:
                 // 需要在敌人生成器中实现
                 // EnemySpawner.Instance.ReduceSpawnRate();
-                player.Abilities.ChangeAbility(PlayerAbilities.AbilityType.None); // 禁用技能
+                player.Abilities.ChangeAbility(AbilityType.None); // 禁用技能
                 break;
 
             case BuffID.Barserk:
@@ -132,19 +132,19 @@ public class PlayerBuff : IBuffEffect
     private void AddAllNormalBuff(PlayerCore player, BuffSO buffData)
     {
         float smallBoost = buffData.allNormalBuffModifier;
-        player.Health.AddMaxHealth(player.Health.maxHealth * smallBoost);
-        player.Health.AddArmor(player.Health.armor * smallBoost);
-        player.Health.AddHealthRegen(player.Health.healthRegen * smallBoost);
-        player.Health.AddDodgeChance(player.Health.dodgeChance * smallBoost);
-        player.Health.AddCollitionDamage(player.Health.collisionDamage * smallBoost);
+        player.Health.AddMaxHealth(player.Health.MaxHealth * smallBoost);
+        player.Health.AddArmor(player.Health.Armor * smallBoost);
+        player.Health.AddHealthRegen(player.Health.HealthRegen * smallBoost);
+        player.Health.AddDodgeChance(player.Health.DodgeChance * smallBoost);
+        player.Health.AddCollitionDamage(player.Health.CollisionDamage * smallBoost);
 
-        player.Shooting.AddDamage(player.Shooting.damage * smallBoost);
-        player.Shooting.AddFireRate(player.Shooting.fireRate * smallBoost);
-        player.Shooting.AddKnockback(player.Shooting.knockback * smallBoost);
-        player.Shooting.AddProjectileCount(player.Shooting.projectileCount);
-        player.Shooting.AddProjectileSize(player.Shooting.projectileSize * smallBoost);
+        player.Shooting.AddDamage(player.Shooting.Damage * smallBoost);
+        player.Shooting.AddFireRate(player.Shooting.FireRate * smallBoost);
+        player.Shooting.AddKnockback(player.Shooting.Knockback * smallBoost);
+        player.Shooting.AddProjectileCount(player.Shooting.ProjectileCount);
+        player.Shooting.AddProjectileSize(player.Shooting.ProjectileSize * smallBoost);
 
-        player.Movement.AddSpeed(player.Movement.runSpeed * smallBoost);
+        player.Movement.AddSpeed(player.Movement.RunSpeed * smallBoost);
     }
 
     /// <summary>
@@ -156,9 +156,9 @@ public class PlayerBuff : IBuffEffect
     {
         if (buffData.barserkMode)
         {
-            player.Shooting.AddDamage(player.Shooting.damage);
-            player.Shooting.AddFireRate(player.Shooting.fireRate);
-            player.Health.AddArmor(-player.Health.armor * 0.9f);
+            player.Shooting.AddDamage(player.Shooting.Damage);
+            player.Shooting.AddFireRate(player.Shooting.FireRate);
+            player.Health.AddArmor(-player.Health.Armor * 0.9f);
         }
     }
 
@@ -171,7 +171,7 @@ public class PlayerBuff : IBuffEffect
     {
         if (buffData.healthToArmor)
         {
-            float healthReduction = player.Health.maxHealth - 1;
+            float healthReduction = player.Health.MaxHealth - 1;
             player.Health.AddMaxHealth(-healthReduction);
             player.Health.AddArmor(healthReduction);
         }
