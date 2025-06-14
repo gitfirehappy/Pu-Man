@@ -29,7 +29,6 @@ MonoBehaviour:
   extraBuff: 0
   extraRefreshChance: 0
   reduceAbilityCooldown: 0
-  randomNormalBuff: 0
   replaceAbilityWithChainKill: 0
   randomizeAbility: 0
   grantCheatDeath: 0

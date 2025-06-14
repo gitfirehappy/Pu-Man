@@ -15,6 +15,8 @@ public class EnemyMovement : MonoBehaviour
     /// <param name="data"></param>
     public void Initialize(EnemySO data)
     {
+        rb = GetComponent<Rigidbody2D>();
+
         moveSpeed = data.moveSpeed;
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
     }

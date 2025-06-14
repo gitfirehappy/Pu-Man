@@ -42,13 +42,14 @@ public class PlayerSOEditor : Editor
                 EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("berserkFireRateMultiplier"));
                 break;
 
+            case AbilityType.Skilled:
+                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("extraRefreshChancesPerWave"));
+                break;
+
             case AbilityType.ChainKill:
                 EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("chainkillCooldownWaves"));
                 break;
 
-            case AbilityType.CheatDeath:
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("cheatDeathCooldownWaves"));
-                break;
         }
 
         serializedObject.ApplyModifiedProperties();

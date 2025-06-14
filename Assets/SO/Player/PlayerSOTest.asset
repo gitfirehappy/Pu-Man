@@ -15,32 +15,31 @@ MonoBehaviour:
   playerType: 0
   description: 
   healthConfig:
-    maxHealth: 0
-    currentHealth: 0
-    armor: 0
+    maxHealth: 100
+    armor: 1
     healthRegen: 0
     dodgeChance: 0
-    collisionDamage: 0
-    collisionImmunityDuration: 0
+    collisionDamage: 1
+    collisionImmunityDuration: 1
+    cheatDeathInvincibleTime: 0
   shootingConfig:
-    damage: 0
-    fireRate: 0
+    damage: 1
+    fireRate: 2
     knockback: 0
-    projectileCount: 0
-    projectileSize: 0
+    projectileCount: 1
+    projectileSize: 1
     isAoeDamage: 0
-    projectileSpeed: 0
-    projectileLifeTime: 0
-    bulletPrefab: {fileID: 0}
-    firePoint: {fileID: 0}
+    projectileSpeed: 0.5
+    projectileLifeTime: 100
+    bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
   movementConfig:
-    runSpeed: 0
+    runSpeed: 4
   abilitiesConfig:
-    startingAbility: 0
-    classicCooldownWaves: 0
-    classicDuration: 0
+    startingAbility: 1
+    classicCooldownWaves: 1
+    classicDuration: 1
     berserkCooldownWaves: 0
     berserkDuration: 0
     berserkFireRateMultiplier: 0
+    extraRefreshChancesPerWave: 0
     chainkillCooldownWaves: 0
-    cheatDeathCooldownWaves: 0

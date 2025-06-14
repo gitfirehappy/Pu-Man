@@ -16,12 +16,9 @@ public class PlayerAbilities : MonoBehaviour
 
     [Header("被动效果")]
     //[SerializeField] private int extraRefreshChancesPerWave = 1; // 每波增加的刷新次数(可以在刷新中检测技能Type）
-    public bool hasCheatDeath; // 名刀效果
-    public int cheatDeathCooldownWaves = 1; // 名刀冷却波次
 
     [Header("当前状态")]
     public int nextAvailableWave = 0; // 下次可用技能的波次
-    public int nextCheatDeathAvailableWave = 0; // 下次可用名刀的波次
     public bool isAbilityActive;
     private Coroutine activeAbilityCoroutine;
 
@@ -46,7 +43,7 @@ public class PlayerAbilities : MonoBehaviour
         classicDuration = playerData.abilitiesConfig.classicDuration;
         berserkDuration = playerData.abilitiesConfig.berserkDuration;
         berserkFireRateMultiplier = playerData.abilitiesConfig.berserkFireRateMultiplier;
-        cheatDeathCooldownWaves = playerData.abilitiesConfig.cheatDeathCooldownWaves;
+
     }
 
     /// <summary>
@@ -93,20 +90,10 @@ public class PlayerAbilities : MonoBehaviour
     {
         Debug.Log("释放了狂暴技能！");
         float originalFireRate = playerCore.Shooting.FireRate;
-        playerCore.Shooting.AddFireRate(originalFireRate * berserkFireRateMultiplier);
+        playerCore.Shooting.AddCurrentFireRate(originalFireRate * berserkFireRateMultiplier);
         yield return new WaitForSeconds(berserkDuration);
-        playerCore.Shooting.AddFireRate(-originalFireRate * berserkFireRateMultiplier);
+        playerCore.Shooting.AddCurrentFireRate(-originalFireRate * berserkFireRateMultiplier);
         isAbilityActive = false;
-    }
-
-    /// <summary>
-    /// 名刀
-    /// </summary>
-    public void TryApplyCheatDeath()
-    {
-        Debug.Log("触发了名刀！");
-        hasCheatDeath = false;
-        nextCheatDeathAvailableWave = currentWave + classicCooldownWaves;
     }
 
     /// <summary>
@@ -204,6 +191,5 @@ public enum AbilityType
     Classic,    // 经典吐豆人：获得无敌
     Berserk,    // 狂暴吐豆人：短时间大幅提升攻速
     Skilled,    // 会玩的吐豆人：刷新次数+1
-    CheatDeath,  // 名刀效果：每波次触发一次免死，通过buff获得（可能要改）
     ChainKill,  //亵渎清场,通过buff获取
 }

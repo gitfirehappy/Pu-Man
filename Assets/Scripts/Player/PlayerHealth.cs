@@ -5,18 +5,22 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [Header("属性")]
     [SerializeField][Header("当前血量")] private float currentHealth;
+    [SerializeField][Header("当前能否触发名刀")] private bool currentHasCheatDeath;
+
+
     [SerializeField][Header("血量上限")] private float maxHealth;
     [SerializeField][Header("护甲值")]   private float armor;
     [SerializeField][Header("生命恢复")] private float healthRegen;
     [SerializeField][Header("闪避率")]   private float dodgeChance;
     [SerializeField][Header("碰撞伤害")]   private float collisionDamage;
     [SerializeField][Header("碰撞受击无敌时间")] private float collisionImmunityDuration;
+    [SerializeField][Header("是否有名刀")] private bool hasCheatDeath;
+    [SerializeField][Header("名刀无敌时间")] private float cheatDeathInvincibleTime;
+
 
     [Header("无敌效果")]
     public bool isInvincible; // 当前是否无敌
     public float invincibleDuration; // 无敌剩余时间
-
-    PlayerAbilities playerAbilities;
 
     //碰撞
     private float lastCollisionDamageTime;
@@ -38,6 +42,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         dodgeChance = playerData.healthConfig.dodgeChance;
         collisionDamage = playerData.healthConfig.collisionDamage;
         collisionImmunityDuration = playerData.healthConfig.collisionImmunityDuration;
+
+        cheatDeathInvincibleTime = playerData.healthConfig.cheatDeathInvincibleTime;
 
         currentHealth = maxHealth;
     }
@@ -73,12 +79,12 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         // 护甲减伤
         float damageTaken = damage - armor; 
 
-        // 致命伤害检查
+        // 致命伤害检查,名刀
         if (damageTaken >= currentHealth)
         {
-            playerAbilities.TryApplyCheatDeath();
+            TryApplyCheatDeath();
+            AddInvincible(cheatDeathInvincibleTime);
             Debug.Log("Cheat death activated!");
-            // 这里可以触发无敌效果
             return;
         }
 
@@ -104,6 +110,18 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         return collisionDamage;
     }
+
+    /// <summary>
+    /// 应用名刀
+    /// </summary>
+    public void TryApplyCheatDeath()
+    {
+        if (hasCheatDeath && currentHasCheatDeath)
+        {
+            currentHasCheatDeath = false;
+        }
+    }
+
 
     /// <summary>
     /// 玩家死亡
@@ -146,11 +164,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     }
 
     /// <summary>
-    /// 重置血量状态
+    /// 重置状态
     /// </summary>
-    public void ResetHealth()
+    public void ResetToBaseStats()
     {
         currentHealth = maxHealth;
+        RemoveInvincible();
+
     }
 
     #region 公共属性
@@ -170,7 +190,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void AddHealthRegen(float amount) => healthRegen += amount;
     public void AddCollitionDamage(float amount) => collisionDamage += amount;
     public void AddDodgeChance(float amount) => dodgeChance = Mathf.Min(dodgeChance + amount, 0.6f);
-    public void SetCheatDeath(bool value) => playerAbilities.hasCheatDeath = value;
+    public void SetCheatDeath(bool value) => hasCheatDeath = value;
 
     #endregion
 

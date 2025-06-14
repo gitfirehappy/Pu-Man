@@ -14,21 +14,21 @@ public class PlayerShooting : MonoBehaviour
 
 
     [Header("当前属性")]
-    [SerializeField][Header("子弹伤害")] private float damage;
-    [SerializeField][Header("射速")] private float fireRate;
-    [SerializeField][Header("击退距离")] private float knockback;
-    [SerializeField][Header("弹道数量")] private int projectileCount;
-    [SerializeField][Header("子弹大小")] private float projectileSize;
-    [SerializeField][Header("飞行速度")] private float projectileSpeed;
-    [SerializeField][Header("生命周期")] private float projectileLifeTime;
-    [SerializeField][Header("范围伤害")] private bool isAoeDamage;
+    [SerializeField][Header("子弹伤害")] private float currentDamage;
+    [SerializeField][Header("射速")] private float currentFireRate;
+    [SerializeField][Header("击退距离")] private float currentKnockback;
+    [SerializeField][Header("弹道数量")] private int currentProjectileCount;
+    [SerializeField][Header("子弹大小")] private float currentProjectileSize;
+    [SerializeField][Header("飞行速度")] private float currentProjectileSpeed;
+    [SerializeField][Header("生命周期")] private float currentProjectileLifeTime;
+    [SerializeField][Header("范围伤害")] private bool currentIsAoeDamage;
 
     [Header("设置")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform firePoint;
 
     private float nextFireTime;
-    private bool isRotating;
+    [SerializeField][Header("是否跟随鼠标")]private bool isRotating;
     private PlayerInput playerInput;
     private InputAction fireAction;
 
@@ -36,6 +36,12 @@ public class PlayerShooting : MonoBehaviour
     {
         playerInput = new PlayerInput();
         fireAction = playerInput.Player.Fire;
+        isRotating = true;
+
+        if (firePoint == null)
+        {
+            firePoint = transform;
+        }
     }
 
     private void OnEnable()
@@ -54,6 +60,8 @@ public class PlayerShooting : MonoBehaviour
     public void Initialize(PlayerSO playerData)
     {
         // 存储基础值
+        bulletPrefab = playerData.shootingConfig.bulletPrefab;
+
         baseDamage = playerData.shootingConfig.damage;
         baseFireRate = playerData.shootingConfig.fireRate;
         baseKnockback = playerData.shootingConfig.knockback;
@@ -64,14 +72,14 @@ public class PlayerShooting : MonoBehaviour
         baseIsAoeDamage = playerData.shootingConfig.isAoeDamage;
 
         // 初始化当前值
-        damage = baseDamage;
-        fireRate = baseFireRate;
-        knockback = baseKnockback;
-        projectileCount = baseProjectileCount;
-        projectileSize = baseProjectileSize;
-        projectileSpeed = baseProjectileSpeed;
-        projectileLifeTime = baseProjectileLifeTime;
-        isAoeDamage = baseIsAoeDamage;
+        currentDamage = baseDamage;
+        currentFireRate = baseFireRate;
+        currentKnockback = baseKnockback;
+        currentProjectileCount = baseProjectileCount;
+        currentProjectileSize = baseProjectileSize;
+        currentProjectileSpeed = baseProjectileSpeed;
+        currentProjectileLifeTime = baseProjectileLifeTime;
+        currentIsAoeDamage = baseIsAoeDamage;
     }
 
     /// <summary>
@@ -79,14 +87,14 @@ public class PlayerShooting : MonoBehaviour
     /// </summary>
     public void ResetToBaseStats()
     {
-        damage = baseDamage;
-        fireRate = baseFireRate;
-        knockback = baseKnockback;
-        projectileCount = baseProjectileCount;
-        projectileSize = baseProjectileSize;
-        projectileSpeed = baseProjectileSpeed;
-        projectileLifeTime = baseProjectileLifeTime;
-        isAoeDamage = baseIsAoeDamage;
+        currentDamage = baseDamage;
+        currentFireRate = baseFireRate;
+        currentKnockback = baseKnockback;
+        currentProjectileCount = baseProjectileCount;
+        currentProjectileSize = baseProjectileSize;
+        currentProjectileSpeed = baseProjectileSpeed;
+        currentProjectileLifeTime = baseProjectileLifeTime;
+        currentIsAoeDamage = baseIsAoeDamage;
     }
 
     private void Update()
@@ -99,7 +107,7 @@ public class PlayerShooting : MonoBehaviour
         if (fireAction.IsPressed() && Time.time >= nextFireTime)
         {
             Shoot();
-            nextFireTime = Time.time + 1f / fireRate;
+            nextFireTime = Time.time + 1f / currentFireRate;
         }
     }
 
@@ -108,25 +116,32 @@ public class PlayerShooting : MonoBehaviour
     /// </summary>
     private void Shoot()
     {
-        float angleStep = projectileCount > 1 ? 15f / (projectileCount - 1) : 0f;
-        float startAngle = -(angleStep * (projectileCount - 1)) / 2f;
+        // 添加预制体检查
+        if (bulletPrefab == null)
+        {
+            Debug.LogError("BulletPrefab is not assigned in PlayerShooting!");
+            return;
+        }
+
+        float angleStep = currentProjectileCount > 1 ? 15f / (currentProjectileCount - 1) : 0f;
+        float startAngle = -(angleStep * (currentProjectileCount - 1)) / 2f;
 
         var config = new BulletConfig
         {
-            damage = damage,
-            knockback = knockback,
-            isAoeDamage = isAoeDamage,
-            size = projectileSize,
-            lifeTime = projectileLifeTime,
-            speed = projectileSpeed,
+            damage = currentDamage,
+            knockback = currentKnockback,
+            isAoeDamage = currentIsAoeDamage,
+            size = currentProjectileSize,
+            lifeTime = currentProjectileLifeTime,
+            speed = currentProjectileSpeed,
         };
 
-        for (int i = 0; i < projectileCount; i++)
+        for (int i = 0; i < currentProjectileCount; i++)
         {
             float currentAngle = startAngle + angleStep * i;
             Vector2 direction = Quaternion.Euler(0, 0, currentAngle) * transform.right;
 
-            GameObject bulletObj = ObjectPoolManager.SpawnObject(bulletPrefab, firePoint.position, Quaternion.identity);
+            GameObject bulletObj = ObjectPoolManager.SpawnObject(bulletPrefab, firePoint.position, Quaternion.identity,ObjectPoolManager.PoolType.PlayerBullet);
             Bullet bullet = bulletObj.GetComponent<Bullet>();
             bullet.Initialize(config, direction);
         }
@@ -172,9 +187,13 @@ public class PlayerShooting : MonoBehaviour
     public void AddDamage(float amount) => baseDamage += amount;
     public void AddFireRate(float amount) => baseFireRate += amount;
     public void AddKnockback(float amount) => baseKnockback += amount;
-    public void AddProjectileCount(int amount) => baseProjectileCount = Mathf.Min(projectileCount + amount, 5);
+    public void AddProjectileCount(int amount) => baseProjectileCount = Mathf.Min(baseProjectileCount + amount, 5);
     public void AddProjectileSize(float amount) => baseProjectileSize += amount;
     public void SetAoeDamage(bool value) => baseIsAoeDamage = value;
+
+    //临时增益方法
+
+    public void AddCurrentFireRate(float amount) => currentFireRate += amount;
 
     #endregion
 

@@ -25,6 +25,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// <param name="data"></param>
     public void Initialize(EnemySO data,EnemyCore enemyCore)
     {
+        rb = GetComponent<Rigidbody2D>();
+
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
         collisionDamage = data.collisionDamage;
@@ -75,6 +77,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void TakeDamage(float damage)
     {
         currentHealth -= damage;
+        Debug.Log($"Enemy took {damage} damage! Current HP: {currentHealth}");
         if (currentHealth <= 0)
         {
             Die();

@@ -12,20 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aef6142bf23ed6438c1f5bb1b9c6ca9, type: 3}
   m_Name: EnemySOTest
   m_EditorClassIdentifier: 
-  enemyType: 2
+  enemyType: 0
   description: 
   moveSpeed: 0
-  maxHealth: 0
-  collisionDamage: 0
-  collisionImmunityDuration: 0
-  attackRadius: 0
-  detectionInterval: 0
+  maxHealth: 100
+  collisionDamage: 2
+  collisionImmunityDuration: 1
+  attackRadius: 1
+  detectionInterval: 0.2
   shootingConfig:
     bulletPrefab: {fileID: 0}
     bulletDamage: 0
     bulletSpeed: 0
     bulletSize: 0
     shootRate: 0
+    shootRadius: 0
+    projectileCount: 0
   clashConfig:
     seekRadius: 0
     clashSpeed: 0
@@ -33,5 +35,3 @@ MonoBehaviour:
   rewardConfig:
     healthUp: 0
     extraRefreshChance: 0
-  bossConfig:
-    projectileCount: 0

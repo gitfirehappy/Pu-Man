@@ -40,13 +40,12 @@ public class PlayerCore : MonoBehaviour
     }
 
     /// <summary>
-    /// 恢复状态,每波结束或开始前调用
+    /// 恢复状态,每波开始前调用
     /// </summary>
     public void ResetState()
     {
-        // 重置状态（给每波结束后可以调用，主要是回血和重置临时增益）
-        GetComponent<PlayerHealth>().ResetHealth();
-        GetComponent<PlayerHealth>().RemoveInvincible();
+        // 重置状态（给每波开始前可以调用，主要是回血和重置临时增益）
+        GetComponent<PlayerHealth>().ResetToBaseStats();
         GetComponent<PlayerShooting>().ResetToBaseStats();
         GetComponent<PlayerMovement>().ResetToBaseStats();
     }

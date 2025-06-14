@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private float baserunSpeed;
 
-    [SerializeField]private float runSpeed;
+    [SerializeField][Header("当前移速")]private float currentRunSpeed;
 
     private Vector2 inputDirection;
     private Rigidbody2D rb;
@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
     {
         baserunSpeed = playerData.movementConfig.runSpeed;
 
-        runSpeed = baserunSpeed;
+        currentRunSpeed = baserunSpeed;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void Move()
     {
-        rb.velocity = new Vector2(inputDirection.x * runSpeed, inputDirection.y * runSpeed); // 四向
+        rb.velocity = new Vector2(inputDirection.x * currentRunSpeed, inputDirection.y * currentRunSpeed); // 四向
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void ResetToBaseStats()
     {
-        runSpeed = baserunSpeed;
+        currentRunSpeed = baserunSpeed;
     }
 
     #region 公共属性
@@ -74,4 +74,5 @@ public class PlayerMovement : MonoBehaviour
     public void AddSpeed(float amount) => baserunSpeed += amount;
 
     #endregion
+
 }

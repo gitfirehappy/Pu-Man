@@ -73,9 +73,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
     }
 
     // IPoolable接口实现
+    /// <summary>
+    /// 重置敌人所有状态
+    /// </summary>
     public void OnRelease()
     {
-        // 重置所有状态
         GetComponent<EnemyHealth>().ResetHealth();
     }
 

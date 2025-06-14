@@ -80,7 +80,10 @@ public class PlayerBuff : IBuffEffect
                 break;
 
             case BuffID.ChainKillSkill:
-                player.Abilities.ChangeAbility(AbilityType.ChainKill);
+                if (buffData.replaceAbilityWithChainKill)
+                {
+                    player.Abilities.ChangeAbility(AbilityType.ChainKill);
+                }
                 break;
 
             case BuffID.ChangeSkill:
@@ -101,13 +104,16 @@ public class PlayerBuff : IBuffEffect
                 break;
 
             case BuffID.ReduceEnemy:
-                // 需要在敌人生成器中实现
-                // EnemySpawner.Instance.ReduceSpawnRate();
-                player.Abilities.ChangeAbility(AbilityType.None); // 禁用技能
+                if (buffData.reduceEnemy)
+                {
+                    // 需要在敌人生成器中实现
+                    // EnemySpawner.Instance.ReduceSpawnRate();
+                    player.Abilities.ChangeAbility(AbilityType.None); // 禁用技能
+                }
                 break;
 
             case BuffID.Barserk:
-                // 狂暴模式：伤害翻倍，护甲减半
+                // 狂暴模式：伤害翻倍，护甲减少
                 ApplyBerserkMode(player, buffData);
                 break;
 

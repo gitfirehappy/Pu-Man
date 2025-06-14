@@ -19,12 +19,14 @@ public class PlayerSO : ScriptableObject
     public class HealthConfig
     {
         [Header("血量上限")] public float maxHealth;
-        [Header("当前血量")] public float currentHealth;
         [Header("护甲值")] public float armor;
         [Header("生命恢复")] public float healthRegen;
         [Header("闪避率")] public float dodgeChance;
         [Header("碰撞伤害")] public float collisionDamage;
         [Header("碰撞受击无敌时间")] public float collisionImmunityDuration;
+
+        [Header("名刀无敌时间")] public float cheatDeathInvincibleTime;
+
     }
 
     [System.Serializable]
@@ -40,7 +42,7 @@ public class PlayerSO : ScriptableObject
         [Header("生命周期")] public float projectileLifeTime;
 
         [Header("玩家子弹预制体")] public GameObject bulletPrefab;
-        [Header("发射点")] public Transform firePoint;
+
     }
 
     [System.Serializable]
@@ -63,11 +65,12 @@ public class PlayerSO : ScriptableObject
         public float berserkDuration;
         public float berserkFireRateMultiplier;
 
+        [Header("额外刷新技能配置")]
+        public int extraRefreshChancesPerWave;
+
         [Header("亵渎技能配置")]
         public int chainkillCooldownWaves;
 
-        [Header("名刀效果配置")]
-        public int cheatDeathCooldownWaves;
     }
 
 }
