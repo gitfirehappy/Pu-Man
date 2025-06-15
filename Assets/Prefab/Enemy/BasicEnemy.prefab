@@ -178,6 +178,9 @@ MonoBehaviour:
   radius1: 0.5
   color1: {r: 1, g: 0, b: 0, a: 1}
   showRange1: 1
-  radius2: 2
+  radius2: 4
   color2: {r: 0, g: 0, b: 1, a: 1}
   showRange2: 1
+  radius3: 7
+  color3: {r: 0, g: 1, b: 0, a: 1}
+  showRange3: 1

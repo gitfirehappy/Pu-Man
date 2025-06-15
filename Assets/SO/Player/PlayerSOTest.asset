@@ -16,10 +16,10 @@ MonoBehaviour:
   description: 
   healthConfig:
     maxHealth: 100
-    armor: 1
+    armor: 0
     healthRegen: 0
     dodgeChance: 0
-    collisionDamage: 1
+    collisionDamage: 0
     collisionImmunityDuration: 1
     cheatDeathInvincibleTime: 0
   shootingConfig:

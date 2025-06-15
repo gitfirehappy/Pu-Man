@@ -192,6 +192,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void AddDodgeChance(float amount) => dodgeChance = Mathf.Min(dodgeChance + amount, 0.6f);
     public void SetCheatDeath(bool value) => hasCheatDeath = value;
 
+    //临时
+    public void AddCurrentHealth(float amount) => currentHealth += amount;
+
     #endregion
 
 }

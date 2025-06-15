@@ -13,25 +13,27 @@ MonoBehaviour:
   m_Name: EnemySOTest
   m_EditorClassIdentifier: 
   enemyType: 0
+  enemyPrefab: {fileID: 4221185578653224041, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
   description: 
-  moveSpeed: 0
-  maxHealth: 100
-  collisionDamage: 2
+  moveSpeed: 1
+  maxHealth: 1
+  collisionDamage: 50
   collisionImmunityDuration: 1
   attackRadius: 1
   detectionInterval: 0.2
   shootingConfig:
-    bulletPrefab: {fileID: 0}
-    bulletDamage: 0
-    bulletSpeed: 0
-    bulletSize: 0
-    shootRate: 0
-    shootRadius: 0
-    projectileCount: 0
+    bulletPrefab: {fileID: 5579274564280302287, guid: 15bd73bb293a4094eb48fb632039c624, type: 3}
+    bulletDamage: 2
+    bulletSpeed: 2
+    bulletSize: 1
+    shootRate: 1
+    shootRadius: 7
+    projectileCount: 3
+    bulletLifeTime: 10
   clashConfig:
-    seekRadius: 0
-    clashSpeed: 0
-    clashCooldown: 0
+    seekRadius: 4
+    clashSpeed: 5
+    clashCooldown: 1
   rewardConfig:
-    healthUp: 0
+    healthUp: 100
     extraRefreshChance: 0

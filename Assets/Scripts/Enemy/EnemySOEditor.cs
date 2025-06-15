@@ -11,6 +11,7 @@ public class EnemySOEditor : Editor
 
         // 1. 始终显示的基础字段
         EditorGUILayout.PropertyField(serializedObject.FindProperty("enemyType"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("enemyPrefab"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
 
         EditorGUILayout.Space(5);

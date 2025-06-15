@@ -4,6 +4,7 @@
 public class EnemySO : ScriptableObject
 {
     public EnemyType enemyType;
+    public GameObject enemyPrefab;
 
     [TextArea] public string description;
 
@@ -33,6 +34,7 @@ public class EnemySO : ScriptableObject
         [Header("射速")] public float shootRate;
         [Header("开始射击距离")] public float shootRadius;
         [Header("弹道数量")] public int projectileCount;
+        [Header("生命周期")] public float bulletLifeTime;
     }
 
     [System.Serializable]

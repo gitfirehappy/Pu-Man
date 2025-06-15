@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
@@ -11,6 +12,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField][Header("受击无敌")] private float collisionImmunityDuration;
     [SerializeField][Header("碰撞范围")] private float attackRadius;
     [SerializeField][Header("检测间隔")] private float detectionInterval;
+
+    private bool _isDead = false;
+    private Collider2D _collider;
 
     private float lastCollisionDamageTime;
     private float lastDetectionTime;
@@ -26,6 +30,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void Initialize(EnemySO data,EnemyCore enemyCore)
     {
         rb = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<Collider2D>();
 
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
@@ -98,9 +103,46 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// </summary>
     private void Die()
     {
-        Debug.Log("敌人死亡");
-        //对象池回收
-        core.ReturnToPool();
+        if (_isDead || this == null) return;
+        _isDead = true;
+
+        // 立即禁用所有相关组件
+        if (_collider != null) _collider.enabled = false;
+        if (rb != null) rb.simulated = false;
+
+        // 获取核心引用（防止缓存失效）
+        var validCore = GetComponent<EnemyCore>();
+        if (validCore == null)
+        {
+            Debug.LogWarning("EnemyCore missing on death", gameObject);
+            Destroy(gameObject);
+            return;
+        }
+
+        Debug.Log("敌人死亡", this);
+
+        // 使用协程确保执行顺序
+        StartCoroutine(DeathRoutine(validCore));
+    }
+
+    private IEnumerator DeathRoutine(EnemyCore validCore)
+    {
+        // 第一步：触发事件
+        EnemyEvent.TriggerDied(validCore);
+        EnemyEvent.TriggerReturnedToPool(validCore, true);
+
+        // 等待一帧让事件处理完成
+        yield return null;
+
+        // 第二步：执行回收
+        if (validCore != null && !validCore.Equals(null))
+        {
+            validCore.ReturnToPool();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     /// <summary>
@@ -108,6 +150,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// </summary>
     public void ResetHealth()
     {
+        _isDead = false;
+        if (_collider != null) _collider.enabled = true;
+        if (rb != null) rb.simulated = true;
+
         currentHealth = maxHealth;
         lastCollisionDamageTime = -collisionImmunityDuration;
     }
@@ -117,4 +163,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
+
+    public bool IsDead => _isDead;
 }

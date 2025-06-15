@@ -74,7 +74,13 @@ public class Bullet : MonoBehaviour
 
     private void ApplyDamage(Collider2D enemyCollider, float damageAmount)
     {
-        if (enemyCollider.TryGetComponent<IDamageable>(out var enemy))
+        // 增加组件有效性检查
+        if (enemyCollider == null || !enemyCollider.gameObject.activeInHierarchy)
+            return;
+
+        if (enemyCollider.TryGetComponent<IDamageable>(out var enemy) &&
+            enemyCollider.TryGetComponent<EnemyHealth>(out var health) &&
+            !health.IsDead)
         {
             enemy.TakeDamage(damageAmount);
 

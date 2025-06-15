@@ -13,6 +13,11 @@ public class MultiRangeVisualizer : MonoBehaviour
     public Color color2 = Color.blue;
     public bool showRange2 = true;
 
+    [Header("范围3")]
+    public float radius3 = 2f;
+    public Color color3 = Color.green;
+    public bool showRange3 = true;
+
     void OnDrawGizmos()
     {
         if (showRange1)
@@ -25,6 +30,12 @@ public class MultiRangeVisualizer : MonoBehaviour
         {
             Gizmos.color = color2;
             Gizmos.DrawWireSphere(transform.position, radius2);
+        }
+
+        if (showRange3)
+        {
+            Gizmos.color = color3;
+            Gizmos.DrawWireSphere (transform.position, radius3);
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.Pool;
+using static ObjectPoolManager;
 
 [DisallowMultipleComponent]
 public class EnemyCore : MonoBehaviour, IPoolable
 {
     [SerializeField] private EnemySO enemyData;
-    private IObjectPool<GameObject> _managedPool;
+    [SerializeField] private IObjectPool<GameObject> _managedPool;
 
     private void Awake()
     {
@@ -85,6 +86,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
     {
         // 重新初始化
         InitializeComponents();
+        EnemyEvent.TriggerSpawned(this); // 触发生成事件
     }
 
     public void SetPool(IObjectPool<GameObject> pool)
@@ -94,7 +96,18 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
     public void ReturnToPool()
     {
-        _managedPool?.Release(gameObject);
+        // 添加状态检查
+        if (this == null || gameObject == null) return;
+
+        if (_managedPool != null)
+        {
+            _managedPool.Release(gameObject);
+        }
+        else
+        {
+            Debug.LogWarning("No pool assigned, destroying instance", this);
+            Destroy(gameObject);
+        }
     }
 
     public EnemyType GetEnemyType() => enemyData.enemyType;

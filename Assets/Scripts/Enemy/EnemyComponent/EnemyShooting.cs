@@ -12,6 +12,7 @@ public class EnemyShooting : MonoBehaviour
     [SerializeField] private float shootRate;
     [SerializeField] private float shootRadius;
     [SerializeField] private int projectileCount;
+    [SerializeField] private float bulletLifeTime;
 
     private float nextShootTime;
     private Transform playerTransform;
@@ -34,6 +35,7 @@ public class EnemyShooting : MonoBehaviour
         shootRate = data.shootingConfig.shootRate;
         shootRadius = data.shootingConfig.shootRadius;
         projectileCount = data.shootingConfig.projectileCount;
+        bulletLifeTime = data.shootingConfig.bulletLifeTime;
 
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
         firePoint = firePoint != null ? firePoint : transform;
@@ -66,7 +68,7 @@ public class EnemyShooting : MonoBehaviour
             damage = bulletDamage,
             speed = bulletSpeed,
             size = bulletSize,
-            lifeTime = 3f // 固定生命周期
+            lifeTime = bulletLifeTime, //生命周期
         };
 
         // 多弹道散射逻辑
