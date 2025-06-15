@@ -48,6 +48,7 @@ public class PlayerCore : MonoBehaviour
         GetComponent<PlayerHealth>().ResetToBaseStats();
         GetComponent<PlayerShooting>().ResetToBaseStats();
         GetComponent<PlayerMovement>().ResetToBaseStats();
+        GetComponent<PlayerAbilities>().ResetToBaseStats();
     }
 
     /// <summary>

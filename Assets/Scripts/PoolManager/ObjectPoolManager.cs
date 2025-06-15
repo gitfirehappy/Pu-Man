@@ -271,6 +271,22 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
+    #region 扩展逻辑
+
+    /// <summary>
+    /// 获取指定预制体对应的对象池实例
+    /// </summary>
+    public static IObjectPool<GameObject> GetPoolForPrefab(GameObject prefab)
+    {
+        if (_objectPools.TryGetValue(prefab, out var pool))
+        {
+            return pool;
+        }
+        return null;
+    }
+
+    #endregion
+
     #region 🧪 实时调试信息
 #if UNITY_EDITOR
     private void OnGUI()

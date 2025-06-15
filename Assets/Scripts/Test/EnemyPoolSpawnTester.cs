@@ -28,7 +28,7 @@ public class EnemyPoolSpawnTester : MonoBehaviour
 
         // 从对象池获取敌人
         _currentEnemy = ObjectPoolManager.SpawnObject(
-            enemyData.enemyPrefab, // 需要在EnemySO中添加prefab字段
+            enemyData.enemyPrefab,
             spawnPoint.position,
             Quaternion.identity,
             ObjectPoolManager.PoolType.Enemy
@@ -36,7 +36,13 @@ public class EnemyPoolSpawnTester : MonoBehaviour
 
         // 获取并初始化核心组件
         var core = _currentEnemy.GetComponent<EnemyCore>();
-        core.OnGet(); // 手动触发对象池获取逻辑
+        if (core != null)
+        {
+            // 获取对象池实例并设置给敌人
+            var pool = ObjectPoolManager.GetPoolForPrefab(enemyData.enemyPrefab);
+            core.SetPool(pool);
+            core.OnGet(); // 手动触发对象池获取逻辑
+        }
 
         Debug.Log($"从对象池生成敌人: {enemyData.enemyType}", _currentEnemy);
     }

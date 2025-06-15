@@ -46,6 +46,14 @@ public class PlayerMovement : MonoBehaviour
     {
         baserunSpeed = playerData.movementConfig.runSpeed;
 
+        ResetToBaseStats();
+    }
+
+    /// <summary>
+    /// 恢复移速状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
         currentRunSpeed = baserunSpeed;
     }
 
@@ -57,13 +65,6 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2(inputDirection.x * currentRunSpeed, inputDirection.y * currentRunSpeed); // 四向
     }
 
-    /// <summary>
-    /// 恢复移速状态
-    /// </summary>
-    public void ResetToBaseStats()
-    {
-        currentRunSpeed = baserunSpeed;
-    }
 
     #region 公共属性
     public float RunSpeed => baserunSpeed;

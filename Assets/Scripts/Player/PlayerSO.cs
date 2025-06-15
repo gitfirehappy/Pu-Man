@@ -26,6 +26,7 @@ public class PlayerSO : ScriptableObject
         [Header("碰撞受击无敌时间")] public float collisionImmunityDuration;
 
         [Header("名刀无敌时间")] public float cheatDeathInvincibleTime;
+        [Header("是否有名刀")] public bool hasCheatDeath;
 
     }
 

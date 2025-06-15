@@ -28,7 +28,7 @@ MonoBehaviour:
     bulletSize: 1
     shootRate: 1
     shootRadius: 7
-    projectileCount: 3
+    projectileCount: 1
     bulletLifeTime: 10
   clashConfig:
     seekRadius: 4

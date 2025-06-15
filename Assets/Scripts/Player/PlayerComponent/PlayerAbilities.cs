@@ -6,25 +6,34 @@ using UnityEngine.InputSystem;
 public class PlayerAbilities : MonoBehaviour
 { 
     [Header("主动技能冷却")]
-    public AbilityType currentAbility;
-    [SerializeField] private int classicCooldownWaves = 5;
-    [SerializeField] private int berserkCooldownWaves = 3;
-    [SerializeField] private int chainkillCooldownWaves = 2;
-    [SerializeField] private float classicDuration = 10f;
-    [SerializeField] private float berserkDuration = 5f;
-    [SerializeField] private float berserkFireRateMultiplier = 2f;
+    [SerializeField] private AbilityType baseAbility;
+    [SerializeField] private int baseClassicCooldownWaves;
+    [SerializeField] private int baseBerserkCooldownWaves;
+    [SerializeField] private int baseChainkillCooldownWaves;
+    [SerializeField] private float baseClassicDuration;
+    [SerializeField] private float baseBerserkDuration;
+    [SerializeField] private float baseBerserkFireRateMultiplier;
+
+    [Header("当前属性")]
+    private AbilityType currentAbility;
+    private int currentClassicCooldownWaves;
+    private int currentBerserkCooldownWaves;
+    private int currentChainkillCooldownWaves;
+    private float currentClassicDuration;
+    private float currentBerserkDuration;
+    private float currentBerserkFireRateMultiplier;
 
     [Header("被动效果")]
     //[SerializeField] private int extraRefreshChancesPerWave = 1; // 每波增加的刷新次数(可以在刷新中检测技能Type）
 
     [Header("当前状态")]
-    public int nextAvailableWave = 0; // 下次可用技能的波次
+    public int nextAvailableWave; // 下次可用技能的波次
     public bool isAbilityActive;
     private Coroutine activeAbilityCoroutine;
 
     private PlayerCore playerCore;
     private PlayerInput playerInput;
-    private int currentWave;//临时变量，当前波次数,后续需要从关卡系统中获取该变量 
+    public int currentWave = 10;//临时变量，当前波次数,后续需要从关卡系统中获取该变量 
 
     private void Awake()
     {
@@ -34,16 +43,56 @@ public class PlayerAbilities : MonoBehaviour
 
     }
 
+    private void OnEnable()
+    {
+        playerInput.Enable();
+    }
+    private void OnDisable()
+    {
+        playerInput.Disable();
+    }
+
+    /// <summary>
+    /// 玩家技能系统初始化
+    /// </summary>
     public void Initialize(PlayerSO playerData)
     {
-        currentAbility = playerData.abilitiesConfig.startingAbility;
-        classicCooldownWaves = playerData.abilitiesConfig.classicCooldownWaves;
-        berserkCooldownWaves = playerData.abilitiesConfig.berserkCooldownWaves;
-        chainkillCooldownWaves = playerData.abilitiesConfig.chainkillCooldownWaves;
-        classicDuration = playerData.abilitiesConfig.classicDuration;
-        berserkDuration = playerData.abilitiesConfig.berserkDuration;
-        berserkFireRateMultiplier = playerData.abilitiesConfig.berserkFireRateMultiplier;
+        nextAvailableWave = 0;
 
+        baseAbility = playerData.abilitiesConfig.startingAbility;
+        baseClassicCooldownWaves = playerData.abilitiesConfig.classicCooldownWaves;
+        baseBerserkCooldownWaves = playerData.abilitiesConfig.berserkCooldownWaves;
+        baseChainkillCooldownWaves = playerData.abilitiesConfig.chainkillCooldownWaves;
+        baseClassicDuration = playerData.abilitiesConfig.classicDuration;
+        baseBerserkDuration = playerData.abilitiesConfig.berserkDuration;
+        baseBerserkFireRateMultiplier = playerData.abilitiesConfig.berserkFireRateMultiplier;
+
+        ResetToBaseStats(); // 初始化时调用重置方法
+    }
+
+    /// <summary>
+    /// 重置为初始状态（每波开始时调用）
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        // 重置当前属性为基准值
+        currentAbility = baseAbility;
+        currentClassicCooldownWaves = baseClassicCooldownWaves;
+        currentBerserkCooldownWaves = baseBerserkCooldownWaves;
+        currentChainkillCooldownWaves = baseChainkillCooldownWaves;
+        currentClassicDuration = baseClassicDuration;
+        currentBerserkDuration = baseBerserkDuration;
+        currentBerserkFireRateMultiplier = baseBerserkFireRateMultiplier;
+
+        // 重置技能状态
+        isAbilityActive = false;
+
+        // 如果有正在运行的技能协程，停止它
+        if (activeAbilityCoroutine != null)
+        {
+            StopCoroutine(activeAbilityCoroutine);
+            DeactivateAbility();
+        }
     }
 
     /// <summary>
@@ -51,22 +100,26 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void ActivateAbility(InputAction.CallbackContext context)
     {
-        if (currentWave <= nextAvailableWave || isAbilityActive) return;
+        if (currentWave <= nextAvailableWave || isAbilityActive)
+        {
+            Debug.Log("技能不可用");
+            return;
+        }
 
         isAbilityActive = true;
 
         switch (currentAbility)
         {
             case AbilityType.Classic:
-                nextAvailableWave = currentWave + classicCooldownWaves;
+                nextAvailableWave = currentWave + currentClassicCooldownWaves;
                 ClassicAbility();
                 break;
             case AbilityType.Berserk:
-                nextAvailableWave = currentWave + berserkCooldownWaves;
+                nextAvailableWave = currentWave + currentBerserkCooldownWaves;
                 activeAbilityCoroutine = StartCoroutine(BerserkAbilityRoutine());
                 break;
             case AbilityType.ChainKill:
-                nextAvailableWave = currentWave + chainkillCooldownWaves;
+                nextAvailableWave = currentWave + currentChainkillCooldownWaves;
                 ChainKill();
                 break;
         }
@@ -78,7 +131,7 @@ public class PlayerAbilities : MonoBehaviour
     private void ClassicAbility()
     {
         Debug.Log("释放了无敌技能！");
-        playerCore.Health.AddInvincible(classicDuration);
+        playerCore.Health.AddInvincible(currentClassicDuration);
         isAbilityActive = false;
     }
 
@@ -90,10 +143,11 @@ public class PlayerAbilities : MonoBehaviour
     {
         Debug.Log("释放了狂暴技能！");
         float originalFireRate = playerCore.Shooting.FireRate;
-        playerCore.Shooting.AddCurrentFireRate(originalFireRate * berserkFireRateMultiplier);
-        yield return new WaitForSeconds(berserkDuration);
-        playerCore.Shooting.AddCurrentFireRate(-originalFireRate * berserkFireRateMultiplier);
+        playerCore.Shooting.AddCurrentFireRate(originalFireRate * currentBerserkFireRateMultiplier);
+        yield return new WaitForSeconds(currentBerserkDuration);
+        playerCore.Shooting.AddCurrentFireRate(-originalFireRate * currentBerserkFireRateMultiplier);
         isAbilityActive = false;
+        Debug.Log("狂暴技能结束");
     }
 
     /// <summary>
@@ -180,6 +234,7 @@ public class PlayerAbilities : MonoBehaviour
         }
         isAbilityActive = false;
     }
+
 }
 
 /// <summary>

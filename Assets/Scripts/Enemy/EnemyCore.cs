@@ -101,11 +101,12 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
         if (_managedPool != null)
         {
+            Debug.Log($"成功回收敌人到对象池: {gameObject.name}", this);
             _managedPool.Release(gameObject);
         }
         else
         {
-            Debug.LogWarning("No pool assigned, destroying instance", this);
+            Debug.LogError($"无法回收敌人: 未设置对象池引用. 敌人: {gameObject.name}", this);
             Destroy(gameObject);
         }
     }

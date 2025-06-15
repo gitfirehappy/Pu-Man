@@ -22,6 +22,7 @@ MonoBehaviour:
     collisionDamage: 0
     collisionImmunityDuration: 1
     cheatDeathInvincibleTime: 0
+    hasCheatDeath: 0
   shootingConfig:
     damage: 1
     fireRate: 2
@@ -37,9 +38,9 @@ MonoBehaviour:
   abilitiesConfig:
     startingAbility: 1
     classicCooldownWaves: 1
-    classicDuration: 1
+    classicDuration: 10
     berserkCooldownWaves: 0
-    berserkDuration: 0
-    berserkFireRateMultiplier: 0
+    berserkDuration: 10
+    berserkFireRateMultiplier: 1
     extraRefreshChancesPerWave: 0
     chainkillCooldownWaves: 0

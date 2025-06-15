@@ -44,8 +44,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         collisionImmunityDuration = playerData.healthConfig.collisionImmunityDuration;
 
         cheatDeathInvincibleTime = playerData.healthConfig.cheatDeathInvincibleTime;
+        hasCheatDeath = playerData.healthConfig.hasCheatDeath;
 
+        ResetToBaseStats();
+
+    }
+
+    /// <summary>
+    /// 刷新状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
         currentHealth = maxHealth;
+        currentHasCheatDeath = hasCheatDeath;
+        RemoveInvincible();
+
     }
 
     /// <summary>
@@ -139,6 +152,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void AddInvincible(float duration)
     {
         isInvincible = true;
+        invincibleDuration = duration;
 
         if (duration > 0)
         {
@@ -151,6 +165,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(invincibleDuration);
         isInvincible = false;
         invincibleDuration = 0;
+        Debug.Log("无敌时间结束");
     }
 
     /// <summary>
@@ -163,15 +178,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         StopCoroutine("InvincibleTimerRoutine");
     }
 
-    /// <summary>
-    /// 重置状态
-    /// </summary>
-    public void ResetToBaseStats()
-    {
-        currentHealth = maxHealth;
-        RemoveInvincible();
-
-    }
 
     #region 公共属性
     public float MaxHealth => maxHealth;

@@ -36,7 +36,7 @@ public class PlayerShooting : MonoBehaviour
     {
         playerInput = new PlayerInput();
         fireAction = playerInput.Player.Fire;
-        isRotating = true;
+       
 
         if (firePoint == null)
         {
@@ -59,6 +59,8 @@ public class PlayerShooting : MonoBehaviour
     /// <param name="playerData"></param>
     public void Initialize(PlayerSO playerData)
     {
+        isRotating = true;
+
         // 存储基础值
         bulletPrefab = playerData.shootingConfig.bulletPrefab;
 
@@ -72,14 +74,7 @@ public class PlayerShooting : MonoBehaviour
         baseIsAoeDamage = playerData.shootingConfig.isAoeDamage;
 
         // 初始化当前值
-        currentDamage = baseDamage;
-        currentFireRate = baseFireRate;
-        currentKnockback = baseKnockback;
-        currentProjectileCount = baseProjectileCount;
-        currentProjectileSize = baseProjectileSize;
-        currentProjectileSpeed = baseProjectileSpeed;
-        currentProjectileLifeTime = baseProjectileLifeTime;
-        currentIsAoeDamage = baseIsAoeDamage;
+        ResetToBaseStats();
     }
 
     /// <summary>
@@ -87,6 +82,8 @@ public class PlayerShooting : MonoBehaviour
     /// </summary>
     public void ResetToBaseStats()
     {
+        isRotating = true;
+
         currentDamage = baseDamage;
         currentFireRate = baseFireRate;
         currentKnockback = baseKnockback;
