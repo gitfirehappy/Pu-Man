@@ -23,6 +23,14 @@ public class EnemyReward : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 重置奖励系统状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        // 目前没有需要重置的状态变量
+    }
+
     private void OnEnable()
     {
         EnemyEvent.OnReturnedToPool += HandleEnemyDeath;

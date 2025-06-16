@@ -13,7 +13,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField][Header("碰撞范围")] private float attackRadius;
     [SerializeField][Header("检测间隔")] private float detectionInterval;
 
-    private bool _isDead = false;
+    [SerializeField] private bool _isDead = false;
     private Collider2D _collider;
 
     private float lastCollisionDamageTime;
@@ -40,8 +40,24 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         detectionInterval = data.detectionInterval;
 
         lastCollisionDamageTime = -collisionImmunityDuration;
+
+        ResetToBaseStats();
         FindPlayer();
     }
+
+    /// <summary>
+    /// 刷新血量系统状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        _isDead = false;
+        if (_collider != null) _collider.enabled = true;
+        if (rb != null) rb.simulated = true;
+
+        currentHealth = maxHealth;
+        lastCollisionDamageTime = -collisionImmunityDuration;
+    }
+
 
     private void FindPlayer()
     {
@@ -145,18 +161,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
     }
 
-    /// <summary>
-    /// 重置血量
-    /// </summary>
-    public void ResetHealth()
-    {
-        _isDead = false;
-        if (_collider != null) _collider.enabled = true;
-        if (rb != null) rb.simulated = true;
-
-        currentHealth = maxHealth;
-        lastCollisionDamageTime = -collisionImmunityDuration;
-    }
 
     private void OnDrawGizmosSelected()
     {

@@ -15,9 +15,9 @@ MonoBehaviour:
   enemyType: 0
   enemyPrefab: {fileID: 4221185578653224041, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
   description: 
-  moveSpeed: 1
-  maxHealth: 1
-  collisionDamage: 50
+  moveSpeed: 2
+  maxHealth: 10
+  collisionDamage: 1
   collisionImmunityDuration: 1
   attackRadius: 1
   detectionInterval: 0.2

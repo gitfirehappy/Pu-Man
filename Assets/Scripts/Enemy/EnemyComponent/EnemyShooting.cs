@@ -41,6 +41,14 @@ public class EnemyShooting : MonoBehaviour
         firePoint = firePoint != null ? firePoint : transform;
     }
 
+    /// <summary>
+    /// 重置射击系统状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        nextShootTime = 0f;
+    }
+
     private void Update()
     {
         if (playerTransform == null || Time.time < nextShootTime)

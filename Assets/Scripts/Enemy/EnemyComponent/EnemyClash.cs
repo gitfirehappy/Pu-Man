@@ -37,6 +37,25 @@ public class EnemyClash : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    /// <summary>
+    /// 重置冲撞系统状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        isClashing = false;
+        lastClashTime = 0f;
+
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+        }
+
+        if (movement != null)
+        {
+            movement.enabled = true;
+        }
+    }
+
     private void Update()
     {
         if (playerTransform == null || isClashing)

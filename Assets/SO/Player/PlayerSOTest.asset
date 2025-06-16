@@ -28,10 +28,10 @@ MonoBehaviour:
     fireRate: 2
     knockback: 0
     projectileCount: 1
-    projectileSize: 1
+    projectileSize: 0.5
     isAoeDamage: 0
-    projectileSpeed: 0.5
-    projectileLifeTime: 100
+    projectileSpeed: 4
+    projectileLifeTime: 1
     bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
   movementConfig:
     runSpeed: 4
@@ -41,6 +41,6 @@ MonoBehaviour:
     classicDuration: 10
     berserkCooldownWaves: 0
     berserkDuration: 10
-    berserkFireRateMultiplier: 1
+    berserkFireRateMultiplier: 3
     extraRefreshChancesPerWave: 0
     chainkillCooldownWaves: 0

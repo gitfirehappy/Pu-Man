@@ -21,6 +21,17 @@ public class EnemyMovement : MonoBehaviour
         playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
     }
 
+    /// <summary>
+    /// 重置移动系统状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+        }
+    }
+
     private void Update()
     {
         if (playerTransform == null || (enemyClash != null && enemyClash.IsClashing)) 

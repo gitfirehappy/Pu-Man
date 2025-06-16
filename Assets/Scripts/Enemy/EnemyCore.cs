@@ -79,7 +79,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     public void OnRelease()
     {
-        GetComponent<EnemyHealth>().ResetHealth();
+        GetComponent<EnemyHealth>()?.ResetToBaseStats();
+        GetComponent<EnemyMovement>()?.ResetToBaseStats();
+        GetComponent<EnemyShooting>()?.ResetToBaseStats();
+        GetComponent<EnemyClash>()?.ResetToBaseStats();
+        GetComponent<EnemyReward>()?.ResetToBaseStats();
     }
 
     public void OnGet()
