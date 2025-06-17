@@ -28,6 +28,18 @@ public class PlayerMovement : MonoBehaviour
         Move();
     }
 
+    private void OnEnable()
+    {
+        EventBus.OnPlayerDisabled += DisableMovement;
+        EventBus.OnPlayerEnabled += EnableMovement;
+    }
+
+    private void OnDisable()
+    {
+        EventBus.OnPlayerDisabled -= DisableMovement;
+        EventBus.OnPlayerEnabled -= EnableMovement;
+    }
+
     /// <summary>
     /// 玩家移动系统初始化
     /// </summary>
@@ -45,18 +57,6 @@ public class PlayerMovement : MonoBehaviour
     public void ResetToBaseStats()
     {
         currentRunSpeed = baserunSpeed;
-    }
-
-    private void OnEnable()
-    {
-        EventBus.OnPlayerDisabled += DisableMovement;
-        EventBus.OnPlayerEnabled += EnableMovement;
-    }
-
-    private void OnDisable()
-    {
-        EventBus.OnPlayerDisabled -= DisableMovement;
-        EventBus.OnPlayerEnabled -= EnableMovement;
     }
 
     private void DisableMovement()
