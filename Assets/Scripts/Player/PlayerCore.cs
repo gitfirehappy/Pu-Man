@@ -6,6 +6,14 @@ public class PlayerCore : MonoBehaviour
 {
     [SerializeField] private PlayerSO playerData;
 
+    // 组件引用缓存
+    private PlayerHealth health;
+    private PlayerShooting shooting;
+    private PlayerMovement movement;
+    private PlayerAbilities abilities;
+    public PlayerInput playerInput; // 统一管理输入
+
+
     private void Awake()
     {
         if (playerData == null)
@@ -13,24 +21,23 @@ public class PlayerCore : MonoBehaviour
             Debug.LogError("PlayerSO not assigned!");
             return;
         }
+        // 初始化输入系统
+        playerInput = new PlayerInput();
 
         InitializeComponents();
+        RegisterEventHandlers();
     }
 
+    /// <summary>
+    /// Player组件初始化
+    /// </summary>
     private void InitializeComponents()
     {
-        // 确保所有必须组件存在
-        if (!TryGetComponent<PlayerHealth>(out var health))
-            health = gameObject.AddComponent<PlayerHealth>();
-
-        if (!TryGetComponent<PlayerShooting>(out var shooting))
-            shooting = gameObject.AddComponent<PlayerShooting>();
-
-        if (!TryGetComponent<PlayerMovement>(out var movement))
-            movement = gameObject.AddComponent<PlayerMovement>();
-
-        if (!TryGetComponent<PlayerAbilities>(out var abilities))
-            abilities = gameObject.AddComponent<PlayerAbilities>();
+        // 确保所有必须组件存在并获取引用
+        health = GetOrAddComponent<PlayerHealth>();
+        shooting = GetOrAddComponent<PlayerShooting>();
+        movement = GetOrAddComponent<PlayerMovement>();
+        abilities = GetOrAddComponent<PlayerAbilities>();
 
         // 初始化所有组件
         GetComponent<PlayerHealth>().Initialize(playerData);
@@ -39,16 +46,81 @@ public class PlayerCore : MonoBehaviour
         GetComponent<PlayerAbilities>().Initialize(playerData);
     }
 
+    private T GetOrAddComponent<T>() where T : Component
+    {
+        var component = GetComponent<T>();
+        if (component == null)
+        {
+            component = gameObject.AddComponent<T>();
+        }
+        return component;
+    }
+
+    /// <summary>
+    /// 注册Player事件
+    /// </summary>
+    private void RegisterEventHandlers()
+    {
+        // 注册内部组件事件
+        health.OnDeath += HandlePlayerDeath;
+
+        // 注册外部系统事件
+        EventBus.OnPlayerDisabled += DisableAllComponents;
+        EventBus.OnPlayerEnabled += EnableAllComponents;
+    }
+
+    private void OnDestroy()
+    {
+        // 注销事件
+        if (health != null) health.OnDeath -= HandlePlayerDeath;
+
+        EventBus.OnPlayerDisabled -= DisableAllComponents;
+        EventBus.OnPlayerEnabled -= EnableAllComponents;
+
+        // 清理输入系统
+        playerInput.Dispose();
+    }
+
+    private void HandlePlayerDeath()
+    {
+        // 死亡事件中转
+        EventBus.TriggerPlayerDeath();
+    }
+
+    private void DisableAllComponents()
+    {
+        // 禁用输入（核心统一管理）
+        playerInput.Disable();
+
+        // 调用各组件内部的禁用逻辑
+        health?.DisableHealth();
+        shooting?.DisableShooting();
+        movement?.DisableMovement();
+        abilities?.DisableAbilities();
+    }
+
+    private void EnableAllComponents()
+    {
+        // 启用输入（核心统一管理）
+        playerInput.Enable();
+
+        // 调用各组件内部的启用逻辑
+        health?.EnableHealth();
+        shooting?.EnableShooting();
+        movement?.EnableMovement();
+        abilities?.EnableAbilities();
+    }
+
     /// <summary>
     /// 恢复状态,每波开始前调用
     /// </summary>
     public void ResetState()
     {
         // 重置状态（给每波开始前可以调用，主要是回血和重置临时增益）
-        GetComponent<PlayerHealth>().ResetToBaseStats();
-        GetComponent<PlayerShooting>().ResetToBaseStats();
-        GetComponent<PlayerMovement>().ResetToBaseStats();
-        GetComponent<PlayerAbilities>().ResetToBaseStats();
+        health.ResetToBaseStats();
+        shooting.ResetToBaseStats();
+        movement.ResetToBaseStats();
+        abilities.ResetToBaseStats();
     }
 
     /// <summary>
@@ -63,8 +135,8 @@ public class PlayerCore : MonoBehaviour
     public PlayerType GetPlayerType() => playerData.playerType;
 
     // 提供给外部访问的接口
-    public PlayerHealth Health => GetComponent<PlayerHealth>();
-    public PlayerShooting Shooting => GetComponent<PlayerShooting>();
-    public PlayerMovement Movement => GetComponent<PlayerMovement>();
-    public PlayerAbilities Abilities => GetComponent<PlayerAbilities>();
+    public PlayerHealth Health => health;
+    public PlayerShooting Shooting => shooting;
+    public PlayerMovement Movement => movement;
+    public PlayerAbilities Abilities => abilities;
 }

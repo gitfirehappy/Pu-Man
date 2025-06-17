@@ -4,7 +4,8 @@ using DG.Tweening.Core.Easing;
 using UnityEngine.InputSystem;
 
 public class PlayerAbilities : MonoBehaviour
-{ 
+{
+
     [Header("主动技能冷却")]
     [SerializeField] private AbilityType baseAbility;
     [SerializeField] private int baseClassicCooldownWaves;
@@ -38,36 +39,30 @@ public class PlayerAbilities : MonoBehaviour
     private void Awake()
     {
         playerCore = GetComponent<PlayerCore>();
-        playerInput = new PlayerInput();
-        playerInput.Player.Ability.started += ActivateAbility;
+        if (playerCore != null && playerCore.playerInput != null)
+        {
+            playerCore.playerInput.Player.Ability.started += ActivateAbility;
+        }
+        else
+        {
+            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
+        }
 
     }
 
-    private void OnEnable()
-    {
-        EventBus.OnPlayerDisabled += OnPlayerDisabled;
-        EventBus.OnPlayerEnabled += OnPlayerEnabled;
-    }
-
-    private void OnDisable()
-    {
-        EventBus.OnPlayerDisabled -= OnPlayerDisabled;
-        EventBus.OnPlayerEnabled -= OnPlayerEnabled;
-    }
-
-    private void OnPlayerDisabled()
+    public void DisableAbilities()
     {
         // 强制中断当前技能
         if (isAbilityActive)
         {
             DeactivateAbility();
         }
-        playerInput.Disable();
+
     }
 
-    private void OnPlayerEnabled()
+    public void EnableAbilities()
     {
-        playerInput.Enable();
+
     }
 
     /// <summary>

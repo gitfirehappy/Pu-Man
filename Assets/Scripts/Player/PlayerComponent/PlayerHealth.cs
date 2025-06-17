@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
@@ -26,6 +27,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private float lastCollisionDamageTime;
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
+    // 添加死亡事件
+    public event Action OnDeath;
+
     private void Update()
     {
         RegenerateHealth();
@@ -48,6 +52,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         ResetToBaseStats();
 
+    }
+
+    public void DisableHealth()
+    {
+
+    }
+
+    public void EnableHealth()
+    {
+        
     }
 
     /// <summary>
@@ -83,7 +97,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (isInvincible) return;
 
         // 闪避判定
-        if (Random.value < dodgeChance)
+        if (UnityEngine.Random.value < dodgeChance)
         {
             Debug.Log("Dodged the attack!");
             return;
@@ -176,8 +190,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Die()
     {
         Debug.Log("Player died!");
-        EventBus.TriggerPlayerDeath(); // 触发死亡事件通知其他模块
-        
+        OnDeath?.Invoke(); // 通知Core死亡事件
+
     }
 
 

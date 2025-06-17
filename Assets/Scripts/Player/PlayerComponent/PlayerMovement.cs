@@ -28,18 +28,6 @@ public class PlayerMovement : MonoBehaviour
         Move();
     }
 
-    private void OnEnable()
-    {
-        EventBus.OnPlayerDisabled += DisableMovement;
-        EventBus.OnPlayerEnabled += EnableMovement;
-    }
-
-    private void OnDisable()
-    {
-        EventBus.OnPlayerDisabled -= DisableMovement;
-        EventBus.OnPlayerEnabled -= EnableMovement;
-    }
-
     /// <summary>
     /// 玩家移动系统初始化
     /// </summary>
@@ -59,15 +47,14 @@ public class PlayerMovement : MonoBehaviour
         currentRunSpeed = baserunSpeed;
     }
 
-    private void DisableMovement()
+    public void DisableMovement()
     {
-        inputControl.Disable();
         rb.velocity = Vector2.zero; // 立即停止移动
     }
 
-    private void EnableMovement()
+    public void EnableMovement()
     {
-        inputControl.Enable();
+
     }
 
     /// <summary>

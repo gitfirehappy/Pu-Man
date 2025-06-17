@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
+    private PlayerCore playerCore;
+
     [SerializeField]private bool _isShootingEnabled = true;
 
     private float baseDamage;
@@ -34,11 +36,19 @@ public class PlayerShooting : MonoBehaviour
     private PlayerInput playerInput;
     private InputAction fireAction;
 
+
     private void Awake()
     {
-        playerInput = new PlayerInput();
-        fireAction = playerInput.Player.Fire;
-       
+        playerCore = GetComponent<PlayerCore>();
+
+        if (playerCore != null && playerCore.playerInput != null)
+        {
+            fireAction = playerCore.playerInput.Player.Fire;
+        }
+        else
+        {
+            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
+        }
 
         if (firePoint == null)
         {
@@ -46,29 +56,15 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
-    private void OnEnable()
+    public void DisableShooting()
     {
-        EventBus.OnPlayerDisabled += DisableShooting;
-        EventBus.OnPlayerEnabled += EnableShooting;
-    }
-
-    private void OnDisable()
-    {
-        EventBus.OnPlayerDisabled -= DisableShooting;
-        EventBus.OnPlayerEnabled -= EnableShooting;
-    }
-
-    private void DisableShooting()
-    {
-        playerInput.Disable();
         _isShootingEnabled = false;
         isRotating = false;
         nextFireTime = float.MaxValue; // 确保不会射击
     }
 
-    private void EnableShooting()
+    public void EnableShooting()
     {
-        playerInput.Enable();
         _isShootingEnabled = true;
         isRotating = true;
         nextFireTime = 0f;
