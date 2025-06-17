@@ -45,11 +45,29 @@ public class PlayerAbilities : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInput.Enable();
+        EventBus.OnPlayerDisabled += OnPlayerDisabled;
+        EventBus.OnPlayerEnabled += OnPlayerEnabled;
     }
+
     private void OnDisable()
     {
+        EventBus.OnPlayerDisabled -= OnPlayerDisabled;
+        EventBus.OnPlayerEnabled -= OnPlayerEnabled;
+    }
+
+    private void OnPlayerDisabled()
+    {
+        // 强制中断当前技能
+        if (isAbilityActive)
+        {
+            DeactivateAbility();
+        }
         playerInput.Disable();
+    }
+
+    private void OnPlayerEnabled()
+    {
+        playerInput.Enable();
     }
 
     /// <summary>

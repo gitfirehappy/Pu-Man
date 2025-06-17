@@ -137,15 +137,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
 
     /// <summary>
-    /// 玩家死亡
-    /// </summary>
-    private void Die()
-    {
-        Debug.Log("Player died!");
-        // 游戏结束逻辑
-    }
-
-    /// <summary>
     /// 添加无敌效果
     /// </summary>
     /// <param name="duration">无敌持续时间(秒)，-1表示永久</param>
@@ -176,6 +167,17 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isInvincible = false;
         invincibleDuration = 0;
         StopCoroutine("InvincibleTimerRoutine");
+    }
+
+
+    /// <summary>
+    /// 玩家死亡
+    /// </summary>
+    private void Die()
+    {
+        Debug.Log("Player died!");
+        EventBus.TriggerPlayerDeath(); // 触发死亡事件通知其他模块
+        
     }
 
 

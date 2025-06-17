@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
+    [SerializeField]private bool _isShootingEnabled = true;
+
     private float baseDamage;
     private float baseFireRate;
     private float baseKnockback;
@@ -46,11 +48,30 @@ public class PlayerShooting : MonoBehaviour
 
     private void OnEnable()
     {
-        playerInput.Enable();
+        EventBus.OnPlayerDisabled += DisableShooting;
+        EventBus.OnPlayerEnabled += EnableShooting;
     }
+
     private void OnDisable()
     {
+        EventBus.OnPlayerDisabled -= DisableShooting;
+        EventBus.OnPlayerEnabled -= EnableShooting;
+    }
+
+    private void DisableShooting()
+    {
         playerInput.Disable();
+        _isShootingEnabled = false;
+        isRotating = false;
+        nextFireTime = float.MaxValue; // 确保不会射击
+    }
+
+    private void EnableShooting()
+    {
+        playerInput.Enable();
+        _isShootingEnabled = true;
+        isRotating = true;
+        nextFireTime = 0f;
     }
 
     /// <summary>
@@ -78,7 +99,7 @@ public class PlayerShooting : MonoBehaviour
     }
 
     /// <summary>
-    /// 恢复正常射击
+    /// 恢复射击参数
     /// </summary>
     public void ResetToBaseStats()
     {
@@ -96,6 +117,8 @@ public class PlayerShooting : MonoBehaviour
 
     private void Update()
     {
+        if(!_isShootingEnabled) return;
+
         if (isRotating)
         {
             RotateTowardsMouse();

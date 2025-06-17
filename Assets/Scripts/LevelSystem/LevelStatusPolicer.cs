@@ -26,6 +26,18 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
         currentState = newState;
         Debug.Log("切换到状态: " + newState);
 
+        switch (currentState)
+        {
+            case GameState.GameOver:
+            case GameState.Paused:
+                EventBus.TriggerPlayerDisabled(); // 禁用玩家
+                break;
+
+            case GameState.Battle:
+                EventBus.TriggerPlayerEnabled(); // 启用玩家
+                break;
+        }
+
         // 状态切换后广播出去，其他系统监听
         switch (currentState)
         {

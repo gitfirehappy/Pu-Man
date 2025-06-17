@@ -18,16 +18,6 @@ public class PlayerMovement : MonoBehaviour
         inputControl = new PlayerInput(); // 自动生成的输入类
     }
 
-    private void OnEnable()
-    {
-        inputControl.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputControl.Disable();
-    }
-
     private void Update()
     {
         inputDirection = inputControl.Player.Move.ReadValue<Vector2>();
@@ -55,6 +45,29 @@ public class PlayerMovement : MonoBehaviour
     public void ResetToBaseStats()
     {
         currentRunSpeed = baserunSpeed;
+    }
+
+    private void OnEnable()
+    {
+        EventBus.OnPlayerDisabled += DisableMovement;
+        EventBus.OnPlayerEnabled += EnableMovement;
+    }
+
+    private void OnDisable()
+    {
+        EventBus.OnPlayerDisabled -= DisableMovement;
+        EventBus.OnPlayerEnabled -= EnableMovement;
+    }
+
+    private void DisableMovement()
+    {
+        inputControl.Disable();
+        rb.velocity = Vector2.zero; // 立即停止移动
+    }
+
+    private void EnableMovement()
+    {
+        inputControl.Enable();
     }
 
     /// <summary>
