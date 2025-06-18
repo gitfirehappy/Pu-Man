@@ -15,11 +15,22 @@ public class EnemyReward : MonoBehaviour
         _rewardConfig = data.rewardConfig;
         _core = GetComponent<EnemyCore>();
 
+        _core.OnEnemyDeath += HandleEnemyDeath;
+
         // 获取玩家引用
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
             _playerHealth = player.GetComponent<PlayerHealth>();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 注销事件
+        if (_core != null)
+        {
+            _core.OnEnemyDeath -= HandleEnemyDeath;
         }
     }
 
@@ -31,23 +42,9 @@ public class EnemyReward : MonoBehaviour
         // 目前没有需要重置的状态变量
     }
 
-    private void OnEnable()
+    private void HandleEnemyDeath()
     {
-        EnemyEvent.OnReturnedToPool += HandleEnemyDeath;
-    }
-
-    private void OnDisable()
-    {
-        EnemyEvent.OnReturnedToPool -= HandleEnemyDeath;
-    }
-
-    private void HandleEnemyDeath(EnemyCore core, bool killedByPlayer)
-    {
-        // 只处理当前敌人且被玩家击杀的情况
-        if (killedByPlayer && core == _core)
-        {
-            ApplyReward();
-        }
+        ApplyReward();
     }
 
     /// <summary>

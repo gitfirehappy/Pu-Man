@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Pool;
 using static ObjectPoolManager;
 
@@ -7,6 +8,15 @@ public class EnemyCore : MonoBehaviour, IPoolable
 {
     [SerializeField] private EnemySO enemyData;
     [SerializeField] private IObjectPool<GameObject> _managedPool;
+
+    public event Action OnEnemyDeath;
+
+    // 组件引用缓存
+    private EnemyHealth _health;
+    private EnemyMovement _movement;
+    private EnemyShooting _shooting;
+    private EnemyClash _clash;
+    private EnemyReward _reward;
 
     private void Awake()
     {
@@ -17,60 +27,80 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
 
         InitializeComponents();
+        RegisterEventHandlers();
     }
 
+    /// <summary>
+    /// 敌人组件初始化
+    /// </summary>
     private void InitializeComponents()
     {
         // 确保基础组件存在
-        if (!TryGetComponent<EnemyHealth>(out var health))
-            health = gameObject.AddComponent<EnemyHealth>();
-
-        if (!TryGetComponent<EnemyMovement>(out var movement))
-            movement = gameObject.AddComponent<EnemyMovement>();
+        _health = GetOrAddComponent<EnemyHealth>();
+        _movement = GetOrAddComponent<EnemyMovement>();
 
         // 根据EnemyType动态添加组件
         switch (enemyData.enemyType)
         {
             case EnemyType.Remote:
             case EnemyType.BigRemote:
-                if (!TryGetComponent<EnemyShooting>(out _))
-                    gameObject.AddComponent<EnemyShooting>();
+                _shooting = GetOrAddComponent<EnemyShooting>();
                 break;
 
             case EnemyType.Clash:
             case EnemyType.BigClash:
-                if (!TryGetComponent<EnemyClash>(out _))
-                    gameObject.AddComponent<EnemyClash>();
+                _clash = GetOrAddComponent<EnemyClash>();
                 break;
 
             case EnemyType.Reward:
             case EnemyType.BigReward:
-                if (!TryGetComponent<EnemyReward>(out _))
-                    gameObject.AddComponent<EnemyReward>();
+                _reward = GetOrAddComponent<EnemyReward>();
                 break;
 
             case EnemyType.Boss:
-                if (!TryGetComponent<EnemyShooting>(out _))
-                    gameObject.AddComponent<EnemyShooting>();
-                if (!TryGetComponent<EnemyClash>(out _))
-                    gameObject.AddComponent<EnemyClash>();
-                if (!TryGetComponent<EnemyReward>(out _))
-                    gameObject.AddComponent<EnemyReward>();
+                _shooting = GetOrAddComponent<EnemyShooting>();
+                _clash = GetOrAddComponent<EnemyClash>();
+                _reward = GetOrAddComponent<EnemyReward>();
                 break;
         }
 
-        // 初始化所有组件
-        GetComponent<EnemyHealth>().Initialize(enemyData, this);
-        GetComponent<EnemyMovement>().Initialize(enemyData);
+        // 初始化
+        _health.Initialize(enemyData, this);
+        _movement.Initialize(enemyData);
+        _shooting?.Initialize(enemyData);
+        _clash?.Initialize(enemyData);
+        _reward?.Initialize(enemyData);
+    }
 
-        var shooting = GetComponent<EnemyShooting>();
-        if (shooting != null) shooting.Initialize(enemyData);
+    private T GetOrAddComponent<T>() where T : Component
+    {
+        var component = GetComponent<T>();
+        if (component == null)
+        {
+            component = gameObject.AddComponent<T>();
+        }
+        return component;
+    }
 
-        var clash = GetComponent<EnemyClash>();
-        if (clash != null) clash.Initialize(enemyData);
+    /// <summary>
+    /// 注册敌人事件
+    /// </summary>
+    private void RegisterEventHandlers()
+    {
+        _health.OnDeath += HandleDeath;
+    }
 
-        var reward = GetComponent<EnemyReward>();
-        if (reward != null) reward.Initialize(enemyData);
+    /// <summary>
+    /// 处理死亡事件
+    /// </summary>
+    private void HandleDeath()
+    {
+        // 触发全局事件
+        EnemyEvent.TriggerDeath(this);
+
+        // 触发内部事件（通知EnemyReward等组件）
+        OnEnemyDeath?.Invoke();
+        ReturnToPool();
     }
 
     // IPoolable接口实现
@@ -79,11 +109,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     public void OnRelease()
     {
-        GetComponent<EnemyHealth>()?.ResetToBaseStats();
-        GetComponent<EnemyMovement>()?.ResetToBaseStats();
-        GetComponent<EnemyShooting>()?.ResetToBaseStats();
-        GetComponent<EnemyClash>()?.ResetToBaseStats();
-        GetComponent<EnemyReward>()?.ResetToBaseStats();
+        _movement?.ResetToBaseStats();
+        _shooting?.ResetToBaseStats();
+        _clash?.ResetToBaseStats();
+        _reward?.ResetToBaseStats();
+        _health?.ResetToBaseStats();
     }
 
     public void OnGet()
@@ -115,5 +145,10 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
     }
 
-    public EnemyType GetEnemyType() => enemyData.enemyType;
+    #region 公共属性
+    public EnemyType EnemyType => enemyData.enemyType;
+
+    public bool IsDead => _health != null && _health.IsDead;
+
+    #endregion
 }

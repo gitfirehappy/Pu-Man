@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
+    private EnemyCore enemyCore;
+
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
 
@@ -19,7 +22,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private float lastCollisionDamageTime;
     private float lastDetectionTime;
     private Transform playerTransform;
-    private EnemyCore core;
+
+    public event Action OnDeath;
+
 
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
@@ -97,7 +102,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// <param name="damage"></param>
     public void TakeDamage(float damage)
     {
+        if (_isDead) return;
+
         currentHealth -= damage;
+        EnemyEvent.TriggerHealthChanged(enemyCore, currentHealth, maxHealth);
+
         Debug.Log($"Enemy took {damage} damage! Current HP: {currentHealth}");
         if (currentHealth <= 0)
         {
@@ -126,39 +135,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (_collider != null) _collider.enabled = false;
         if (rb != null) rb.simulated = false;
 
-        // 获取核心引用（防止缓存失效）
-        var validCore = GetComponent<EnemyCore>();
-        if (validCore == null)
-        {
-            Debug.LogWarning("EnemyCore missing on death", gameObject);
-            Destroy(gameObject);
-            return;
-        }
-
         Debug.Log("敌人死亡", this);
 
-        // 使用协程确保执行顺序
-        StartCoroutine(DeathRoutine(validCore));
-    }
-
-    private IEnumerator DeathRoutine(EnemyCore validCore)
-    {
-        // 第一步：触发事件
-        EnemyEvent.TriggerDied(validCore);
-        EnemyEvent.TriggerReturnedToPool(validCore, true);
-
-        // 等待一帧让事件处理完成
-        yield return null;
-
-        // 第二步：执行回收
-        if (validCore != null && !validCore.Equals(null))
-        {
-            validCore.ReturnToPool();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        // 通知死亡事件（EnemyCore会处理回收）
+        OnDeath?.Invoke();
     }
 
 
@@ -168,5 +148,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         Gizmos.DrawWireSphere(transform.position, attackRadius);
     }
 
+    #region 公共属性
     public bool IsDead => _isDead;
+
+    #endregion
 }

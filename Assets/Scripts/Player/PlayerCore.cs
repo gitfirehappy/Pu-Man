@@ -40,10 +40,10 @@ public class PlayerCore : MonoBehaviour
         abilities = GetOrAddComponent<PlayerAbilities>();
 
         // 初始化所有组件
-        GetComponent<PlayerHealth>().Initialize(playerData);
-        GetComponent<PlayerShooting>().Initialize(playerData);
-        GetComponent<PlayerMovement>().Initialize(playerData);
-        GetComponent<PlayerAbilities>().Initialize(playerData);
+        health.Initialize(playerData);
+        shooting.Initialize(playerData);
+        movement.Initialize(playerData);
+        abilities.Initialize(playerData);
     }
 
     private T GetOrAddComponent<T>() where T : Component
