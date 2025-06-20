@@ -100,12 +100,13 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
         // 触发内部事件（通知EnemyReward等组件）
         OnEnemyDeath?.Invoke();
+
         ReturnToPool();
     }
 
     // IPoolable接口实现
     /// <summary>
-    /// 重置敌人所有状态
+    /// 重置敌人所有状态，从关闭到启用
     /// </summary>
     public void OnRelease()
     {
@@ -116,6 +117,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _health?.ResetToBaseStats();
     }
 
+    /// <summary>
+    /// 从对象池取出对象时,从无到有的生成
+    /// </summary>
     public void OnGet()
     {
         // 重新初始化
@@ -128,6 +132,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _managedPool = pool;
     }
 
+    /// <summary>
+    /// 统一回收
+    /// </summary>
     public void ReturnToPool()
     {
         // 添加状态检查
