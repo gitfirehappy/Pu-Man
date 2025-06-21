@@ -3,7 +3,7 @@ using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 
-public class PlayerBuff : IBuffEffect
+public class PlayerBuff : MonoBehaviour,IBuffEffect
 {
     public void Apply(BuffSO buffData, PlayerCore player)
     {

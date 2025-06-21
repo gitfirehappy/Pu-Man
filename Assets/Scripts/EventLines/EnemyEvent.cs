@@ -2,14 +2,15 @@
 using UnityEngine;
 
 /// <summary>
-/// 敌人专用事件系统 | 双击日志定位事件触发点
+/// 敌人专用事件系统
 /// </summary>
 public static class EnemyEvent
 {
     #region 核心事件
+
     public static event Action<EnemyCore> OnSpawned;
     public static event Action<EnemyCore> OnDeath; // Enemy实例
-    public static event Action<EnemyCore, float, float> OnHealthChanged; // 当前血量, 最大血量
+
     #endregion
 
     #region 触发方法
@@ -25,13 +26,6 @@ public static class EnemyEvent
         SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy));
     }
 
-    public static void TriggerHealthChanged(EnemyCore enemy, float currentHealth, float maxHealth)
-    {
-        if (!ValidateEnemy(enemy)) return;
-        SafeTrigger(nameof(OnHealthChanged),
-            () => OnHealthChanged?.Invoke(enemy, currentHealth, maxHealth),
-            $"HP: {currentHealth}/{maxHealth}");
-    }
     #endregion
 
     #region 安全验证与调试
@@ -72,8 +66,7 @@ public static class EnemyEvent
     {
         Debug.Log($"=== 敌人事件监听数 ===\n" +
                  $"{nameof(OnSpawned)}: {OnSpawned?.GetInvocationList().Length ?? 0}\n" +
-                 $"{nameof(OnDeath)}: {OnDeath?.GetInvocationList().Length ?? 0}\n" +
-                 $"{nameof(OnHealthChanged)}: {OnHealthChanged?.GetInvocationList().Length ?? 0}");
+                 $"{nameof(OnDeath)}: {OnDeath?.GetInvocationList().Length ?? 0}\n");
     }
 #endif
     #endregion

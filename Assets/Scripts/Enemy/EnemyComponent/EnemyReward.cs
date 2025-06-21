@@ -3,7 +3,7 @@ using static EnemySO;
 
 public class EnemyReward : MonoBehaviour
 {
-    private PlayerHealth _playerHealth;
+    private PlayerCore _playerCore;
     private RewardConfig _rewardConfig;
     private EnemyCore _core;
 
@@ -21,7 +21,7 @@ public class EnemyReward : MonoBehaviour
         var player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            _playerHealth = player.GetComponent<PlayerHealth>();
+            _playerCore = GetComponent<PlayerCore>();
         }
     }
 
@@ -52,16 +52,20 @@ public class EnemyReward : MonoBehaviour
     /// </summary>
     private void ApplyReward()
     {
-        if (_playerHealth == null || _rewardConfig == null) return;
+        if (_playerCore == null || _rewardConfig == null) return;
 
-        // 应用回血效果
+        // TODO：应用回血效果
         if (_rewardConfig.healthUp > 0)
         {
-            _playerHealth.AddCurrentHealth(_rewardConfig.healthUp);
+            //_playerCore.ApplyReward(_rewardConfig.healthUp);
             Debug.Log($"玩家获得 {_rewardConfig.healthUp} 点生命恢复", this);
         }
 
         // TODO: 刷新次数增加逻辑
-        // if (_rewardConfig.extraRefreshChance > 0) {...}
+        if (_rewardConfig.extraRefreshChance > 0) 
+        {
+            //_gameUIManager.ApplyReward(_rewardConfig.extraRefreshChance);
+            Debug.Log($"玩家获得 {_rewardConfig.extraRefreshChance} 次刷新次数", this);
+        }
     }
 }

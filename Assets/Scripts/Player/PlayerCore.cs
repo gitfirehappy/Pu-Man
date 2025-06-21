@@ -11,6 +11,7 @@ public class PlayerCore : MonoBehaviour
     private PlayerShooting shooting;
     private PlayerMovement movement;
     private PlayerAbilities abilities;
+    private PlayerBuff buff;
     public PlayerInput playerInput; // 统一管理输入
 
 
@@ -38,6 +39,7 @@ public class PlayerCore : MonoBehaviour
         shooting = GetOrAddComponent<PlayerShooting>();
         movement = GetOrAddComponent<PlayerMovement>();
         abilities = GetOrAddComponent<PlayerAbilities>();
+        buff = GetOrAddComponent<PlayerBuff>();
 
         // 初始化所有组件
         health.Initialize(playerData);
@@ -81,12 +83,18 @@ public class PlayerCore : MonoBehaviour
         playerInput.Dispose();
     }
 
+    /// <summary>
+    /// 处理死亡事件
+    /// </summary>
     private void HandlePlayerDeath()
     {
-        // 死亡事件中转
+        //通知总线游戏结束
         EventBus.TriggerPlayerDeath();
     }
 
+    /// <summary>
+    /// 禁用Player组件，总线广播，切换状态时调用
+    /// </summary>
     private void DisableAllComponents()
     {
         // 禁用输入（核心统一管理）
@@ -99,6 +107,9 @@ public class PlayerCore : MonoBehaviour
         abilities?.DisableAbilities();
     }
 
+    /// <summary>
+    /// 启用Player组件，总线广播，切换状态时调用
+    /// </summary>
     private void EnableAllComponents()
     {
         // 启用输入（核心统一管理）
@@ -134,9 +145,12 @@ public class PlayerCore : MonoBehaviour
 
     public PlayerType GetPlayerType() => playerData.playerType;
 
-    // 提供给外部访问的接口
+    #region 提供给外部访问的接口
     public PlayerHealth Health => health;
     public PlayerShooting Shooting => shooting;
     public PlayerMovement Movement => movement;
     public PlayerAbilities Abilities => abilities;
+    public PlayerBuff Buff => buff;
+
+    #endregion
 }

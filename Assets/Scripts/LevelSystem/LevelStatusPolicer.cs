@@ -75,6 +75,7 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
                 break;
             case GameState.GameOver:
             case GameState.Paused:
+            case GameState.SelectBuff:
                 EventBus.TriggerPlayerDisabled();
                 break;
         }

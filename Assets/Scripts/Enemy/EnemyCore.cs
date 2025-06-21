@@ -157,5 +157,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
     public bool IsDead => _health != null && _health.IsDead;
 
+    public float CurrentHealth => _health.CurrentHealth;
+
+    public float MaxHealth => _health.MaxHealth;
+
     #endregion
 }

@@ -105,7 +105,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (_isDead) return;
 
         currentHealth -= damage;
-        EnemyEvent.TriggerHealthChanged(enemyCore, currentHealth, maxHealth);
 
         Debug.Log($"Enemy took {damage} damage! Current HP: {currentHealth}");
         if (currentHealth <= 0)
@@ -150,6 +149,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     #region 公共属性
     public bool IsDead => _isDead;
+
+    public float CurrentHealth => currentHealth;
+
+    public float MaxHealth => maxHealth;
 
     #endregion
 }
