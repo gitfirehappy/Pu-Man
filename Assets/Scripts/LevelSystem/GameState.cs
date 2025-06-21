@@ -5,5 +5,4 @@
     Battle,
     SelectBuff,
     GameOver,
-    Paused,
 }

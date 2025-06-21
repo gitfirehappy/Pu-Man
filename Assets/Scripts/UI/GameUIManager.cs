@@ -10,22 +10,34 @@ public class GameUIManager : SingletonMono<GameUIManager>
     {
         base.Init();
 
-        // 注册所有UI控制器
+        // 自动注册所有子物体上的UI控制器
         RegisterControllers();
 
         // 监听状态变化
         EventBus.OnGameStateChanged += OnGameStateChanged;
     }
 
+
     private void RegisterControllers()
     {
-        // 手动注册或自动查找
-        uiControllers.Add(GameState.Menu, new MenuUIManager());
-        uiControllers.Add(GameState.Prepare, new CharacterSelectUIManager());
-        uiControllers.Add(GameState.Battle, new BattleUIManager());
-        uiControllers.Add(GameState.SelectBuff, new SelectBuffUIManager());
-        uiControllers.Add(GameState.GameOver, new GameOverUIManager());
-        uiControllers.Add(GameState.Paused, new PauseUIManager());
+        // 清空字典以防重复注册
+        uiControllers.Clear();
+
+        // 自动获取子物体上的控制器组件
+        uiControllers.Add(GameState.Menu, GetComponentInChildren<MenuUIManager>());
+        uiControllers.Add(GameState.Prepare, GetComponentInChildren<CharacterSelectUIManager>());
+        uiControllers.Add(GameState.Battle, GetComponentInChildren<BattleUIManager>());
+        uiControllers.Add(GameState.SelectBuff, GetComponentInChildren<SelectBuffUIManager>());
+        uiControllers.Add(GameState.GameOver, GetComponentInChildren<GameOverUIManager>());
+
+        // 验证所有控制器都已找到
+        foreach (var kvp in uiControllers)
+        {
+            if (kvp.Value == null)
+            {
+                Debug.LogError($"未找到 {kvp.Key} 对应的UI控制器");
+            }
+        }
     }
 
     /// <summary>

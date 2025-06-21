@@ -38,6 +38,7 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
         {
             EventBus.TriggerPlayerEnabled();
         }
+        EventBus_Resumed();
         Debug.Log($"游戏继续，恢复到: {stateBeforePause}");
         // 不需要改变currentState，因为我们只是从暂停中恢复
     }
@@ -74,7 +75,6 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
                 EventBus.TriggerPlayerEnabled();
                 break;
             case GameState.GameOver:
-            case GameState.Paused:
             case GameState.SelectBuff:
                 EventBus.TriggerPlayerDisabled();
                 break;
@@ -111,6 +111,15 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
     private void EventBus_Battle() { /* 通知关卡计时器、波次生成等战斗开始 */ }
     private void EventBus_SelectBuff() { /* 先通知敌人生成器，计时器等战斗停止，再通知Buff抽卡系统 */ }
     private void EventBus_GameOver() { /* 通知失败UI ，通知战斗内停止*/ }
-    private void EventBus_Paused() { /* 通知暂停UI ，关卡计时器，敌人生成器等战斗停止*/ }
-    
+
+
+    private void EventBus_Paused() 
+    {
+        EventBus.TriggerPauseUIRequested(); // UI相关
+    }
+    private void EventBus_Resumed()
+    {
+        EventBus.TriggerResumeUIRequested();
+    }
+
 }

@@ -6,11 +6,11 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
 {
     public void OnEnterState()
     {
-
+        UIManager.Instance.ShowUIForm<SelectCharacterPanel>();
     }
 
     public void OnExitState()
     {
-
+        UIManager.Instance.HideUIForm<SelectCharacterPanel>();
     }
 }

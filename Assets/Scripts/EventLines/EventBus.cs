@@ -26,15 +26,20 @@ public static class EventBus
     /// </summary>
     public static event Action OnBuffSelected;
 
+    #region 暂停相关
     /// <summary>
     /// 当游戏暂停时触发
     /// </summary>
     public static event Action OnGamePaused;
+    public static event Action OnPauseUIRequested;
 
     /// <summary>
     /// 当游戏继续时触发
     /// </summary>
     public static event Action OnGameResumed;
+    public static event Action OnResumeUIRequested;
+
+    #endregion
 
     #endregion
 
@@ -69,11 +74,18 @@ public static class EventBus
     public static void TriggerBattleStart() => OnBattleStart?.Invoke();
     public static void TriggerCharacterSelected() => OnCharacterSelected?.Invoke();
     public static void TriggerBuffSelected() => OnBuffSelected?.Invoke();
-    public static void TriggerGamePaused() => OnGamePaused?.Invoke();
-    public static void TriggerGameResumed() => OnGameResumed?.Invoke();
     public static void TriggerPlayerDeath() => _onPlayerDeath?.Invoke();
+
     public static void TriggerPlayerDisabled() => OnPlayerDisabled?.Invoke();
     public static void TriggerPlayerEnabled() => OnPlayerEnabled?.Invoke();
+
+
+    public static void TriggerGamePaused() => OnGamePaused?.Invoke();
+    public static void TriggerGameResumed() => OnGameResumed?.Invoke();
+
+
+    public static void TriggerPauseUIRequested() => OnPauseUIRequested?.Invoke();
+    public static void TriggerResumeUIRequested() => OnResumeUIRequested?.Invoke();
 
     #endregion
 }
