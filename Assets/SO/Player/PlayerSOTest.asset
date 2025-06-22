@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: PlayerSOTest
   m_EditorClassIdentifier: 
   playerType: 0
+  playerName: 
+  playerSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   description: 
   healthConfig:
     maxHealth: 100

@@ -11,6 +11,8 @@ public class PlayerSOEditor : Editor
 
         // 基础字段
         EditorGUILayout.PropertyField(serializedObject.FindProperty("playerType"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("playerName"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("playerSprite"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
 
         // 显示各个配置部分

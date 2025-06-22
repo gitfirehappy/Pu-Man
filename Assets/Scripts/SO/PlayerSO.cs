@@ -7,6 +7,8 @@ using static PlayerAbilities;
 public class PlayerSO : ScriptableObject
 {
     public PlayerType playerType;
+    public string playerName;
+    public Sprite playerSprite;
 
     [TextArea] public string description;
 
