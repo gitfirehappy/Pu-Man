@@ -10,7 +10,7 @@ public class SettingsPanel : UIFormBase
     [SerializeField][Header("音乐音量滑块")] private Slider musicSlider;
     [SerializeField][Header("音效音量滑块")] private Slider sfxSlider;
 
-    [SerializeField][Header("返回Menu按钮")] private Button closeButton;
+    [SerializeField][Header("关闭界面按钮")] private Button closeButton;
 
     protected override void Init()
     {

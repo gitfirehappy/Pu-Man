@@ -9,6 +9,8 @@ public class PausePanel : UIFormBase
 
     //选择过的Buff
 
+    //设置按钮（呼出设置界面）
+
     [SerializeField][Header("返回游戏按钮")] private Button resumeButton;
     [SerializeField][Header("结束游戏按钮")] private Button overGameButton;
 

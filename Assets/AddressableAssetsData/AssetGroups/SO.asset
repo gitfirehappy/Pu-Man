@@ -21,19 +21,24 @@ MonoBehaviour:
     m_Address: Enemy
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Enemy
+    - EnemySO
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c05cca6101e624b4c8316c9d24ce1983
     m_Address: PlayerBuff
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Buff
+    - BuffSO
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: efa74ef278a764c41917c6b91f3357c7
     m_Address: Player
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Player
+    - PlayerSO
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dbaf12e2e2d32fd438de6c86cbea7921
+    m_Address: Assets/Prefab/Enemy/BasicEnemy.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4c73a92acb4556f4a89840446eb3feaa, type: 2}

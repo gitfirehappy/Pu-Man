@@ -13,6 +13,7 @@ public class PlayerSOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("playerType"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("playerName"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("playerSprite"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("playerPrefab"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
 
         // 显示各个配置部分

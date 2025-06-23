@@ -9,6 +9,7 @@ public class PlayerSO : ScriptableObject
     public PlayerType playerType;
     public string playerName;
     public Sprite playerSprite;
+    [Header("玩家预制体")] public GameObject playerPrefab;
 
     [TextArea] public string description;
 

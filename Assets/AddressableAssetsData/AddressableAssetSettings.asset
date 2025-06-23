@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 9046f8a7b8f8f0441a806efee020e00c
   m_currentHash:
     serializedVersion: 2
-    Hash: bc3069804ac97be5f06e5547a4a4b5f6
+    Hash: 220ea5a7557bdc85f1f3254b807fa6d1
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -46,6 +46,7 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: 3a2823c1b50e7b04a8060ea879c90d1b, type: 2}
   - {fileID: 11400000, guid: b635c79627a02dc43a03d7da9750c196, type: 2}
+  - {fileID: 11400000, guid: 79a148ad7ce59414eb43f08225d34e3d, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -87,9 +88,12 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
-    - Player
-    - Enemy
-    - Buff
+    - PlayerSO
+    - EnemySO
+    - BuffSO
+    - PlayerPrefab
+    - EnemyPrefab
+    - UIPanelPrefab
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 389d9faa477c8974e9db93e0cb756c17, type: 2}

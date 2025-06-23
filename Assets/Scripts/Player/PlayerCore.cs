@@ -143,6 +143,12 @@ public class PlayerCore : MonoBehaviour
         InitializeComponents();
     }
 
+    public void SetPlayerData(PlayerSO data)
+    {
+        playerData = data;
+        ReInitialize();  // 这会调用InitializeComponents()重新初始化所有组件
+    }
+
     public PlayerType GetPlayerType() => playerData.playerType;
 
     #region 提供给外部访问的接口
