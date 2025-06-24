@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buffID: 0
   rarity: 0
+  buffPicture: {fileID: 0}
   Description: 
   healthModifier: 0
   armorModifier: 0

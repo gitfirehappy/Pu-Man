@@ -5,6 +5,7 @@ public class BuffSO : ScriptableObject
 {
     public BuffID buffID;
     public Rarity rarity;
+    public Sprite buffPicture;
     [TextArea] public string Description;
 
     // 所有可能的数值字段（但只会显示当前buffID需要的）
@@ -44,10 +45,10 @@ public class BuffSO : ScriptableObject
     [Header("狂暴")] public bool barserkMode;
 
 
-    private static readonly PlayerBuff _processor = new PlayerBuff();
+    //private static readonly PlayerBuff _processor = new PlayerBuff();
 
-    public void Apply(PlayerCore player) => _processor.Apply(this, player);
-    public void Remove(PlayerCore player) => _processor.Remove(this, player);
+    //public void Apply(PlayerCore player) => _processor.Apply(this, player);
+    //public void Remove(PlayerCore player) => _processor.Remove(this, player);
 }
 
 

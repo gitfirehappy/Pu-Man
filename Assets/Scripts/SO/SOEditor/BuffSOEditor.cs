@@ -12,6 +12,7 @@ public class BuffSOEditor : Editor
         // 1. 始终显示的基础字段
         EditorGUILayout.PropertyField(serializedObject.FindProperty("buffID"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("rarity"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("buffPicture"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("Description"));
 
         // 2. 根据buffID动态显示数值字段
