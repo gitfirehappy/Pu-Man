@@ -18,15 +18,14 @@ public class SelectCharacterPanel : UIFormBase
     [SerializeField][Header("开始游戏按钮")] private Button startGameButton;
     [SerializeField][Header("返回菜单按钮")] private Button backButton;
 
-    [Header("玩家生成设置")]
-    [SerializeField] private Vector3 spawnPosition = Vector3.zero; // 默认在原点
+    [SerializeField][Header("生成位置")] private Vector3 spawnPosition;
 
-    private List<PlayerSO> allCharacters;
     private PlayerSO selectedCharacter;
+    private CharacterSelectUIManager uiManager;
 
     protected override void Init()
     {
-        LoadCharactersAsync();  // 异步加载角色
+        uiManager = GetComponentInParent<CharacterSelectUIManager>();
 
         startGameButton.onClick.AddListener(OnStartGame);
         backButton.onClick.AddListener(OnBackToMenu);
@@ -35,35 +34,22 @@ public class SelectCharacterPanel : UIFormBase
     }
 
     /// <summary>
-    /// 读取PlayerSO数据
+    /// 初始化面板，创建角色卡片
     /// </summary>
-    private async void LoadCharactersAsync()
+    public void Initialize(List<PlayerSO> characters)
     {
-        try
+        // 清空现有卡片
+        foreach (Transform child in cardContainer)
         {
-            // 加载所有带 "PlayerSO" Label 的 ScriptableObject
-            var loadHandle = Addressables.LoadAssetsAsync<PlayerSO>("PlayerSO", null);
-            await loadHandle.Task;
-
-            if (loadHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                allCharacters = new List<PlayerSO>(loadHandle.Result);
-
-                foreach (var character in allCharacters)
-                {
-                    var cardObj = Instantiate(cardPrefab, cardContainer);
-                    var card = cardObj.GetComponent<CharacterPanel>();
-                    card.Setup(character, OnCharacterSelected);
-                }
-            }
-            else
-            {
-                Debug.LogError("角色加载失败！");
-            }
+            Destroy(child.gameObject);
         }
-        catch (Exception e)
+
+        // 创建新卡片
+        foreach (var character in characters)
         {
-            Debug.LogError($"加载角色时出错: {e.Message}");
+            var cardObj = Instantiate(cardPrefab, cardContainer);
+            var card = cardObj.GetComponent<CharacterPanel>();
+            card.Setup(character, OnCharacterSelected);
         }
     }
 
@@ -86,8 +72,8 @@ public class SelectCharacterPanel : UIFormBase
     {
         if (selectedCharacter == null) return;
 
-        // 生成玩家角色
-        SpawnPlayer(selectedCharacter);
+        // 通知UIManager生成玩家
+        uiManager.SpawnPlayer(selectedCharacter, spawnPosition);
 
         EventBus.TriggerGameStateChanged(GameState.Battle);
     }
@@ -98,41 +84,6 @@ public class SelectCharacterPanel : UIFormBase
     private void OnBackToMenu()
     {
         EventBus.TriggerGameStateChanged(GameState.Menu);
-    }
-
-    /// <summary>
-    /// 根据选择的角色SO生成玩家
-    /// </summary>
-    private void SpawnPlayer(PlayerSO characterData)
-    {
-        // 1. 检查预制体是否存在
-        if (characterData.playerPrefab == null)
-        {
-            Debug.LogError($"角色 {characterData.playerName} 的预制体未设置!");
-            return;
-        }
-
-        // 2. 销毁现有玩家
-        var existingPlayer = FindObjectOfType<PlayerCore>();
-        if (existingPlayer != null)
-        {
-            Destroy(existingPlayer.gameObject);
-        }
-
-        // 3. 实例化预制体
-        var playerObj = Instantiate(characterData.playerPrefab, spawnPosition, Quaternion.identity);
-
-        // 4. 获取PlayerCore组件并设置数据
-        var playerCore = playerObj.GetComponent<PlayerCore>();
-        if (playerCore == null)
-        {
-            Debug.LogError("玩家预制体缺少PlayerCore组件!");
-            Destroy(playerObj);
-            return;
-        }
-
-        // 5. 设置SO数据并初始化
-        playerCore.SetPlayerData(characterData);
     }
 
 }

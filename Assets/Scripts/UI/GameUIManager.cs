@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 public class GameUIManager : SingletonMono<GameUIManager>
 {
+    [Header("需要预加载的UI预制体")]
+    [SerializeField] private GameObject[] uiPrefabsToPreload;
+
     private Dictionary<GameState, IUIController> uiControllers = new Dictionary<GameState, IUIController>();
     private GameState currentState;
 
@@ -10,14 +13,30 @@ public class GameUIManager : SingletonMono<GameUIManager>
     {
         base.Init();
 
-        // 自动注册所有子物体上的UI控制器
+        // 1. 预加载所有UI预制体
+        PreloadAllUIForms();
+
+        // 2. 注册控制器
         RegisterControllers();
 
-        // 监听状态变化
+        // 3. 监听状态变化
         EventBus.OnGameStateChanged += OnGameStateChanged;
     }
 
+    /// <summary>
+    /// 预加载UIPanel预制体
+    /// </summary>
+    private void PreloadAllUIForms()
+    {
+        if (uiPrefabsToPreload != null && uiPrefabsToPreload.Length > 0)
+        {
+            UIManager.Instance.PreLoadForms(uiPrefabsToPreload);
+        }
+    }
 
+    /// <summary>
+    /// 注册控制器
+    /// </summary>
     private void RegisterControllers()
     {
         // 清空字典以防重复注册

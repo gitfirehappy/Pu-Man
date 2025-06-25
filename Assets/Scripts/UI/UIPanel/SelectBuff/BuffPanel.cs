@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BuffPanel : UIFormBase
+public class BuffPanel : UIFormBase, IPointerClickHandler
 {
     [SerializeField][Header("Buff图片")] private Image buffPicture;
     [SerializeField][Header("Buff名称")] private TextMeshPro buffName;
@@ -20,15 +20,16 @@ public class BuffPanel : UIFormBase
     [SerializeField] private Color epicColor;
     [SerializeField] private Color legendaryColor;
 
-    private BuffSO buffSO;
-    private Action<BuffSO> onSelected;
+    private BuffSO currentBuff;
+    private System.Action<BuffSO> onClickCallback;
 
     public void Setup(BuffSO buff, System.Action<BuffSO> onSelectedCallback)
     {
-        buffSO = buff;
-        onSelected = onSelectedCallback;
+        currentBuff = buff;
+        onClickCallback = onSelectedCallback;
 
         // 设置UI内容
+        buffPicture.sprite = buff.buffPicture;
         buffName.text = buff.buffID.ToString();
         buffDiscription.text = buff.Description;
 
@@ -52,7 +53,7 @@ public class BuffPanel : UIFormBase
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        onSelected?.Invoke(buffSO);
+        onClickCallback?.Invoke(currentBuff);
     }
 
 }

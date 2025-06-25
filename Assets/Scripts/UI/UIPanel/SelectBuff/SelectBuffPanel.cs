@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -14,77 +15,71 @@ public class SelectBuffPanel : UIFormBase
 
     [SerializeField][Header("确定Buff按钮")] private Button applyBuffButton;
     [SerializeField][Header("刷新Buff按钮")] private Button refreshBuffButton;
+    [SerializeField][Header("剩余刷新次数")] private TextMeshPro refreshCountText;
 
-    private List<BuffSO> allBuff;
     private BuffSO selectedBuff;
+    private System.Action<BuffSO> onApplyCallback;
+    private System.Action onRefreshCallback;
+
 
     protected override void Init()
     {
-        LoadBuffAsync();  // 异步加载buff
-
-        refreshBuffButton.onClick.AddListener(OnRefreshBuff);
-        applyBuffButton.onClick.AddListener(OnApplyBuff);
-
-        applyBuffButton.interactable = false; // 默认禁用开始按钮
+        // 初始化按钮状态
+        applyBuffButton.interactable = false;
+        refreshBuffButton.interactable = false; // 初始状态由ShowBuffOptions设置
+        refreshCountText.text = "刷新次数: 0";
     }
 
     /// <summary>
-    /// 读取BuffSO数据
+    /// 显示Buff选项
     /// </summary>
-    private async void LoadBuffAsync()//这个要改
+    public void ShowBuffOptions(List<BuffSO> buffs,
+        System.Action<BuffSO> onSelected,
+        System.Action<BuffSO> onApply,
+        System.Action onRefresh,
+        int initialRefreshCount) // 添加初始刷新次数参数
     {
-        try
+        // 清空现有卡片
+        foreach (Transform child in cardContainer)
         {
-            // 加载所有带 "BuffSO" Label 的 ScriptableObject
-            var loadHandle = Addressables.LoadAssetsAsync<BuffSO>("BuffSO", null);
-            await loadHandle.Task;
+            Destroy(child.gameObject);
+        }
 
-            if (loadHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                allBuff = new List<BuffSO>(loadHandle.Result);
+        // 存储回调
+        this.onApplyCallback = onApply;
+        this.onRefreshCallback = onRefresh;
 
-                foreach (var character in allBuff)
+        // 创建新卡片
+        foreach (var buff in buffs)
+        {
+            var cardObj = Instantiate(cardPrefab, cardContainer);
+            var card = cardObj.GetComponent<BuffPanel>();
+            card.Setup(buff, (selected) =>
                 {
-                    var cardObj = Instantiate(cardPrefab, cardContainer);
-                    var card = cardObj.GetComponent<BuffPanel>();
-                    card.Setup(character, OnBuffSelected);
-                }
-            }
-            else
-            {
-                Debug.LogError("Buff加载失败！");
-            }
+                    selectedBuff = selected;
+                    onSelected?.Invoke(selected);
+                    applyBuffButton.interactable = true;
+                });
         }
-        catch (Exception e)
-        {
-            Debug.LogError($"加载Buff时出错: {e.Message}");
-        }
+
+        // 重置按钮状态
+        applyBuffButton.interactable = false;
+        applyBuffButton.onClick.RemoveAllListeners();
+        applyBuffButton.onClick.AddListener(() => onApplyCallback?.Invoke(selectedBuff));
+
+        refreshBuffButton.onClick.RemoveAllListeners();
+        refreshBuffButton.onClick.AddListener(() => onRefreshCallback?.Invoke());
+
+        // 更新刷新次数显示
+        UpdateRefreshCount(initialRefreshCount);
     }
 
     /// <summary>
-    /// 选中Buff时
+    /// 更新刷新次数显示
     /// </summary>
-    /// <param name="buff"></param>
-    private void OnBuffSelected(BuffSO buff)
+    public void UpdateRefreshCount(int count)
     {
-        selectedBuff = buff;
-        applyBuffButton.interactable = true;
+        refreshCountText.text = $"刷新次数: {count}";
+        refreshBuffButton.interactable = count > 0;
     }
-
-    /// <summary>
-    /// 应用Buff
-    /// </summary>
-    private void OnApplyBuff()
-    {
-
-    }
-
-    /// <summary>
-    /// 刷新Buff
-    /// </summary>
-    private void OnRefreshBuff()
-    {
-        //让Manager重新抽取BuffPanel
-    }
-
 }
