@@ -19,6 +19,7 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
         EventBus.OnBattleStart += () => ChangeState(GameState.Battle);
         EventBus.OnBuffSelected += () => ChangeState(GameState.SelectBuff);
         EventBus.OnPlayerDeath += () => ChangeState(GameState.GameOver);
+        EventBus.OnTimeOut += () => ChangeState(GameState.SelectBuff); // 计时结束切换到选Buff
 
         EventBus.OnGamePaused += OnGamePaused;
         EventBus.OnGameResumed += OnGameResumed;

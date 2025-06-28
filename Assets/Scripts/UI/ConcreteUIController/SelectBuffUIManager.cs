@@ -12,22 +12,24 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     [SerializeField][Header("默认n选1")] private int defaultBuffChoices = 3;
     [SerializeField][Header("默认刷新次数")] private int defaultRefreshCount = 1;
 
+    [Header("稀有度权重 (总和自动调整为1)")]
+    [Range(0f, 1f)][SerializeField] private float commonWeight = 0.7f;
+    [Range(0f, 1f)][SerializeField] private float rareWeight = 0.2f;
+    [Range(0f, 1f)][SerializeField] private float epicWeight = 0.08f;
+    [Range(0f, 1f)][SerializeField] private float legendaryWeight = 0.02f;
+
     private SelectBuffPanel selectBuffPanel;
     private int remainingRefreshCount;
     private List<BuffSO> allBuffs = new List<BuffSO>();
     private List<BuffSO> currentBuffOptions = new List<BuffSO>();
 
-    private Dictionary<Rarity, int> rarityWeights = new Dictionary<Rarity, int>()
-    {
-        { Rarity.Common, 70 },
-        { Rarity.Rare, 20 },
-        { Rarity.Epic, 8 },
-        { Rarity.Legendary, 2 }
-    };
+    private Dictionary<Rarity, float> rarityWeights;
 
     public async void OnEnterState()
     {
         remainingRefreshCount = defaultRefreshCount;
+
+        InitializeWeights();//初始化权重
 
         // 加载所有Buff数据
         await LoadAllBuffsAsync();
@@ -72,6 +74,38 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     }
 
     /// <summary>
+    /// 初始化Buff权重
+    /// </summary>
+    private void InitializeWeights()
+    {
+        //计算总权重
+        float totalWeight = commonWeight + rareWeight + epicWeight + legendaryWeight;
+
+        if (totalWeight > 0)
+        {
+            commonWeight /= totalWeight;
+            rareWeight /= totalWeight;
+            epicWeight /= totalWeight;
+            legendaryWeight /= totalWeight;
+        }
+        else
+        {
+            commonWeight = 0.7f;
+            rareWeight = 0.2f;
+            epicWeight = 0.08f;
+            legendaryWeight = 0.02f;
+        }
+
+        rarityWeights = new Dictionary<Rarity, float>()
+        {
+            { Rarity.Common, commonWeight },
+            { Rarity.Rare, rareWeight },
+            { Rarity.Epic, epicWeight },
+            { Rarity.Legendary, legendaryWeight }
+        };
+    }
+
+    /// <summary>
     /// 根据权重随机抽取Buff
     /// </summary>
     private void GenerateBuffOptions()
@@ -104,23 +138,18 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         if (allBuffs.Count == 0) return null;
 
         // 根据权重随机选择稀有度
-        int totalWeight = 0;
-        foreach (var weight in rarityWeights.Values)
-        {
-            totalWeight += weight;
-        }
-
-        int randomValue = UnityEngine.Random.Range(0, totalWeight);
+        float randomValue = UnityEngine.Random.Range(0f, 1f);
         Rarity selectedRarity = Rarity.Common;
+        float cumulativeWeight = 0f;
 
         foreach (var kvp in rarityWeights)
         {
-            if (randomValue < kvp.Value)
+            cumulativeWeight += kvp.Value;
+            if (randomValue <= cumulativeWeight)
             {
                 selectedRarity = kvp.Key;
                 break;
             }
-            randomValue -= kvp.Value;
         }
 
         // 从对应稀有度的Buff中随机选择一个
@@ -135,7 +164,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// </summary>
     private void OnBuffSelected(BuffSO buff)
     {
-        // 可以在这里处理选中逻辑，如高亮显示等
+        // 可以在这里处理选中逻辑，选中颜色在BuffPanel
     }
 
     /// <summary>
