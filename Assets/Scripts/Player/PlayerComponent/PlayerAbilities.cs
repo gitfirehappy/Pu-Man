@@ -34,11 +34,12 @@ public class PlayerAbilities : MonoBehaviour
 
     private PlayerCore playerCore;
     private PlayerInput playerInput;
-    public int currentWave = 10;//临时变量，当前波次数,后续需要从关卡系统中获取该变量 
+    private WaveCounter waveCounter;
 
     private void Awake()
     {
         playerCore = GetComponent<PlayerCore>();
+        waveCounter = WaveCounter.Instance;
         if (playerCore != null && playerCore.playerInput != null)
         {
             playerCore.playerInput.Player.Ability.started += ActivateAbility;
@@ -113,6 +114,10 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void ActivateAbility(InputAction.CallbackContext context)
     {
+        if (waveCounter == null) return;
+
+        int currentWave = waveCounter.CurrentWave;
+
         if (currentWave <= nextAvailableWave || isAbilityActive)
         {
             Debug.Log("技能不可用");
@@ -168,7 +173,10 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void ResetAbilityCooldown()
     {
-        nextAvailableWave = currentWave++;
+        if (waveCounter != null)
+        {
+            nextAvailableWave = waveCounter.CurrentWave;
+        }
     }
 
     /// <summary>
@@ -246,6 +254,17 @@ public class PlayerAbilities : MonoBehaviour
                 break;
         }
         isAbilityActive = false;
+    }
+
+    public int GetCooldownWaves()
+    {
+        switch (currentAbility)
+        {
+            case AbilityType.Classic: return currentClassicCooldownWaves;
+            case AbilityType.Berserk: return currentBerserkCooldownWaves;
+            case AbilityType.ChainKill: return currentChainkillCooldownWaves;
+            default: return 0;
+        }
     }
 
 }

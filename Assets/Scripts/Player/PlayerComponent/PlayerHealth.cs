@@ -201,7 +201,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public float HealthRegen => healthRegen;
     public float DodgeChance => dodgeChance;
     public float CollisionDamage => collisionDamage;
-
+    public float CurrentHealth => currentHealth;
 
     #endregion
 

@@ -40,26 +40,56 @@ public static class EventBus
 
     #endregion
 
+    #region 敌人相关
+
+    public static event Action OnBossWaveStarted;
+    public static event Action OnBossWaveEnded;
+
+    #endregion
+
     #region 触发方法
+
+    #region 游戏流程相关
 
     public static void TriggerGameStateChanged(GameState state) => OnGameStateChanged?.Invoke(state);
     public static void TriggerBattleStart() => OnBattleStart?.Invoke();
     public static void TriggerCharacterSelected() => OnCharacterSelected?.Invoke();
     public static void TriggerBuffSelected() => OnBuffSelected?.Invoke();
 
+    #endregion
+
+    #region 玩家相关
+
     public static void TriggerPlayerDeath() => _onPlayerDeath?.Invoke();
     public static void TriggerPlayerDisabled() => OnPlayerDisabled?.Invoke();
     public static void TriggerPlayerEnabled() => OnPlayerEnabled?.Invoke();
+
+    #endregion
+
+    #region 暂停相关
 
     public static void TriggerGamePaused() => OnGamePaused?.Invoke();
     public static void TriggerGameResumed() => OnGameResumed?.Invoke();
     public static void TriggerPauseUIRequested() => OnPauseUIRequested?.Invoke();
     public static void TriggerResumeUIRequested() => OnResumeUIRequested?.Invoke();
 
+    #endregion
+
+    #region 波次和时间
+
     public static void TriggerTimeOut() => OnTimeOut?.Invoke();
     public static void TriggerAllWavesCompleted() => OnAllWavesCompleted?.Invoke();
     public static void TriggerEndlessModeActivated() => OnEndlessModeActivated?.Invoke();
     public static void TriggerWaveChanged(int wave) => OnWaveChanged?.Invoke(wave);
+
+    #endregion
+
+    #region 敌人相关(boss)
+
+    public static void TriggerBossWaveStarted() => OnBossWaveStarted?.Invoke();
+    public static void TriggerBossWaveEnded() => OnBossWaveEnded?.Invoke();
+
+    #endregion
 
     #endregion
 }

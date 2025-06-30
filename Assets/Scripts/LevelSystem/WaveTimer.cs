@@ -35,9 +35,7 @@ public class WaveTimer : SingletonMono<WaveTimer>
 
         if (_currentTime <= 0)
         {
-            _currentTime = 0;
-            _isRunning = false;
-            EventBus.TriggerTimeOut();
+            CompleteWave();
         }
     }
 
@@ -50,8 +48,9 @@ public class WaveTimer : SingletonMono<WaveTimer>
 
     private void CompleteWave()
     {
-        // 计时结束，切换到选Buff状态
-        EventBus.TriggerGameStateChanged(GameState.SelectBuff);
+        _currentTime = 0;
+        _isRunning = false;
+        EventBus.TriggerTimeOut();
     }
 
     public void PauseTimer() => _isRunning = false;

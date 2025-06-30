@@ -558,6 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c16c56f8f758ba4e849d3694bb750e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiPrefabsToPreload: []
 --- !u!4 &684775746
 Transform:
   m_ObjectHideFlags: 0
@@ -654,6 +655,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4be9226c0b5fcf41a0f8a388c73403b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultBuffChoices: 3
+  defaultRefreshCount: 1
+  commonWeight: 0.7
+  rareWeight: 0.2
+  epicWeight: 0.08
+  legendaryWeight: 0.02
 --- !u!1 &1221782492
 GameObject:
   m_ObjectHideFlags: 0

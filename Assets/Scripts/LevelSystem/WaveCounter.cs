@@ -27,6 +27,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     public bool IsEndlessMode => _isEndlessMode;
     public float TimeIncrease => timeIncreasePerWave;
     public float CurrentTimeLimit => _currentTimeLimit;
+    public int TotalWaves => totalWaves;
 
     protected override void Init()
     {
@@ -80,9 +81,13 @@ public class WaveCounter : SingletonMono<WaveCounter>
                 }
             }
         }
-
-
         EventBus.TriggerWaveChanged(_currentWave);
+
+        //boss事件
+        if (_currentWave % bossInterval == 0)
+        {
+            EventBus.TriggerBossWaveStarted();
+        }
     }
 
     /// <summary>
