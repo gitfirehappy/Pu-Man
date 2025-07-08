@@ -54,18 +54,18 @@ public class EnemyReward : MonoBehaviour
     {
         if (_playerCore == null || _rewardConfig == null) return;
 
-        // TODO：应用回血效果
+        //应用回血效果
         if (_rewardConfig.healthUp > 0)
         {
-            //_playerCore.ApplyReward(_rewardConfig.healthUp);
+            _playerCore.Health.AddCurrentHealth(_rewardConfig.healthUp);
             Debug.Log($"玩家获得 {_rewardConfig.healthUp} 点生命恢复", this);
         }
 
-        // TODO: 刷新次数增加逻辑
-        if (_rewardConfig.extraRefreshChance > 0) 
+        // 刷新次数增加逻辑
+        var buffUIManager = GameUIManager.Instance?.GetSubUIManager<SelectBuffUIManager>();
+        if (_rewardConfig.extraRefreshChance > 0 && buffUIManager != null)
         {
-            //_gameUIManager.ApplyReward(_rewardConfig.extraRefreshChance);
-            Debug.Log($"玩家获得 {_rewardConfig.extraRefreshChance} 次刷新次数", this);
+            buffUIManager.AddRefreshCount(_rewardConfig.extraRefreshChance);
         }
     }
 }

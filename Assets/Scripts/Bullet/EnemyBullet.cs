@@ -60,7 +60,7 @@ public class EnemyBullet : MonoBehaviour
     {
         if (playerCollider.TryGetComponent<PlayerHealth>(out var player))
         {
-            player.TakeDamage(damageAmount);
+            player.TakeDamage(damageAmount, DamageSource.Enemy);
         }
     }
 

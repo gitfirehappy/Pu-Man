@@ -7,7 +7,6 @@ public class PausePanel : UIFormBase
 {
     //角色面板
 
-    //选择过的Buff
 
     //设置按钮（呼出设置界面）
 

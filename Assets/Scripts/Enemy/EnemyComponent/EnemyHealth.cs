@@ -100,16 +100,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// 敌人受伤
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, DamageSource source = DamageSource.Player)
     {
         if (_isDead) return;
 
         currentHealth -= damage;
 
-        Debug.Log($"Enemy took {damage} damage! Current HP: {currentHealth}");
+        Debug.Log($"{source} caused {damage} damage to Enemy! Current HP: {currentHealth}");
         if (currentHealth <= 0)
         {
-            Die();
+            Die(source);
         }
     }
 
@@ -117,7 +117,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         if (isCollisionImmune) return false;
 
-        TakeDamage(damage);
+        TakeDamage(damage,DamageSource.Player);
         lastCollisionDamageTime = Time.time;
         return true;
     }
@@ -125,7 +125,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// <summary>
     /// 敌人死亡
     /// </summary>
-    private void Die()
+    private void Die(DamageSource source)
     {
         if (_isDead || this == null) return;
         _isDead = true;
@@ -138,6 +138,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         // 通知死亡事件（EnemyCore会处理回收）
         OnDeath?.Invoke();
+        EnemyEvent.TriggerDeath(enemyCore, source); // 传递死亡来源
     }
 
 

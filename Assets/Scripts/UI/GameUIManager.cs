@@ -86,4 +86,21 @@ public class GameUIManager : SingletonMono<GameUIManager>
     {
         EventBus.OnGameStateChanged -= OnGameStateChanged;
     }
+
+    /// <summary>
+    /// 获取子UI管理器的方法
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public T GetSubUIManager<T>() where T : IUIController
+    {
+        foreach (var controller in uiControllers.Values)
+        {
+            if (controller is T)
+            {
+                return (T)controller;
+            }
+        }
+        return default;
+    }
 }

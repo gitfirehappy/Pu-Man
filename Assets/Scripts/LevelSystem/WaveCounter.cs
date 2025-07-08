@@ -23,6 +23,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     private bool _isEndlessMode;
     private float _currentTimeLimit; // 当前波次时间上限
 
+    public bool IsInEndlessMode => _isEndlessMode;
     public int CurrentWave => _currentWave;
     public bool IsEndlessMode => _isEndlessMode;
     public float TimeIncrease => timeIncreasePerWave;
@@ -98,7 +99,5 @@ public class WaveCounter : SingletonMono<WaveCounter>
         _isEndlessMode = true;
         _currentTimeLimit = endlessModeTime; // 无尽模式固定45秒
         EventBus.TriggerEndlessModeActivated();
-
     }
-
 }

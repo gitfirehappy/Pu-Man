@@ -9,26 +9,29 @@ public static class EnemyEvent
     #region 核心事件
 
     public static event Action<EnemyCore> OnSpawned;
-    public static event Action<EnemyCore> OnDeath; // Enemy实例
 
-    #endregion
+    public static event Action<EnemyCore, DamageSource> OnDeath; // Enemy实例
+
+    #endregion 核心事件
 
     #region 触发方法
+
     public static void TriggerSpawned(EnemyCore enemy)
     {
         if (!ValidateEnemy(enemy)) return;
         SafeTrigger(nameof(OnSpawned), () => OnSpawned?.Invoke(enemy));
     }
 
-    public static void TriggerDeath(EnemyCore enemy)
+    public static void TriggerDeath(EnemyCore enemy, DamageSource source)
     {
         if (!ValidateEnemy(enemy)) return;
-        SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy));
+        SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy, source));
     }
 
-    #endregion
+    #endregion 触发方法
 
     #region 安全验证与调试
+
     private static bool ValidateEnemy(EnemyCore enemy)
     {
         if (enemy == null || enemy.Equals(null))
@@ -57,10 +60,13 @@ public static class EnemyEvent
     {
         Debug.Log($"[EnemyEvent] {eventName} | {extraInfo}");
     }
-    #endregion
+
+    #endregion 安全验证与调试
 
     #region 编辑器工具
+
 #if UNITY_EDITOR
+
     [UnityEditor.MenuItem("Tools/Enemy/Print Event Listeners")]
     public static void PrintListeners()
     {
@@ -68,6 +74,16 @@ public static class EnemyEvent
                  $"{nameof(OnSpawned)}: {OnSpawned?.GetInvocationList().Length ?? 0}\n" +
                  $"{nameof(OnDeath)}: {OnDeath?.GetInvocationList().Length ?? 0}\n");
     }
+
 #endif
-    #endregion
+
+    #endregion 编辑器工具
+}
+
+public enum DamageSource
+{
+    SystemCleanup,  // 系统清理
+    Player,         // 玩家直接造成
+    ChainKill,       // 亵渎技能造成
+    Enemy,          //敌人
 }

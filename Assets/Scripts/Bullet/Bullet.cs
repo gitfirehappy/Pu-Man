@@ -82,7 +82,7 @@ public class Bullet : MonoBehaviour
             enemyCollider.TryGetComponent<EnemyHealth>(out var health) &&
             !health.IsDead)
         {
-            enemy.TakeDamage(damageAmount);
+            enemy.TakeDamage(damageAmount, DamageSource.Player);
 
             // 击退效果
             if (_knockbackForce > 0 && enemyCollider.TryGetComponent<Rigidbody2D>(out var rb))

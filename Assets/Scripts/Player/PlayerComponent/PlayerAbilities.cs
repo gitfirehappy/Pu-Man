@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerAbilities : MonoBehaviour
 {
-
     [Header("主动技能冷却")]
     [SerializeField] private AbilityType baseAbility;
     [SerializeField] private int baseClassicCooldownWaves;
@@ -25,13 +24,13 @@ public class PlayerAbilities : MonoBehaviour
     private float currentBerserkFireRateMultiplier;
 
     [Header("被动效果")]
-    //[SerializeField] private int extraRefreshChancesPerWave = 1; // 每波增加的刷新次数(可以在刷新中检测技能Type）
+    [SerializeField] private int extraRefreshChancesPerWave = 1;
 
     [Header("当前状态")]
     public int nextAvailableWave; // 下次可用技能的波次
     public bool isAbilityActive;
-    private Coroutine activeAbilityCoroutine;
 
+    private Coroutine activeAbilityCoroutine;
     private PlayerCore playerCore;
     private PlayerInput playerInput;
     private WaveCounter waveCounter;
@@ -48,7 +47,6 @@ public class PlayerAbilities : MonoBehaviour
         {
             Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
         }
-
     }
 
     public void DisableAbilities()
@@ -58,12 +56,20 @@ public class PlayerAbilities : MonoBehaviour
         {
             DeactivateAbility();
         }
-
     }
 
     public void EnableAbilities()
     {
+    }
 
+    private void OnEnable()
+    {
+        EventBus.OnWaveChanged += OnWaveChanged;
+    }
+
+    private void OnDisable()
+    {
+        EventBus.OnWaveChanged -= OnWaveChanged;
     }
 
     /// <summary>
@@ -132,10 +138,12 @@ public class PlayerAbilities : MonoBehaviour
                 nextAvailableWave = currentWave + currentClassicCooldownWaves;
                 ClassicAbility();
                 break;
+
             case AbilityType.Berserk:
                 nextAvailableWave = currentWave + currentBerserkCooldownWaves;
                 activeAbilityCoroutine = StartCoroutine(BerserkAbilityRoutine());
                 break;
+
             case AbilityType.ChainKill:
                 nextAvailableWave = currentWave + currentChainkillCooldownWaves;
                 ChainKill();
@@ -169,6 +177,24 @@ public class PlayerAbilities : MonoBehaviour
     }
 
     /// <summary>
+    /// 波次变化加刷新次数
+    /// </summary>
+    /// <param name="wave"></param>
+    private void OnWaveChanged(int wave)
+    {
+        // 拥有Skilled技能的玩家获得每波刷新次数
+        if (currentAbility == AbilityType.Skilled)
+        {
+            var buffUIManager = GameUIManager.Instance?.GetSubUIManager<SelectBuffUIManager>();
+            if (buffUIManager != null)
+            {
+                buffUIManager.AddRefreshCount(extraRefreshChancesPerWave); // 每波增加刷新机会
+                Debug.Log($"Skilled技能生效: 获得1次额外刷新机会 (当前波次: {wave})");
+            }
+        }
+    }
+
+    /// <summary>
     /// 重置冷却
     /// </summary>
     public void ResetAbilityCooldown()
@@ -196,7 +222,6 @@ public class PlayerAbilities : MonoBehaviour
         Debug.Log("释放了亵渎技能！");
         // 实现亵渎技能 - 需要在EnemyManager中实现
         // StartCoroutine(ChainKillRoutine());
-
     }
 
     /// <summary>
@@ -235,7 +260,7 @@ public class PlayerAbilities : MonoBehaviour
         }
         currentAbility = newAbility;
         ResetAbilityCooldown();
-        Debug.Log("当前技能:"+currentAbility);
+        Debug.Log("当前技能:" + currentAbility);
     }
 
     /// <summary>
@@ -249,6 +274,7 @@ public class PlayerAbilities : MonoBehaviour
                 //重置射击
                 playerCore.Shooting.ResetToBaseStats();
                 break;
+
             case AbilityType.Classic:
                 playerCore.Health.RemoveInvincible();
                 break;
@@ -266,7 +292,6 @@ public class PlayerAbilities : MonoBehaviour
             default: return 0;
         }
     }
-
 }
 
 /// <summary>

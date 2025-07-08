@@ -120,7 +120,7 @@ public class BattleUIPanel : UIFormBase
     }
 
     /// <summary>
-    /// 
+    /// 波次转换事件
     /// </summary>
     /// <param name="wave"></param>
     private void OnWaveChanged(int wave)

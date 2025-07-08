@@ -10,6 +10,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
 {
     [Header("Buff配置")]
     [SerializeField][Header("默认n选1")] private int defaultBuffChoices = 3;
+
     [SerializeField][Header("默认刷新次数")] private int defaultRefreshCount = 1;
 
     [Header("稀有度权重 (总和自动调整为1)")]
@@ -19,16 +20,24 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     [Range(0f, 1f)][SerializeField] private float legendaryWeight = 0.02f;
 
     private SelectBuffPanel selectBuffPanel;
+
     private int remainingRefreshCount;
+
     private List<BuffSO> allBuffs = new List<BuffSO>();
     private List<BuffSO> currentBuffOptions = new List<BuffSO>();
-
     private Dictionary<Rarity, float> rarityWeights;
 
     public async void OnEnterState()
     {
-        remainingRefreshCount = defaultRefreshCount;
+        // 检查是否是无尽模式
+        if (WaveCounter.Instance != null && WaveCounter.Instance.IsInEndlessMode)
+        {
+            // 无尽模式直接返回战斗状态
+            EventBus.TriggerGameStateChanged(GameState.Battle);
+            return;
+        }
 
+        remainingRefreshCount = defaultRefreshCount;
         InitializeWeights();//初始化权重
 
         // 加载所有Buff数据
@@ -46,7 +55,6 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     {
         UIManager.Instance.HideUIForm<SelectBuffPanel>();
     }
-
 
     /// <summary>
     /// 异步加载所有Buff数据
@@ -125,8 +133,8 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         // 更新UI显示
         if (selectBuffPanel != null)
         {
-            selectBuffPanel.ShowBuffOptions(currentBuffOptions, 
-                OnBuffSelected, OnApplyBuff, OnRefreshBuff,remainingRefreshCount);
+            selectBuffPanel.ShowBuffOptions(currentBuffOptions,
+                OnBuffSelected, OnApplyBuff, OnRefreshBuff, remainingRefreshCount);
         }
     }
 
@@ -200,6 +208,21 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         GenerateBuffOptions();
 
         // 更新UI刷新次数显示
+        if (selectBuffPanel != null)
+        {
+            selectBuffPanel.UpdateRefreshCount(remainingRefreshCount);
+        }
+    }
+
+    /// <summary>
+    /// 增加刷新次数
+    /// </summary>
+    /// <param name="count">增加的次数</param>
+    public void AddRefreshCount(int count)
+    {
+        remainingRefreshCount += count;
+
+        // 更新UI显示
         if (selectBuffPanel != null)
         {
             selectBuffPanel.UpdateRefreshCount(remainingRefreshCount);

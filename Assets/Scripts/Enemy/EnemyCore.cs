@@ -96,7 +96,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
     private void HandleDeath()
     {
         // 触发全局事件
-        EnemyEvent.TriggerDeath(this);
+        EnemyEvent.TriggerDeath(this,DamageSource.Player);
 
         // 触发内部事件（通知EnemyReward等组件）
         OnEnemyDeath?.Invoke();

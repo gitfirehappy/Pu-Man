@@ -6,25 +6,26 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [Header("属性")]
     [SerializeField][Header("当前血量")] private float currentHealth;
+
     [SerializeField][Header("当前能否触发名刀")] private bool currentHasCheatDeath;
 
-
     [SerializeField][Header("血量上限")] private float maxHealth;
-    [SerializeField][Header("护甲值")]   private float armor;
+    [SerializeField][Header("护甲值")] private float armor;
     [SerializeField][Header("生命恢复")] private float healthRegen;
-    [SerializeField][Header("闪避率")]   private float dodgeChance;
-    [SerializeField][Header("碰撞伤害")]   private float collisionDamage;
+    [SerializeField][Header("闪避率")] private float dodgeChance;
+    [SerializeField][Header("碰撞伤害")] private float collisionDamage;
     [SerializeField][Header("碰撞受击无敌时间")] private float collisionImmunityDuration;
     [SerializeField][Header("是否有名刀")] private bool hasCheatDeath;
     [SerializeField][Header("名刀无敌时间")] private float cheatDeathInvincibleTime;
 
-
     [Header("无敌效果")]
     public bool isInvincible; // 当前是否无敌
+
     public float invincibleDuration; // 无敌剩余时间
 
     //碰撞
     private float lastCollisionDamageTime;
+
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
     // 添加死亡事件
@@ -51,17 +52,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         hasCheatDeath = playerData.healthConfig.hasCheatDeath;
 
         ResetToBaseStats();
-
     }
 
     public void DisableHealth()
     {
-
     }
 
     public void EnableHealth()
     {
-        
     }
 
     /// <summary>
@@ -72,7 +70,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
         currentHasCheatDeath = hasCheatDeath;
         RemoveInvincible();
-
     }
 
     /// <summary>
@@ -91,7 +88,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     /// 玩家受击
     /// </summary>
     /// <param name="damage">原伤害</param>
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, DamageSource source = DamageSource.Enemy)
     {
         //无敌判定
         if (isInvincible) return;
@@ -104,7 +101,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
 
         // 护甲减伤
-        float damageTaken = damage - armor; 
+        float damageTaken = damage - armor;
 
         // 致命伤害检查,名刀
         if (damageTaken >= currentHealth)
@@ -116,11 +113,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
 
         currentHealth -= damageTaken;
-        Debug.Log($"Player took {damageTaken} damage! Current HP: {currentHealth}");
+        Debug.Log($"{source} caused {damageTaken} damage to Player! Current HP: {currentHealth}");
 
         if (currentHealth <= 0)
         {
-            Die();
+            Die(source);
         }
     }
 
@@ -148,7 +145,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             currentHasCheatDeath = false;
         }
     }
-
 
     /// <summary>
     /// 添加无敌效果
@@ -183,19 +179,17 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         StopCoroutine("InvincibleTimerRoutine");
     }
 
-
     /// <summary>
     /// 玩家死亡
     /// </summary>
-    private void Die()
+    private void Die(DamageSource source)
     {
         Debug.Log("Player died!");
         OnDeath?.Invoke(); // 通知Core死亡事件
-
     }
 
-
     #region 公共属性
+
     public float MaxHealth => maxHealth;
     public float Armor => armor;
     public float HealthRegen => healthRegen;
@@ -203,20 +197,24 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public float CollisionDamage => collisionDamage;
     public float CurrentHealth => currentHealth;
 
-    #endregion
+    #endregion 公共属性
 
     #region 增益效果相关方法
 
     public void AddMaxHealth(float amount) => maxHealth += amount;
+
     public void AddArmor(float amount) => armor += amount;
+
     public void AddHealthRegen(float amount) => healthRegen += amount;
+
     public void AddCollitionDamage(float amount) => collisionDamage += amount;
+
     public void AddDodgeChance(float amount) => dodgeChance = Mathf.Min(dodgeChance + amount, 0.6f);
+
     public void SetCheatDeath(bool value) => hasCheatDeath = value;
 
     //临时
     public void AddCurrentHealth(float amount) => currentHealth += amount;
 
-    #endregion
-
+    #endregion 增益效果相关方法
 }
