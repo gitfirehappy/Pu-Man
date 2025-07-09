@@ -152,6 +152,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
     }
 
+    public void TakeDamage(float damage, DamageSource source)
+    {
+        _health?.TakeDamage(damage, source);
+    }
+
     #region 公共属性
     public EnemyType EnemyType => enemyData.enemyType;
 

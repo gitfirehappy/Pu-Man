@@ -16,6 +16,7 @@ public class SelectBuffPanel : UIFormBase
     [SerializeField][Header("确定Buff按钮")] private Button applyBuffButton;
     [SerializeField][Header("刷新Buff按钮")] private Button refreshBuffButton;
     [SerializeField][Header("剩余刷新次数")] private TextMeshPro refreshCountText;
+    [SerializeField][Header("剩余选择次数")] private TextMeshPro remainingChoicesText;
 
     private BuffSO selectedBuff;
     private System.Action<BuffSO> onApplyCallback;
@@ -28,6 +29,7 @@ public class SelectBuffPanel : UIFormBase
         applyBuffButton.interactable = false;
         refreshBuffButton.interactable = false; // 初始状态由ShowBuffOptions设置
         refreshCountText.text = "刷新次数: 0";
+        remainingChoicesText.text = "剩余选择: 0";
     }
 
     /// <summary>
@@ -39,6 +41,8 @@ public class SelectBuffPanel : UIFormBase
         System.Action onRefresh,
         int initialRefreshCount) // 添加初始刷新次数参数
     {
+        ResetSelection();
+
         // 清空现有卡片
         foreach (Transform child in cardContainer)
         {
@@ -81,5 +85,16 @@ public class SelectBuffPanel : UIFormBase
     {
         refreshCountText.text = $"刷新次数: {count}";
         refreshBuffButton.interactable = count > 0;
+    }
+
+    public void SetRemainingChoices(int count)
+    {
+        remainingChoicesText.text = $"剩余选择: {count}";  
+    }
+
+    public void ResetSelection()
+    {
+        selectedBuff = null;
+        applyBuffButton.interactable = false;
     }
 }

@@ -27,7 +27,7 @@ public class BuffSO : ScriptableObject
     [Header("增加移速")] public float speedModifier;
 
     [Header("稀有")]
-    [Header("额外选择次数")] public int extraBuff;
+    [Header("额外选择次数")] public int extraBuffChoices;
     [Header("刷新次数")] public int extraRefreshChance;
     [Header("减少技能冷却")] public int reduceAbilityCooldown;
 

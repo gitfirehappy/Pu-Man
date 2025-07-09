@@ -9,9 +9,13 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class SelectBuffUIManager : MonoBehaviour, IUIController
 {
     [Header("Buff配置")]
-    [SerializeField][Header("默认n选1")] private int defaultBuffChoices = 3;
+    [SerializeField][Header("默认n个选项")] private int defaultBuffChoices = 3;
+    [SerializeField][Header("默认选择次数")] private int defaultBuffCanChoose = 1;
+    private int remainingChoices;//剩余选择次数
+    private int extraBuffChoices = 0; // 存储额外Buff选择次数
 
     [SerializeField][Header("默认刷新次数")] private int defaultRefreshCount = 1;
+    private int remainingRefreshCount;
 
     [Header("稀有度权重 (总和自动调整为1)")]
     [Range(0f, 1f)][SerializeField] private float commonWeight = 0.7f;
@@ -20,8 +24,6 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     [Range(0f, 1f)][SerializeField] private float legendaryWeight = 0.02f;
 
     private SelectBuffPanel selectBuffPanel;
-
-    private int remainingRefreshCount;
 
     private List<BuffSO> allBuffs = new List<BuffSO>();
     private List<BuffSO> currentBuffOptions = new List<BuffSO>();
@@ -46,6 +48,10 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         // 显示选择面板
         UIManager.Instance.ShowUIForm<SelectBuffPanel>();
         selectBuffPanel = UIManager.Instance.GetForm<SelectBuffPanel>();
+
+        // 计算总Buff选择次数 = 默认 + 额外
+        remainingChoices = defaultBuffCanChoose + extraBuffChoices;
+        extraBuffChoices = 0; // 使用后重置
 
         // 生成初始Buff选项
         GenerateBuffOptions();
@@ -180,21 +186,29 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// </summary>
     private void OnApplyBuff(BuffSO selectedBuff)
     {
-        if (selectedBuff == null) return;
+        if (selectedBuff == null || remainingChoices <= 0) return;
+
+        Debug.Log($"应用Buff: {selectedBuff.buffID}, 剩余次数: {remainingChoices - 1}");
 
         // 应用Buff效果
         var player = FindObjectOfType<PlayerCore>();
-        if (player != null)
-        {
-            var buffProcessor = player.GetComponent<PlayerBuff>();
-            if (buffProcessor != null)
-            {
-                buffProcessor.Apply(selectedBuff, player);
-            }
-        }
+        player?.GetComponent<PlayerBuff>()?.Apply(selectedBuff, player);
 
-        // 返回游戏
-        EventBus.TriggerGameStateChanged(GameState.Battle);
+        // 减少选择次数
+        remainingChoices--;
+        selectBuffPanel.SetRemainingChoices(remainingChoices);
+
+        if (remainingChoices > 0)
+        {
+            // 还有选择机会，重新生成选项
+            selectBuffPanel.ResetSelection();
+            GenerateBuffOptions();
+        }
+        else
+        {
+            // 选择次数用完，返回游戏
+            EventBus.TriggerGameStateChanged(GameState.Battle);
+        }
     }
 
     /// <summary>
@@ -227,5 +241,15 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         {
             selectBuffPanel.UpdateRefreshCount(remainingRefreshCount);
         }
+    }
+
+    /// <summary>
+    /// 增加额外的Buff选择次数
+    /// </summary>
+    /// <param name="count">增加的次数</param>
+    public void AddExtraBuffChoices(int count)
+    {
+        extraBuffChoices += count;
+        Debug.Log($"已增加{count}次额外Buff选择机会，将在下次选择时生效");
     }
 }

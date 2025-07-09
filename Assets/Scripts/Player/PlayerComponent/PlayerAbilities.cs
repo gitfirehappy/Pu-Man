@@ -220,8 +220,20 @@ public class PlayerAbilities : MonoBehaviour
     public void ChainKill()
     {
         Debug.Log("释放了亵渎技能！");
-        // 实现亵渎技能 - 需要在EnemyManager中实现
-        // StartCoroutine(ChainKillRoutine());
+
+        // 获取玩家位置作为技能中心
+        Vector2 origin = playerCore.transform.position;
+
+        // 设置技能半径（可根据需要调整或从配置读取）
+        float radius = 5f;
+        float damage = 1f;
+
+        // 调用EnemyManager执行亵渎技能
+        EnemyManager.Instance.ChainKill(origin, radius, damage);
+
+        // 播放特效和音效
+
+        isAbilityActive = false;
     }
 
     /// <summary>

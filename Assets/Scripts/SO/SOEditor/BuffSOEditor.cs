@@ -81,7 +81,7 @@ public class BuffSOEditor : Editor
             //稀有
 
             case BuffID.ExtraBuff:
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("extraBuff"),
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("extraBuffChoices"),
                     new GUIContent("增加下次选择buff数量"));
                 break;
 

@@ -56,13 +56,13 @@ public class PlayerBuff : MonoBehaviour,IBuffEffect
 
             // ========== 稀有增益 ==========
             case BuffID.ExtraBuff:
-                // 需要在关卡管理器中实现
-                // GameManager.Instance.AddExtraBuffChoices(buffData.extraBuff);
+                GameUIManager.Instance.GetSubUIManager<SelectBuffUIManager>().AddExtraBuffChoices(buffData.extraBuffChoices);
+                Debug.Log($"下回合将增加{buffData.extraBuffChoices}次Buff选择机会");
                 break;
 
             case BuffID.ExtraRefreshChance:
-                // 需要在UI系统中实现
-                // BuffSelectionUI.Instance.AddRefreshChances(buffData.extraRefreshChance);
+                GameUIManager.Instance.GetSubUIManager<SelectBuffUIManager>().AddRefreshCount(buffData.extraRefreshChance);
+                Debug.Log($"增加{buffData.extraRefreshChance}次刷新机会");
                 break;
 
             case BuffID.ReduceAbilityCooldown:
