@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : SingletonMono<MonoBehaviour>
 {
     [Header("固定配置")]
     [SerializeField] private float minSpawnDistance = 5f; // 避免刷脸的最小距离
@@ -18,18 +20,20 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float spawnInterval = 3f;        // 每次生成的时间间隔
 
     [Header("敌人预制体池")]
-    [SerializeField] private EnemySpawnConfig[] enemyPrefabs;
+    [SerializeField] private List<GameObject> enemyPrefabs;
 
     private Transform playerTransform;
     private bool isSpawning;
 
 
-    private void Awake()
+    protected override void Init()
     {
         playerTransform = FindObjectOfType<PlayerCore>().transform;
         EventBus.OnBattleStart += StartSpawning;
         EventBus.OnBuffSelected += StopSpawning;
         EventBus.OnPlayerDeath += StopSpawning;
+
+        EventBus.OnBossWaveStarted += OnBossWaveStarted;
     }
 
     private void OnDestroy()
@@ -37,6 +41,8 @@ public class EnemySpawner : MonoBehaviour
         EventBus.OnBattleStart -= StartSpawning;
         EventBus.OnBuffSelected -= StopSpawning;
         EventBus.OnPlayerDeath -= StopSpawning;
+
+        EventBus.OnBossWaveStarted -= OnBossWaveStarted;
     }
 
     private void StartSpawning() => isSpawning = true;
@@ -54,19 +60,39 @@ public class EnemySpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 生成敌人组
+    /// Boss波事件回调
+    /// </summary>
+    private void OnBossWaveStarted()
+    {
+        GameObject bossPrefab = GetBossEnemy();
+        if (bossPrefab != null)
+        {
+            Vector2 spawnPos = GetValidSpawnPosition();
+            SpawnSingleEnemy(bossPrefab, spawnPos);
+        }
+    }
+
+    /// <summary>
+    /// 普通生成敌人组
     /// </summary>
     private void SpawnEnemyGroup()
     {
-        GameObject enemyPrefab = GetRandomEnemyByWeight();
-        EnemySizeType sizeType = GetEnemySizeType(enemyPrefab.GetComponent<EnemyCore>().EnemyType);
+        int currentWave = WaveCounter.Instance.CurrentWave;
 
+        // 普通敌人生成逻辑（Boss波也会执行）
+        GameObject enemyPrefab = GetRandomEnemy(currentWave);
+        if (enemyPrefab == null) return;
+
+        EnemySO enemyData = enemyPrefab.GetComponent<EnemyCore>().EnemyData;
         Vector2 spawnCenter = GetValidSpawnPosition();
-        int spawnCount = sizeType == EnemySizeType.Normal ? Random.Range(3, 6) : Random.Range(1, 3);
+
+        int spawnCount = enemyData.isLargeEnemy ?
+            UnityEngine.Random.Range(1, 3) :  // 大型敌人1-2只
+            UnityEngine.Random.Range(3, 6);   // 普通敌人3-5只
 
         for (int i = 0; i < spawnCount; i++)
         {
-            Vector2 spawnPos = spawnCenter + Random.insideUnitCircle * groupSpawnRadius;
+            Vector2 spawnPos = spawnCenter + UnityEngine.Random.insideUnitCircle * groupSpawnRadius;
             if (IsPositionInMap(spawnPos))
             {
                 SpawnSingleEnemy(enemyPrefab, spawnPos);
@@ -75,18 +101,55 @@ public class EnemySpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 获取敌人大小
+    /// 获取boss预制体
     /// </summary>
-    /// <param name="type"></param>
     /// <returns></returns>
-    private EnemySizeType GetEnemySizeType(EnemyType type)
+    /// <exception cref="Exception"></exception>
+    private GameObject GetBossEnemy()
     {
-        return type.ToString().StartsWith("Big") ? EnemySizeType.Big :
-               type == EnemyType.Boss ? EnemySizeType.Boss : EnemySizeType.Normal;
+        var bossPrefabs = enemyPrefabs.FindAll(p =>
+             p.GetComponent<EnemyCore>().EnemyData.isBoss);
+
+        return bossPrefabs.Count > 0 ?
+            bossPrefabs[UnityEngine.Random.Range(0, bossPrefabs.Count)] :
+            null;
     }
 
     /// <summary>
-    /// 敌人组生成位置
+    /// 获取随机敌人
+    /// </summary>
+    /// <param name="currentWave"></param>
+    /// <returns></returns>
+    private GameObject GetRandomEnemy(int currentWave)
+    {
+        var availablePrefabs = enemyPrefabs.FindAll(p => {
+            var data = p.GetComponent<EnemyCore>().EnemyData;
+            return !data.isBoss && currentWave >= data.unlockWave;
+        });
+
+        if (availablePrefabs.Count == 0) return null;
+
+        // 计算总权重
+        float totalWeight = 0;
+        foreach (var prefab in availablePrefabs)
+            totalWeight += prefab.GetComponent<EnemyCore>().EnemyData.spawnWeight;
+
+        // 权重随机
+        float randomPoint = UnityEngine.Random.Range(0, totalWeight);
+        float cumulativeWeight = 0;
+
+        foreach (var prefab in availablePrefabs)
+        {
+            cumulativeWeight += prefab.GetComponent<EnemyCore>().EnemyData.spawnWeight;
+            if (randomPoint <= cumulativeWeight)
+                return prefab;
+        }
+
+        return availablePrefabs[0];
+    }
+
+    /// <summary>
+    /// 随机生成位置
     /// </summary>
     /// <returns></returns>
     private Vector2 GetValidSpawnPosition()
@@ -95,8 +158,8 @@ public class EnemySpawner : MonoBehaviour
         int attempts = 0;
         do
         {
-            Vector2 dir = Random.insideUnitCircle.normalized;
-            float distance = Random.Range(minSpawnDistance, maxSpawnDistance);
+            Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
+            float distance = UnityEngine.Random.Range(minSpawnDistance, maxSpawnDistance);
             spawnPos = (Vector2)playerTransform.position + dir * distance;
             attempts++;
         } while (!IsPositionInMap(spawnPos) && attempts < 10);
@@ -105,7 +168,7 @@ public class EnemySpawner : MonoBehaviour
     }
 
     /// <summary>
-    /// 是否在地图内
+    /// 是否超出边界
     /// </summary>
     /// <param name="pos"></param>
     /// <returns></returns>
@@ -113,28 +176,6 @@ public class EnemySpawner : MonoBehaviour
     {
         return pos.x > -mapWidth / 2 && pos.x < mapWidth / 2 &&
                pos.y > -mapHeight / 2 && pos.y < mapHeight / 2;
-    }
-
-    /// <summary>
-    /// 获取敌人权重
-    /// </summary>
-    /// <returns></returns>
-    private GameObject GetRandomEnemyByWeight()
-    {
-        float totalWeight = 0;
-        foreach (var config in enemyPrefabs) totalWeight += config.weight;
-
-        float randomPoint = Random.Range(0, totalWeight);
-        float cumulativeWeight = 0;
-
-        foreach (var config in enemyPrefabs)
-        {
-            cumulativeWeight += config.weight;
-            if (randomPoint <= cumulativeWeight)
-                return config.prefab;
-        }
-
-        return enemyPrefabs[0].prefab;
     }
 
     /// <summary>
@@ -151,20 +192,7 @@ public class EnemySpawner : MonoBehaviour
             ObjectPoolManager.PoolType.Enemy
         ).GetComponent<EnemyCore>();
 
-        //对象池取出时会初始化
+        enemy?.InitializeComponents();
     }
 
-    [System.Serializable]
-    public class EnemySpawnConfig
-    {
-        public GameObject prefab; // 已配置EnemyCore+EnemySO的预制体
-        [Range(0.1f, 10f)] public float weight = 1f;
-    }
-
-}
-public enum EnemySizeType
-{
-    Normal = 0,
-    Big = 1 << 0,
-    Boss = 1 << 1
 }

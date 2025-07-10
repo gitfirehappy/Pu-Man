@@ -8,6 +8,19 @@ public class EnemySO : ScriptableObject
 
     [TextArea] public string description;
 
+    [Header("生成配置")]
+    [Tooltip("生成权重"), Range(0.1f, 10f)]
+    public float spawnWeight = 1f;
+
+    [Tooltip("解锁该敌人的最低波次")]
+    public int unlockWave = 0;
+
+    [Tooltip("Boss敌人必须设为true")]
+    public bool isBoss = false;
+
+    [Tooltip("大型敌人必须设为true")]
+    public bool isLargeEnemy = false;
+
     [Header("基础属性")]
     [Header("移动速度")] public float moveSpeed;
     [Header("血量上限")] public float maxHealth;

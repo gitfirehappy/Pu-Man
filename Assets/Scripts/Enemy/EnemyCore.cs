@@ -33,7 +33,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// <summary>
     /// 敌人组件初始化
     /// </summary>
-    private void InitializeComponents()
+    public void InitializeComponents()
     {
         // 确保基础组件存在
         _health = GetOrAddComponent<EnemyHealth>();
@@ -165,6 +165,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
     public float CurrentHealth => _health.CurrentHealth;
 
     public float MaxHealth => _health.MaxHealth;
+
+    public EnemySO EnemyData => enemyData;
+
 
     #endregion
 }

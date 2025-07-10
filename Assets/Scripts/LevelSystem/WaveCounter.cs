@@ -23,12 +23,14 @@ public class WaveCounter : SingletonMono<WaveCounter>
     private bool _isEndlessMode;
     private float _currentTimeLimit; // 当前波次时间上限
 
+    #region 公共属性
     public bool IsInEndlessMode => _isEndlessMode;
     public int CurrentWave => _currentWave;
     public bool IsEndlessMode => _isEndlessMode;
     public float TimeIncrease => timeIncreasePerWave;
     public float CurrentTimeLimit => _currentTimeLimit;
     public int TotalWaves => totalWaves;
+    #endregion
 
     protected override void Init()
     {

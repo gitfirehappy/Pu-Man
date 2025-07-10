@@ -15,6 +15,13 @@ public class EnemySOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("description"));
 
         EditorGUILayout.Space(5);
+        EditorGUILayout.LabelField("生成配置", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("spawnWeight"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("unlockWave"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("isBoss"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("isLargeEnemy"));
+
+        EditorGUILayout.Space(5);
         EditorGUILayout.LabelField("基础属性", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(serializedObject.FindProperty("maxHealth"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("moveSpeed"));
