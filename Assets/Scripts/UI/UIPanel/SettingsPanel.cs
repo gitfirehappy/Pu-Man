@@ -12,6 +12,8 @@ public class SettingsPanel : UIFormBase
 
     [SerializeField][Header("关闭界面按钮")] private Button closeButton;
 
+    [SerializeField][Header("重置记录按钮按钮")] private Button resetDataButton;
+
     protected override void Init()
     {
         // 自动绑定音量滑块（无需手动赋值）
@@ -41,6 +43,15 @@ public class SettingsPanel : UIFormBase
     private void CloseSettingsPanel()
     {
         UIManager.Instance.HideUIForm<SettingsPanel>();
+    }
+
+    /// <summary>
+    /// 重置最高记录
+    /// </summary>
+    public void ResetHighestWaveRecords()
+    {
+        CharacterDataManager.Instance.ResetAllRecords();
+        Debug.Log("已重置所有角色记录");
     }
 
 }

@@ -8,7 +8,6 @@ public class EnemySO : ScriptableObject
 
     [TextArea] public string description;
 
-    [Header("生成配置")]
     [Tooltip("生成权重"), Range(0.1f, 10f)]
     public float spawnWeight = 1f;
 
@@ -21,7 +20,6 @@ public class EnemySO : ScriptableObject
     [Tooltip("大型敌人必须设为true")]
     public bool isLargeEnemy = false;
 
-    [Header("基础属性")]
     [Header("移动速度")] public float moveSpeed;
     [Header("血量上限")] public float maxHealth;
     [Header("碰撞伤害")] public float collisionDamage;
@@ -61,8 +59,14 @@ public class EnemySO : ScriptableObject
     [System.Serializable]
     public class RewardConfig
     {
-        [Header("回血")] public float healthUp;
-        [Header("增加刷新次数")] public int extraRefreshChance;
+        [Header("奖励配置")]
+        public bool hasHealthReward = false;
+        [Header("回血")]
+        public float healthUp;
+
+        public bool hasRefreshReward = false;
+        [Header("增加刷新次数")]
+        public int extraRefreshChance;
     }
 
 }

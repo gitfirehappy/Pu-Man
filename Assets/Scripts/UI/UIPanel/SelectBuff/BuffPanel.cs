@@ -12,7 +12,9 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
     [SerializeField][Header("Buff图片")] private Image buffPicture;
     [SerializeField][Header("Buff名称")] private TextMeshPro buffName;
     [SerializeField][Header("Buff描述")] private TextMeshPro buffDiscription;
-    [SerializeField][Header("稀有度底色")] private Image rarityBorder;
+    [Header("高亮效果")]
+    [SerializeField] private Image glowBorder; // 动态颜色边框
+    [SerializeField] private ParticleSystem rarityParticles; // 稀有度粒子效果
 
     [Header("稀有度颜色")]
     [SerializeField] private Color commonColor;
@@ -22,6 +24,8 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
 
     private BuffSO currentBuff;
     private System.Action<BuffSO> onClickCallback;
+
+    public BuffSO CurrentBuff => currentBuff;
 
     public void Setup(BuffSO buff, System.Action<BuffSO> onSelectedCallback)
     {
@@ -34,21 +38,8 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
         buffDiscription.text = buff.Description;
 
         // 根据稀有度设置边框颜色
-        switch (buff.rarity)
-        {
-            case Rarity.Common:
-                rarityBorder.color = commonColor;
-                break;
-            case Rarity.Rare:
-                rarityBorder.color = rareColor;
-                break;
-            case Rarity.Epic:
-                rarityBorder.color = epicColor;
-                break;
-            case Rarity.Legendary:
-                rarityBorder.color = legendaryColor;
-                break;
-        }
+        // 设置初始高亮状态
+        SetHighlight(false);
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -56,4 +47,33 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
         onClickCallback?.Invoke(currentBuff);
     }
 
+    public void SetHighlight(bool isSelected)
+    {
+        if (isSelected)
+        {
+            // 激活粒子效果
+            rarityParticles.Play();
+
+            // 设置边框颜色为稀有度对应颜色
+            glowBorder.color = GetRarityColor(currentBuff.rarity) * 1.2f; // 稍微提亮
+            glowBorder.gameObject.SetActive(true);
+        }
+        else
+        {
+            rarityParticles.Stop();
+            glowBorder.gameObject.SetActive(false);
+        }
+    }
+
+    private Color GetRarityColor(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.Common: return commonColor;
+            case Rarity.Rare: return rareColor;
+            case Rarity.Epic: return epicColor;
+            case Rarity.Legendary: return legendaryColor;
+            default: return commonColor;
+        }
+    }
 }

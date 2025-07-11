@@ -12,6 +12,7 @@ public class SelectBuffPanel : UIFormBase
     [Header("Buff卡片容器")]
     [SerializeField] private Transform cardContainer;
     [SerializeField] private GameObject cardPrefab;
+    private List<BuffPanel> buffPanels = new List<BuffPanel>();
 
     [SerializeField][Header("确定Buff按钮")] private Button applyBuffButton;
     [SerializeField][Header("刷新Buff按钮")] private Button refreshBuffButton;
@@ -21,6 +22,8 @@ public class SelectBuffPanel : UIFormBase
     private BuffSO selectedBuff;
     private System.Action<BuffSO> onApplyCallback;
     private System.Action onRefreshCallback;
+
+    public Transform CardContainer => cardContainer;
 
 
     protected override void Init()
@@ -48,6 +51,7 @@ public class SelectBuffPanel : UIFormBase
         {
             Destroy(child.gameObject);
         }
+        buffPanels.Clear();
 
         // 存储回调
         this.onApplyCallback = onApply;
@@ -64,6 +68,7 @@ public class SelectBuffPanel : UIFormBase
                     onSelected?.Invoke(selected);
                     applyBuffButton.interactable = true;
                 });
+            buffPanels.Add(card); // 存入列表
         }
 
         // 重置按钮状态
@@ -96,5 +101,16 @@ public class SelectBuffPanel : UIFormBase
     {
         selectedBuff = null;
         applyBuffButton.interactable = false;
+    }
+
+    public BuffPanel GetBuffPanel(BuffSO buff)
+    {
+        // 遍历列表
+        foreach (var panel in buffPanels)
+        {
+            if (panel.CurrentBuff == buff) // CurrentBuff是BuffPanel的公共属性
+                return panel;
+        }
+        return null;
     }
 }

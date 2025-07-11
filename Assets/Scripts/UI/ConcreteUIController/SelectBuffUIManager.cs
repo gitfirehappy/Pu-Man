@@ -24,6 +24,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     [Range(0f, 1f)][SerializeField] private float legendaryWeight = 0.02f;
 
     private SelectBuffPanel selectBuffPanel;
+    private BuffSO currentlySelectedBuff;
 
     private List<BuffSO> allBuffs = new List<BuffSO>();
     private List<BuffSO> currentBuffOptions = new List<BuffSO>();
@@ -178,7 +179,25 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// </summary>
     private void OnBuffSelected(BuffSO buff)
     {
-        // 可以在这里处理选中逻辑，选中颜色在BuffPanel
+        // 取消之前选中的高亮
+        if (currentlySelectedBuff != null)
+        {
+            // 通过缓存或查找方式获取之前的BuffPanel
+            GetBuffPanelFor(currentlySelectedBuff)?.SetHighlight(false);
+        }
+
+        // 设置新选中
+        currentlySelectedBuff = buff;
+        GetBuffPanelFor(buff)?.SetHighlight(true);
+    }
+
+    private BuffPanel GetBuffPanelFor(BuffSO buff)
+    {
+        if (selectBuffPanel == null || buff == null)
+            return null;
+
+        // 调用SelectBuffPanel的GetBuffPanel方法
+        return selectBuffPanel.GetBuffPanel(buff);
     }
 
     /// <summary>

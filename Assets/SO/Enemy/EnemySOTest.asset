@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aef6142bf23ed6438c1f5bb1b9c6ca9, type: 3}
   m_Name: EnemySOTest
   m_EditorClassIdentifier: 
-  enemyType: 0
+  enemyType: 1
   enemyPrefab: {fileID: 4221185578653224041, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
   description: 
+  spawnWeight: 1
+  unlockWave: 0
+  isBoss: 0
+  isLargeEnemy: 0
   moveSpeed: 2
   maxHealth: 10
   collisionDamage: 1
@@ -35,5 +39,7 @@ MonoBehaviour:
     clashSpeed: 5
     clashCooldown: 1
   rewardConfig:
+    hasHealthReward: 0
     healthUp: 100
+    hasRefreshReward: 0
     extraRefreshChance: 0

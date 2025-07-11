@@ -88,6 +88,12 @@ public class PlayerCore : MonoBehaviour
     /// </summary>
     private void HandlePlayerDeath()
     {
+        // 保存记录
+        CharacterDataManager.Instance.UpdateRecord(
+            playerData.playerType,
+            WaveCounter.Instance.CurrentWave - 1 // CurrentWave从1开始
+        );
+
         //通知总线游戏结束
         EventBus.TriggerPlayerDeath();
     }

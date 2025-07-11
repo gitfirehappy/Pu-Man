@@ -6,12 +6,13 @@ using UnityEngine.UI;
 
 public class GameOverPanel : UIFormBase
 {
-    [SerializeField][Header("通过波次")] private TextMeshPro throughWaves;
+    [SerializeField][Header("通过波次")] private TextMeshPro throughWavesText;
     [SerializeField][Header("返回菜单按钮")] private Button backButton;
 
     protected override void Init()
     {
        backButton.onClick.AddListener(OnBackToMenu);
+        UpdateWaveCount();
     }
 
     private void OnBackToMenu()
@@ -19,4 +20,13 @@ public class GameOverPanel : UIFormBase
         EventBus.TriggerGameStateChanged(GameState.Menu);
     }
 
+    private void UpdateWaveCount()
+    {
+        if (throughWavesText != null)
+        {
+            // 获取当前波次(注意从几开始，可能需要调整)
+            int wavesPassed = WaveCounter.Instance.CurrentWave - 1;
+            throughWavesText.text = $"通过波次: {wavesPassed}";
+        }
+    }
 }

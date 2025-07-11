@@ -12,7 +12,7 @@ public class CharacterPanel : UIFormBase, IPointerClickHandler
 {
     [Header("角色图片")]public Image characterPicture;
     [Header("角色名称")]public TextMeshPro characterName;
-    [Header("最高波次")] public TextMeshPro historicalbest;//TODO：数据保存
+    [Header("最高波次")] public TextMeshPro historicalBest;//TODO：数据保存
 
     private PlayerSO playerSO;
     private Action<PlayerSO> onClickCallback;
@@ -24,6 +24,10 @@ public class CharacterPanel : UIFormBase, IPointerClickHandler
 
         characterPicture.sprite = data.playerSprite;
         characterName.text = data.playerName;
+
+        // 显示最高波次
+        int highestWave = CharacterDataManager.Instance.GetHighestWave(data.playerType);
+        historicalBest.text = $"最高记录: {highestWave}波";
     }
 
 
