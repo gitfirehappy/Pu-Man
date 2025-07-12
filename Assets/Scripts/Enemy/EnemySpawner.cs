@@ -64,11 +64,19 @@ public class EnemySpawner : SingletonMono<MonoBehaviour>
     /// </summary>
     private void OnBossWaveStarted()
     {
+        StartCoroutine(SpawnBossWithDelay());
+    }
+
+    private IEnumerator SpawnBossWithDelay()
+    {
+        yield return null; // 等待一帧确保事件处理完成
+
         GameObject bossPrefab = GetBossEnemy();
         if (bossPrefab != null)
         {
             Vector2 spawnPos = GetValidSpawnPosition();
             SpawnSingleEnemy(bossPrefab, spawnPos);
+            //不用对boss做标记，事件会处理
         }
     }
 

@@ -20,12 +20,15 @@ public class BattleUIPanel : UIFormBase
     [SerializeField][Header("当前波次")] private TextMeshPro waveText;
 
     [Header("boss血量")]
+    [SerializeField] private GameObject bossUIGroup; // 整个Boss UI的父对象（空物体）
     [SerializeField] private Image bossHealthFill;
     [SerializeField] private TextMeshPro bossHealthText;
 
     private PlayerCore _player;
     private WaveTimer _waveTimer;
     private WaveCounter _waveCounter;
+    private EnemyCore _currentBoss;
+    private Coroutine _bossUICoroutine;
 
     protected override void Init()
     {
@@ -41,10 +44,28 @@ public class BattleUIPanel : UIFormBase
         UpdateWaveUI();
         UpdateBossHealthUI();
 
+        // 初始隐藏Boss UI
+        bossUIGroup.SetActive(false);
+
         // 注册事件
         EventBus.OnWaveChanged += OnWaveChanged;
+
         EventBus.OnBossWaveStarted += OnBossWaveStarted;
+        EventBus.OnBossSpawned += OnBossSpawned;
         EventBus.OnBossWaveEnded += OnBossWaveEnded;
+    }
+
+    private void OnDestroy()
+    {
+        // 清理事件注册
+        EventBus.OnWaveChanged -= OnWaveChanged;
+
+        EventBus.OnBossWaveStarted -= OnBossWaveStarted;
+        EventBus.OnBossSpawned -= OnBossSpawned;
+        EventBus.OnBossWaveEnded -= OnBossWaveEnded;
+
+        if (_bossUICoroutine != null)
+            StopCoroutine(_bossUICoroutine);
     }
 
     private void Update()
@@ -53,6 +74,12 @@ public class BattleUIPanel : UIFormBase
         UpdateTimerUI();
         UpdateHealthUI();
         UpdateSkillCooldownUI();
+
+        // 实时更新Boss血量
+        if (bossUIGroup.activeSelf && _currentBoss != null)
+        {
+            UpdateBossHealthUI();
+        }
     }
 
     /// <summary>
@@ -129,26 +156,66 @@ public class BattleUIPanel : UIFormBase
         UpdateSkillCooldownUI();
     }
 
-    private void UpdateBossHealthUI()
-    {
+    #region BossUI
 
-    }
-
-
+    /// <summary>
+    /// 事件1：Boss波次开始时触发（此时Boss还未生成）
+    /// </summary>
     private void OnBossWaveStarted()
     {
-        // TODO: 实际实现时替换为真正的Boss数据
+        // 显示Boss UI框架但无具体数据
+        bossUIGroup.SetActive(true);
+        bossHealthText.text = "BOSS INCOMING...";
         bossHealthFill.fillAmount = 1f;
+
+        //TODO:关掉/调到最低背景音乐
     }
 
+    /// <summary>
+    /// 事件2：Boss实体生成完成后触发
+    /// </summary>
+    /// <param name="boss"></param>
+    private void OnBossSpawned(EnemyCore boss)
+    {
+        _currentBoss = boss;
+
+        // 更新UI显示真实血量
+        UpdateBossHealthUI();
+
+        // 可以在这里播放Boss登场特效
+        //TODO:播放boss战专属背景音乐
+        Debug.Log($"Boss {boss.name} 已绑定到UI");
+    }
+
+
+    /// <summary>
+    /// 更新Boss血量UI
+    /// </summary>
+    private void UpdateBossHealthUI()
+    {
+        if (_currentBoss == null || _currentBoss.IsDead) return;
+
+        bossHealthFill.fillAmount = _currentBoss.CurrentHealth / _currentBoss.MaxHealth;
+        bossHealthText.text = $"{_currentBoss.CurrentHealth:F0}/{_currentBoss.MaxHealth:F0}";
+    }
+
+    /// <summary>
+    /// Boss波结束（死亡或超时）
+    /// </summary>
     private void OnBossWaveEnded()
     {
+        if (_bossUICoroutine != null)
+            StopCoroutine(_bossUICoroutine);
 
+        _bossUICoroutine = StartCoroutine(HideBossUIDelayed(2f));
     }
 
-    // 更新Boss血量 (由Boss系统调用)
-    public void UpdateBossHealth(float currentHealth, float maxHealth)
+    private IEnumerator HideBossUIDelayed(float delay)
     {
-        bossHealthFill.fillAmount = currentHealth / maxHealth;
+        yield return new WaitForSeconds(delay);
+        bossUIGroup.SetActive(false);
+        _currentBoss = null;
     }
+
+    #endregion
 }

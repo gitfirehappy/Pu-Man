@@ -44,6 +44,7 @@ public static class EventBus
 
     public static event Action OnBossWaveStarted;
     public static event Action OnBossWaveEnded;
+    public static event Action<EnemyCore> OnBossSpawned;
 
     #endregion
 
@@ -88,6 +89,7 @@ public static class EventBus
 
     public static void TriggerBossWaveStarted() => OnBossWaveStarted?.Invoke();
     public static void TriggerBossWaveEnded() => OnBossWaveEnded?.Invoke();
+    public static void TriggerBossSpawned(EnemyCore boss) => OnBossSpawned?.Invoke(boss);
 
     #endregion
 

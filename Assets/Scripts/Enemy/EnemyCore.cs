@@ -95,11 +95,15 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     private void HandleDeath()
     {
-        // 触发全局事件
-        EnemyEvent.TriggerDeath(this,DamageSource.Player);
-
-        // 触发内部事件（通知EnemyReward等组件）
+        // 只触发敌人内部事件
         OnEnemyDeath?.Invoke();
+        EnemyEvent.TriggerDeath(this, DamageSource.Player);
+
+        // 如果是Boss，额外触发全局事件
+        if (EnemyData.isBoss)
+        {
+            EventBus.TriggerBossWaveEnded();
+        }
 
         ReturnToPool();
     }
@@ -125,6 +129,10 @@ public class EnemyCore : MonoBehaviour, IPoolable
         // 重新初始化
         InitializeComponents();
         EnemyEvent.TriggerSpawned(this); // 触发生成事件
+        if (EnemyData.isBoss)
+        {
+            EventBus.TriggerBossSpawned(this);
+        }
     }
 
     public void SetPool(IObjectPool<GameObject> pool)

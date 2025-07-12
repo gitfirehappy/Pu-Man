@@ -51,4 +51,14 @@ public class EnemyManager : SingletonMono<EnemyManager>//TODO:敌人生成器也
     {
         return activeEnemies.Count;
     }
+
+    public List<EnemyCore> GetActiveEnemies()
+    {
+        return new List<EnemyCore>(activeEnemies);
+    }
+
+    public EnemyCore GetActiveBoss()
+    {
+        return activeEnemies.Find(e => e.EnemyData.isBoss);
+    }
 }
