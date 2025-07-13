@@ -59,22 +59,7 @@ public class PlayerSO : ScriptableObject
     public class AbilitiesConfig
     {
         [Header("初始技能")] public AbilityType startingAbility;
-
-        [Header("经典技能配置")]
-        public int classicCooldownWaves;
-        public float classicDuration;
-
-        [Header("狂暴技能配置")]
-        public int berserkCooldownWaves;
-        public float berserkDuration;
-        public float berserkFireRateMultiplier;
-
-        [Header("额外刷新技能配置")]
-        public int extraRefreshChancesPerWave;
-
-        [Header("亵渎技能配置")]
-        public int chainkillCooldownWaves;
-
+        public AbilityData startingAbilityData;
     }
 
 }

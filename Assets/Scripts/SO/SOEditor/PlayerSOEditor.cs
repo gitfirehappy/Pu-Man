@@ -23,37 +23,16 @@ public class PlayerSOEditor : Editor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("shootingConfig"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("movementConfig"));
 
-        // 根据技能类型显示对应配置
+        // 技能配置部分
         EditorGUILayout.Space(10);
         EditorGUILayout.LabelField("技能配置", EditorStyles.boldLabel);
         var abilitiesConfig = serializedObject.FindProperty("abilitiesConfig");
 
+        // 显示初始技能类型
         EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("startingAbility"));
 
-        var abilityType = (AbilityType)abilitiesConfig.FindPropertyRelative("startingAbility").enumValueIndex;
-
-        switch (abilityType)
-        {
-            case AbilityType.Classic:
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("classicCooldownWaves"));
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("classicDuration"));
-                break;
-
-            case AbilityType.Berserk:
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("berserkCooldownWaves"));
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("berserkDuration"));
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("berserkFireRateMultiplier"));
-                break;
-
-            case AbilityType.Skilled:
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("extraRefreshChancesPerWave"));
-                break;
-
-            case AbilityType.ChainKill:
-                EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("chainkillCooldownWaves"));
-                break;
-
-        }
+        // 显示AbilityData结构体
+        EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("startingAbilityData"), true);
 
         serializedObject.ApplyModifiedProperties();
     }

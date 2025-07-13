@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b6b1590a85b2443aba9a557a568d74, type: 3}
   m_Name: PlayerBuffTest
   m_EditorClassIdentifier: 
-  buffID: 0
+  buffID: 22
   rarity: 0
   buffPicture: {fileID: 0}
   Description: 
+  isUnique: 0
   healthModifier: 0
   armorModifier: 0
   healthRegenModifier: 0
@@ -27,14 +28,11 @@ MonoBehaviour:
   projectileCountModifier: 0
   projectileSizeModifier: 0
   speedModifier: 0
-  extraBuff: 0
+  extraBuffChoices: 0
   extraRefreshChance: 0
   reduceAbilityCooldown: 0
-  replaceAbilityWithChainKill: 0
-  randomizeAbility: 0
-  grantCheatDeath: 0
-  aoeShot: 0
   allNormalBuffModifier: 0
-  reduceEnemy: 0
-  healthToArmor: 0
-  barserkMode: 0
+  cheatDeathInvisibleTime: 0
+  chainKillCooldown: 0
+  reduceEnemySpawn: 0
+  amorToDamageModifier: 0

@@ -5,28 +5,12 @@ using UnityEngine.InputSystem;
 
 public class PlayerAbilities : MonoBehaviour
 {
-    [Header("主动技能冷却")]
-    [SerializeField] private AbilityType baseAbility;
-    [SerializeField] private int baseClassicCooldownWaves;
-    [SerializeField] private int baseBerserkCooldownWaves;
-    [SerializeField] private int baseChainkillCooldownWaves;
-    [SerializeField] private float baseClassicDuration;
-    [SerializeField] private float baseBerserkDuration;
-    [SerializeField] private float baseBerserkFireRateMultiplier;
+    [Header("基准技能配置")]
+    [SerializeField] private AbilityData baseAbilityData;
 
-    [Header("当前属性")]
-    private AbilityType currentAbility;
-    private int currentClassicCooldownWaves;
-    private int currentBerserkCooldownWaves;
-    private int currentChainkillCooldownWaves;
-    private float currentClassicDuration;
-    private float currentBerserkDuration;
-    private float currentBerserkFireRateMultiplier;
+    [Header("当前技能状态")]
+    [SerializeField]private AbilityData currentAbilityData;
 
-    [Header("被动效果")]
-    [SerializeField] private int extraRefreshChancesPerWave = 1;
-
-    [Header("当前状态")]
     public int nextAvailableWave; // 下次可用技能的波次
     public bool isAbilityActive;
 
@@ -79,14 +63,8 @@ public class PlayerAbilities : MonoBehaviour
     {
         nextAvailableWave = 0;
 
-        baseAbility = playerData.abilitiesConfig.startingAbility;
-        baseClassicCooldownWaves = playerData.abilitiesConfig.classicCooldownWaves;
-        baseBerserkCooldownWaves = playerData.abilitiesConfig.berserkCooldownWaves;
-        baseChainkillCooldownWaves = playerData.abilitiesConfig.chainkillCooldownWaves;
-        baseClassicDuration = playerData.abilitiesConfig.classicDuration;
-        baseBerserkDuration = playerData.abilitiesConfig.berserkDuration;
-        baseBerserkFireRateMultiplier = playerData.abilitiesConfig.berserkFireRateMultiplier;
-
+        baseAbilityData = new AbilityData(playerData.abilitiesConfig.startingAbility);
+        // 从 playerData 中读取其他配置（如冷却、持续时间等）
         ResetToBaseStats(); // 初始化时调用重置方法
     }
 
@@ -96,13 +74,7 @@ public class PlayerAbilities : MonoBehaviour
     public void ResetToBaseStats()
     {
         // 重置当前属性为基准值
-        currentAbility = baseAbility;
-        currentClassicCooldownWaves = baseClassicCooldownWaves;
-        currentBerserkCooldownWaves = baseBerserkCooldownWaves;
-        currentChainkillCooldownWaves = baseChainkillCooldownWaves;
-        currentClassicDuration = baseClassicDuration;
-        currentBerserkDuration = baseBerserkDuration;
-        currentBerserkFireRateMultiplier = baseBerserkFireRateMultiplier;
+        currentAbilityData = baseAbilityData;
 
         // 重置技能状态
         isAbilityActive = false;
@@ -132,20 +104,20 @@ public class PlayerAbilities : MonoBehaviour
 
         isAbilityActive = true;
 
-        switch (currentAbility)
+        switch (currentAbilityData.type)
         {
             case AbilityType.Classic:
-                nextAvailableWave = currentWave + currentClassicCooldownWaves;
+                nextAvailableWave = currentWave + currentAbilityData.cooldownWaves;
                 ClassicAbility();
                 break;
 
             case AbilityType.Berserk:
-                nextAvailableWave = currentWave + currentBerserkCooldownWaves;
+                nextAvailableWave = currentWave + currentAbilityData.cooldownWaves;
                 activeAbilityCoroutine = StartCoroutine(BerserkAbilityRoutine());
                 break;
 
             case AbilityType.ChainKill:
-                nextAvailableWave = currentWave + currentChainkillCooldownWaves;
+                nextAvailableWave = currentWave + currentAbilityData.cooldownWaves;
                 ChainKill();
                 break;
         }
@@ -157,7 +129,7 @@ public class PlayerAbilities : MonoBehaviour
     private void ClassicAbility()
     {
         Debug.Log("释放了无敌技能！");
-        playerCore.Health.AddInvincible(currentClassicDuration);
+        playerCore.Health.AddInvincible(currentAbilityData.duration);
         isAbilityActive = false;
     }
 
@@ -169,9 +141,9 @@ public class PlayerAbilities : MonoBehaviour
     {
         Debug.Log("释放了狂暴技能！");
         float originalFireRate = playerCore.Shooting.FireRate;
-        playerCore.Shooting.AddCurrentFireRate(originalFireRate * currentBerserkFireRateMultiplier);
-        yield return new WaitForSeconds(currentBerserkDuration);
-        playerCore.Shooting.AddCurrentFireRate(-originalFireRate * currentBerserkFireRateMultiplier);
+        playerCore.Shooting.AddCurrentFireRate(originalFireRate * currentAbilityData.effectValue);
+        yield return new WaitForSeconds(currentAbilityData.duration);
+        playerCore.Shooting.AddCurrentFireRate(-originalFireRate * currentAbilityData.effectValue);
         isAbilityActive = false;
         Debug.Log("狂暴技能结束");
     }
@@ -183,12 +155,12 @@ public class PlayerAbilities : MonoBehaviour
     private void OnWaveChanged(int wave)
     {
         // 拥有Skilled技能的玩家获得每波刷新次数
-        if (currentAbility == AbilityType.Skilled)
+        if (currentAbilityData.type == AbilityType.Skilled)
         {
             var buffUIManager = GameUIManager.Instance?.GetSubUIManager<SelectBuffUIManager>();
             if (buffUIManager != null)
             {
-                buffUIManager.AddRefreshCount(extraRefreshChancesPerWave); // 每波增加刷新机会
+                buffUIManager.AddRefreshCount(currentAbilityData.extraRefreshPerWave); // 每波增加刷新机会
                 Debug.Log($"Skilled技能生效: 获得1次额外刷新机会 (当前波次: {wave})");
             }
         }
@@ -241,38 +213,29 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void RandomizeAbility()
     {
-        // 定义初始技能池
-        AbilityType[] initialAbilities = new AbilityType[]
-        {
-        AbilityType.Classic,
-        AbilityType.Berserk,
-        AbilityType.Skilled
-        };
-
-        // 从初始技能池中随机选择（排除当前技能）
-        AbilityType newAbility;
+        AbilityType[] initialAbilities = { AbilityType.Classic, AbilityType.Berserk, AbilityType.Skilled };
+        AbilityType newType;
         do
         {
-            newAbility = initialAbilities[Random.Range(0, initialAbilities.Length)];
-        } while (newAbility == currentAbility);
+            newType = initialAbilities[Random.Range(0, initialAbilities.Length)];
+        } while (newType == currentAbilityData.type);
 
-        ChangeAbility(newAbility);
+        ChangeAbility(new AbilityData(newType));
     }
-
+    
     /// <summary>
     /// 更换技能
     /// </summary>
-    /// <param name="newAbility"></param>
-    public void ChangeAbility(AbilityType newAbility)
+    public void ChangeAbility(AbilityData newAbilityData)
     {
         if (isAbilityActive && activeAbilityCoroutine != null)
         {
             StopCoroutine(activeAbilityCoroutine);
             DeactivateAbility();
         }
-        currentAbility = newAbility;
+        currentAbilityData = newAbilityData;
         ResetAbilityCooldown();
-        Debug.Log("当前技能:" + currentAbility);
+        Debug.Log($"技能已切换为: {currentAbilityData.type}，冷却: {currentAbilityData.cooldownWaves}波");
     }
 
     /// <summary>
@@ -280,7 +243,7 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     private void DeactivateAbility()
     {
-        switch (currentAbility)
+        switch (currentAbilityData.type)
         {
             case AbilityType.Berserk:
                 //重置射击
@@ -296,13 +259,7 @@ public class PlayerAbilities : MonoBehaviour
 
     public int GetCooldownWaves()
     {
-        switch (currentAbility)
-        {
-            case AbilityType.Classic: return currentClassicCooldownWaves;
-            case AbilityType.Berserk: return currentBerserkCooldownWaves;
-            case AbilityType.ChainKill: return currentChainkillCooldownWaves;
-            default: return 0;
-        }
+        return currentAbilityData.cooldownWaves;
     }
 }
 
@@ -316,4 +273,49 @@ public enum AbilityType
     Berserk,    // 狂暴吐豆人：短时间大幅提升攻速
     Skilled,    // 会玩的吐豆人：刷新次数+1
     ChainKill,  //亵渎清场,通过buff获取
+}
+
+[System.Serializable]
+public struct AbilityData
+{
+    public AbilityType type;
+    public int cooldownWaves;  // 冷却波次
+    public float duration;     // 持续时间（如无敌/狂暴的持续时间）
+    public float effectValue;  // 效果数值（如狂暴的攻速倍率）
+
+    public bool isPassive;         // 是否为被动技能
+    public int extraRefreshPerWave; // 每波增加的刷新次数（仅Skilled技能需要）
+
+    // 构造函数：为不同技能类型提供默认值
+    public AbilityData(AbilityType type)
+    {
+        this.type = type;
+        cooldownWaves = 0;
+        duration = 0;
+        effectValue = 0;
+        isPassive = false;
+        extraRefreshPerWave = 0;
+
+        // 根据类型设置默认值（可选）
+        switch (type)
+        {
+            case AbilityType.Classic:
+                cooldownWaves = 5;
+                duration = 10f;
+                break;
+            case AbilityType.Berserk:
+                cooldownWaves = 3;
+                duration = 5f;
+                effectValue = 1.5f; // 攻速倍率
+                break;
+            case AbilityType.Skilled:
+                isPassive = true;
+                extraRefreshPerWave = 1; // 默认每波+1次刷新
+                break;
+            case AbilityType.ChainKill:
+                cooldownWaves = 2; // 默认冷却
+                effectValue = 1f;
+                break;
+        }
+    }
 }

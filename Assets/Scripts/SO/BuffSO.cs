@@ -8,7 +8,10 @@ public class BuffSO : ScriptableObject
     public Sprite buffPicture;
     [TextArea] public string Description;
 
-    // 所有可能的数值字段（但只会显示当前buffID需要的）
+    [Header("是否为唯一buff(只能获得一次)")]
+    public bool isUnique;
+
+    // 所有可能的数值字段
     [Header("血量类")]
     [Header("增加生命")] public float healthModifier;
     [Header("增加护甲")] public float armorModifier;
@@ -31,24 +34,14 @@ public class BuffSO : ScriptableObject
     [Header("刷新次数")] public int extraRefreshChance;
     [Header("减少技能冷却")] public int reduceAbilityCooldown;
 
-
-    [Header("史诗")]//bool类只能获得一次
-    [Header("亵渎")] public bool replaceAbilityWithChainKill;
-    [Header("随机技能")] public bool randomizeAbility;
-    [Header("名刀")] public bool grantCheatDeath;
-    [Header("范围伤害")] public bool aoeShot;
-    [Header("全属性提升")] public float allNormalBuffModifier;
+    [Header("史诗")]
+    [Header("全属性提升百分比")] public float allNormalBuffModifier;
+    [Header("名刀时间")] public float cheatDeathInvisibleTime;
+    [Header("亵渎冷却")] public int chainKillCooldown;
 
     [Header("传说")]
-    [Header("减少出怪")] public bool reduceEnemy;
-    [Header("叠甲")] public bool healthToArmor;
-    [Header("狂暴")] public bool barserkMode;
-
-
-    //private static readonly PlayerBuff _processor = new PlayerBuff();
-
-    //public void Apply(PlayerCore player) => _processor.Apply(this, player);
-    //public void Remove(PlayerCore player) => _processor.Remove(this, player);
+    [Header("减少出怪量")] public float reduceEnemySpawn;
+    [Header("护甲转伤害比例")] public float amorToDamageModifier;
 }
 
 

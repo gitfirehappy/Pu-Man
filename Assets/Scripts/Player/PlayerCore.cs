@@ -1,5 +1,6 @@
 ﻿using UnityEngine.Pool;
 using UnityEngine;
+using System.Collections.Generic;
 
 [DisallowMultipleComponent]
 public class PlayerCore : MonoBehaviour
@@ -163,6 +164,11 @@ public class PlayerCore : MonoBehaviour
     public PlayerMovement Movement => movement;
     public PlayerAbilities Abilities => abilities;
     public PlayerBuff Buff => buff;
+
+    public Dictionary<BuffID, BuffSO> GetAcquiredBuffs()
+    {
+        return buff.GetAcquiredBuffs();
+    }
 
     #endregion
 }

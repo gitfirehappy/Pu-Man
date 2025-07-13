@@ -205,7 +205,7 @@ public class PlayerShooting : MonoBehaviour
     public void AddKnockback(float amount) => baseKnockback += amount;
     public void AddProjectileCount(int amount) => baseProjectileCount = Mathf.Min(baseProjectileCount + amount, 5);
     public void AddProjectileSize(float amount) => baseProjectileSize += amount;
-    public void SetAoeDamage(bool value) => baseIsAoeDamage = value;
+    public void SetAoeDamage() => baseIsAoeDamage = true;
 
     //临时增益方法
 

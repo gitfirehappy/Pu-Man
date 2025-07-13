@@ -1,12 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
-
-public class PlayerBuff : MonoBehaviour,IBuffEffect
+public class PlayerBuff : MonoBehaviour, IBuffEffect
 {
+    [Header("已获得buff")]
+    [SerializeField] private Dictionary<BuffID, BuffSO> acquiredBuffs = new Dictionary<BuffID, BuffSO>();
+
     public void Apply(BuffSO buffData, PlayerCore player)
     {
+        // 检查是否为唯一buff且已获得
+        if (buffData.isUnique && acquiredBuffs.ContainsKey(buffData.buffID))
+        {
+            Debug.Log($"已获得唯一buff: {buffData.buffID}, 无法重复获取");
+            return;
+        }
+
+        // 记录获得的buff
+        acquiredBuffs[buffData.buffID] = buffData;
+
         switch (buffData.buffID)
         {
             // ========== 普通增益 ==========
@@ -69,28 +82,25 @@ public class PlayerBuff : MonoBehaviour,IBuffEffect
                 player.Abilities.ReduceAbilityCooldown(buffData.reduceAbilityCooldown);
                 break;
 
-
             // ========== 史诗增益 ==========
             case BuffID.CheatDeath:
-                player.Health.SetCheatDeath(buffData.grantCheatDeath);
+                player.Health.SetCheatDeath(buffData.cheatDeathInvisibleTime);
                 break;
 
             case BuffID.AoeShot:
-                player.Shooting.SetAoeDamage(buffData.aoeShot);
+                player.Shooting.SetAoeDamage();
                 break;
 
             case BuffID.ChainKillSkill:
-                if (buffData.replaceAbilityWithChainKill)
+                var chainKillData = new AbilityData(AbilityType.ChainKill)
                 {
-                    player.Abilities.ChangeAbility(AbilityType.ChainKill);
-                }
+                    cooldownWaves = buffData.chainKillCooldown // 从 BuffSO 读取冷却时间
+                };
+                player.Abilities.ChangeAbility(chainKillData);
                 break;
 
             case BuffID.ChangeSkill:
-                if (buffData.randomizeAbility)
-                {
-                    player.Abilities.RandomizeAbility();
-                }
+                player.Abilities.RandomizeAbility();
                 break;
 
             case BuffID.AllNormalBuff:
@@ -104,12 +114,10 @@ public class PlayerBuff : MonoBehaviour,IBuffEffect
                 break;
 
             case BuffID.ReduceEnemy:
-                if (buffData.reduceEnemy)
-                {
-                    // 需要在敌人生成器中实现
-                    // EnemySpawner.Instance.ReduceSpawnRate();
-                    player.Abilities.ChangeAbility(AbilityType.None); // 禁用技能
-                }
+                // 需要在敌人生成器中实现
+                // EnemySpawner.Instance.ReduceSpawnRate();
+                var NoneAbilityData = new AbilityData(AbilityType.None);
+                player.Abilities.ChangeAbility(NoneAbilityData); // 禁用技能
                 break;
 
             case BuffID.Barserk:
@@ -160,12 +168,10 @@ public class PlayerBuff : MonoBehaviour,IBuffEffect
     /// <param name="buffData"></param>
     private void ApplyBerserkMode(PlayerCore player, BuffSO buffData)
     {
-        if (buffData.barserkMode)
-        {
-            player.Shooting.AddDamage(player.Shooting.Damage);
-            player.Shooting.AddFireRate(player.Shooting.FireRate);
-            player.Health.AddArmor(-player.Health.Armor * 0.9f);
-        }
+        //TODO：计算转化量
+        player.Shooting.AddDamage(player.Shooting.Damage);
+        player.Shooting.AddFireRate(player.Shooting.FireRate);
+        player.Health.AddArmor(-player.Health.Armor * 0.9f);
     }
 
     /// <summary>
@@ -175,14 +181,15 @@ public class PlayerBuff : MonoBehaviour,IBuffEffect
     /// <param name="buffData"></param>
     private void ApplyHealthToArmor(PlayerCore player, BuffSO buffData)
     {
-        if (buffData.healthToArmor)
-        {
-            float healthReduction = player.Health.MaxHealth - 1;
-            player.Health.AddMaxHealth(-healthReduction);
-            player.Health.AddArmor(healthReduction);
-        }
+        float healthReduction = player.Health.MaxHealth - 1;
+        player.Health.AddMaxHealth(-healthReduction);
+        player.Health.AddArmor(healthReduction);
     }
 
-    #endregion
+    #endregion case调用
 
+    public Dictionary<BuffID, BuffSO> GetAcquiredBuffs()
+    {
+        return new Dictionary<BuffID, BuffSO>(acquiredBuffs);
+    }
 }

@@ -40,10 +40,10 @@ MonoBehaviour:
     runSpeed: 4
   abilitiesConfig:
     startingAbility: 1
-    classicCooldownWaves: 1
-    classicDuration: 10
-    berserkCooldownWaves: 0
-    berserkDuration: 10
-    berserkFireRateMultiplier: 3
-    extraRefreshChancesPerWave: 0
-    chainkillCooldownWaves: 0
+    startingAbilityData:
+      type: 1
+      cooldownWaves: 0
+      duration: 0
+      effectValue: 0
+      isPassive: 0
+      extraRefreshPerWave: 0
