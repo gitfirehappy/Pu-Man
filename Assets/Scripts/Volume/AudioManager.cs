@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class AudioManager : SingletonMono<AudioManager>
 {
+
     [Header("配置")]
     [SerializeField] private AudioMixer mixer;
     [SerializeField] private SceneBGMConfigSO bgmConfig;
@@ -57,4 +58,5 @@ public class AudioManager : SingletonMono<AudioManager>
         if (clip != null)
             sfxSource.PlayOneShot(clip);
     }
+
 }

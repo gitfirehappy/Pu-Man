@@ -28,12 +28,18 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
 
         EventBus.OnPlayerDeath += () => ChangeState(GameState.GameOver);
 
-        EventBus.OnTimeOut += () =>
+        EventBus.OnTimeOut += async () =>
         {
             if (!WaveCounter.Instance.IsInEndlessMode)
+            {
+                // 等待一帧确保敌人清理完成
+                await System.Threading.Tasks.Task.Delay(1);
                 ChangeState(GameState.SelectBuff);
+            }
             else
+            {
                 ChangeState(GameState.Battle);
+            }
         };
 
         EventBus.OnGamePaused += OnGamePaused;

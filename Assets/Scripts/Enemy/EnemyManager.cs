@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyManager : SingletonMono<EnemyManager>//TODO:敌人生成器也在这
+public class EnemyManager : SingletonMono<EnemyManager>
 {
     private List<EnemyCore> activeEnemies = new List<EnemyCore>();
 

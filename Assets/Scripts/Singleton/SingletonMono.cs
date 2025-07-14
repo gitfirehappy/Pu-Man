@@ -6,6 +6,9 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
     private static bool _quitting = false;
     private static object _lock = new object();
 
+    [Header("Singleton Settings")]
+    [SerializeField] private bool _dontDestroyOnLoad = true; // 是否使用 DontDestroyOnLoad
+
     public static T Instance
     {
         get
@@ -26,7 +29,12 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
                     {
                         GameObject obj = new GameObject($"{typeof(T)} (Singleton)");
                         _instance = obj.AddComponent<T>();
-                        DontDestroyOnLoad(obj);
+                        // 只在运行时设置 DontDestroyOnLoad
+                        var singleton = _instance as SingletonMono<T>;
+                        if (Application.isPlaying && singleton != null && singleton._dontDestroyOnLoad)
+                        {
+                            DontDestroyOnLoad(obj);
+                        }
                     }
                 }
 
@@ -40,7 +48,13 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
         if (_instance == null)
         {
             _instance = this as T;
-            DontDestroyOnLoad(gameObject);
+
+            // 只在运行时设置 DontDestroyOnLoad
+            if (Application.isPlaying && _dontDestroyOnLoad)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
+
             Init(); // 子类可实现 Init()
         }
         else if (_instance != this)

@@ -17,7 +17,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     [SerializeField] private int bossInterval = 5; // 每N波出现Boss
 
     [Header("无尽模式")]
-    [SerializeField] private bool enableEndless = true;
+    [SerializeField] private bool enableEndless = false;
 
     private int _currentWave;
     private bool _isEndlessMode;

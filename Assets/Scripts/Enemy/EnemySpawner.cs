@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class EnemySpawner : SingletonMono<MonoBehaviour>
+public class EnemySpawner : SingletonMono<EnemySpawner>
 {
     [Header("固定配置")]
     [SerializeField] private float minSpawnDistance = 5f; // 避免刷脸的最小距离
@@ -30,8 +30,8 @@ public class EnemySpawner : SingletonMono<MonoBehaviour>
     {
         playerTransform = FindObjectOfType<PlayerCore>().transform;
         EventBus.OnBattleStart += StartSpawning;
-        EventBus.OnBuffSelected += StopSpawning;
         EventBus.OnPlayerDeath += StopSpawning;
+        EventBus.OnTimeOut += HandleWaveTimeout;
 
         EventBus.OnBossWaveStarted += OnBossWaveStarted;
     }
@@ -39,14 +39,53 @@ public class EnemySpawner : SingletonMono<MonoBehaviour>
     private void OnDestroy()
     {
         EventBus.OnBattleStart -= StartSpawning;
-        EventBus.OnBuffSelected -= StopSpawning;
         EventBus.OnPlayerDeath -= StopSpawning;
+        EventBus.OnTimeOut -= HandleWaveTimeout;
 
         EventBus.OnBossWaveStarted -= OnBossWaveStarted;
     }
 
-    private void StartSpawning() => isSpawning = true;
-    private void StopSpawning() => isSpawning = false;
+    /// <summary>
+    /// 倒计时为0
+    /// </summary>
+    private void HandleWaveTimeout()
+    {
+        StopSpawning();//停止生成
+        StartCoroutine(CleanupAllEnemies());//清理所有敌人
+    }
+
+    /// <summary>
+    /// 协程方式清理所有敌人，确保在下一帧前完成
+    /// </summary>
+    private IEnumerator CleanupAllEnemies()
+    {
+        // 获取所有活跃敌人
+        var activeEnemies = EnemyManager.Instance.GetActiveEnemies();
+
+        // 遍历并杀死所有敌人
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy != null && !enemy.IsDead)
+            {
+                enemy.TakeDamage(enemy.MaxHealth, DamageSource.SystemCleanup);
+            }
+        }
+
+        yield return null; // 等待一帧确保所有敌人都被处理
+    }
+
+    private void StartSpawning()
+    {
+        isSpawning = true;
+        Debug.Log("[EnemySpawner] 敌人生成已开始");
+    }
+
+
+    private void StopSpawning()
+    {
+        isSpawning = false;
+        Debug.Log("[EnemySpawner] 敌人生成已停止");
+    }
 
     private void Update()
     {
