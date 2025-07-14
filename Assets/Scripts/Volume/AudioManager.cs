@@ -15,6 +15,9 @@ public class AudioManager : SingletonMono<AudioManager>
 
     protected override void Init()
     {
+        // 初始化音量服务
+        AudioVolumeService.Init(mixer);
+
         // 自动创建 AudioSource
         bgmSource = gameObject.AddComponent<AudioSource>();
         sfxSource = gameObject.AddComponent<AudioSource>();

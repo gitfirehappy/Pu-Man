@@ -10,16 +10,16 @@ public class UIFormBase : MonoBehaviour, IUIForm
 {
     protected UIManager uIManager;
 
-    public bool Cached = false;
     public bool IsOpen = false;
     public bool IsInited = false;
 
     [SerializeField]
-    private UILayerSO _layerAsset;
-    public int MajorLayerOrder => _layerAsset != null ? _layerAsset.majorOrder : 0;
-    public int MinorLayerOrder => _layerAsset != null ? _layerAsset.minorOrder : 0;
+    private UIFormConfigSO _config;
+    public int MajorLayerOrder => _config != null ? _config.majorOrder : 0;
+    public int MinorLayerOrder => _config != null ? _config.minorOrder : 0;
+    public bool Cached => _config != null ? _config.cached : false;
+    public FormAnimType AnimType => _config != null ? _config.animType : FormAnimType.None;
 
-    public FormAnimType formAnimType = FormAnimType.None;
 
     public Vector3 originalLocalPos;
 
@@ -39,7 +39,7 @@ public class UIFormBase : MonoBehaviour, IUIForm
         }
 
         // Fade面板初始化CanvasGroup alpha为0，保证第一次打开时能淡入
-        if (formAnimType == FormAnimType.Fade)
+        if (AnimType == FormAnimType.Fade)
         {
             var cg = gameObject.GetComponent<CanvasGroup>();
             if (cg == null)
@@ -81,7 +81,7 @@ public class UIFormBase : MonoBehaviour, IUIForm
     private void CloseImmediate()
     {
         // 若是Fade动画，关闭时alpha也要重置为0，确保下次打开能淡入
-        if (formAnimType == FormAnimType.Fade)
+        if (AnimType == FormAnimType.Fade)
         {
             var cg = gameObject.GetComponent<CanvasGroup>();
             if (cg != null)
@@ -101,7 +101,7 @@ public class UIFormBase : MonoBehaviour, IUIForm
 
     private void OpenAnim()
     {
-        switch (formAnimType)
+        switch (AnimType)
         {
             case FormAnimType.None:
                 gameObject.SetActive(true);
@@ -147,7 +147,7 @@ public class UIFormBase : MonoBehaviour, IUIForm
             }
         };
 
-        switch (formAnimType)
+        switch (AnimType)
         {
             case FormAnimType.None:
                 gameObject.SetActive(false);
