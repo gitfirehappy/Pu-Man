@@ -30,6 +30,8 @@ public class WaveCounter : SingletonMono<WaveCounter>
     public float TimeIncrease => timeIncreasePerWave;
     public float CurrentTimeLimit => _currentTimeLimit;
     public int TotalWaves => totalWaves;
+
+    public int BossInterval => bossInterval;
     #endregion
 
     protected override void Init()

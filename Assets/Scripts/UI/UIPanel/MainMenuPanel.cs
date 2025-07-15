@@ -10,13 +10,9 @@ public class MainMenuPanel : UIFormBase
     [SerializeField][Header("游戏设置按钮")] private Button settingsButton;
     [SerializeField][Header("退出游戏按钮")] private Button exitButton;
 
-    [SerializeField] private AudioMixer mixer;
 
     protected override void Init()
     {
-        //初始化AudioMixer
-        AudioVolumeService.Init(mixer);
-
         startButton.onClick.AddListener(OnStartClick);
         settingsButton.onClick.AddListener(OnSettingsClick);
         exitButton.onClick.AddListener(OnExitClick);

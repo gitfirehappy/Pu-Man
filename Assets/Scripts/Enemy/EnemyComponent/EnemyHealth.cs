@@ -141,6 +141,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         EnemyEvent.TriggerDeath(enemyCore, source); // 传递死亡来源
     }
 
+    public void ApplyWaveScaling(float multiplier)
+    {
+        maxHealth *= multiplier;
+        collisionDamage *= multiplier;
+        currentHealth = maxHealth; // 重置当前血量
+    }
+
 
     private void OnDrawGizmosSelected()
     {

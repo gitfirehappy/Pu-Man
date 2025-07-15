@@ -99,6 +99,16 @@ public class EnemyShooting : MonoBehaviour
         }
     }
 
+    public void ApplyWaveScaling(float multiplier)
+    {
+        bulletDamage *= multiplier;
+    }
+
+    public void AddProjectiles(int count)
+    {
+        projectileCount += count;
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (shootRadius > 0)

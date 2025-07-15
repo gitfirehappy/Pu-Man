@@ -116,6 +116,9 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
             Vector2 spawnPos = GetValidSpawnPosition();
             SpawnSingleEnemy(bossPrefab, spawnPos);
             //不用对boss做标记，事件会处理
+
+            // 通知AudioManager更新BGM
+            AudioManager.Instance.UpdateBGM();
         }
     }
 
