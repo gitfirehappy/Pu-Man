@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b66820e367ec07c4e845a9e88362512e, type: 3}
+  m_Name: SkilledPlayer
+  m_EditorClassIdentifier: 
+  playerType: 2
+  playerName: SkilledPlayer
+  playerSprite: {fileID: 0}
+  playerPrefab: {fileID: 2408863001739500776, guid: 9c3ce89091de26844b27a979a1858218, type: 3}
+  description: 
+  healthConfig:
+    maxHealth: 0
+    armor: 0
+    healthRegen: 0
+    dodgeChance: 0
+    collisionDamage: 0
+    collisionImmunityDuration: 0
+    cheatDeathInvincibleTime: 0
+    hasCheatDeath: 0
+  shootingConfig:
+    damage: 0
+    fireRate: 0
+    knockback: 0
+    projectileCount: 0
+    projectileSize: 0
+    isAoeDamage: 0
+    projectileSpeed: 0
+    projectileLifeTime: 0
+    bulletPrefab: {fileID: 0}
+  movementConfig:
+    runSpeed: 0
+  abilitiesConfig:
+    startingAbility: 3
+    startingAbilityData:
+      type: 3
+      cooldownWaves: 0
+      duration: 0
+      effectValue: 0
+      isPassive: 0
+      extraRefreshPerWave: 0

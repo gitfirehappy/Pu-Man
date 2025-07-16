@@ -928,6 +928,7 @@ MonoBehaviour:
   _dontDestroyOnLoad: 1
   mixer: {fileID: 24100000, guid: ce9f70b363dac1d4b8928b001dab66a8, type: 2}
   bgmConfig: {fileID: 0}
+  defaultBGM: {fileID: 0}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
 --- !u!4 &1322850875
@@ -1217,6 +1218,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
+  scalingConfig:
+    healthPerWave: 0.1
+    damagePerWave: 0.05
+    bossProjectilesPerSpawn: 3
+    maxBossProjectiles: 12
+    typeOverrides: []
 --- !u!4 &1946335553
 Transform:
   m_ObjectHideFlags: 0
