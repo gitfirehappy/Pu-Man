@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class GameOverPanel : UIFormBase
 {
-    [SerializeField][Header("通过波次")] private TextMeshPro throughWavesText;
+    [SerializeField][Header("通过波次")] private TextMeshProUGUI throughWavesText;
     [SerializeField][Header("返回菜单按钮")] private Button backButton;
 
     protected override void Init()

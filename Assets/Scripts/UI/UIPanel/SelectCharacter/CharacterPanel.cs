@@ -11,8 +11,8 @@ using UnityEngine.UI;
 public class CharacterPanel : UIFormBase, IPointerClickHandler
 {
     [Header("角色图片")]public Image characterPicture;
-    [Header("角色名称")]public TextMeshPro characterName;
-    [Header("最高波次")] public TextMeshPro historicalBest;//TODO：数据保存
+    [Header("角色名称")]public TextMeshProUGUI characterName;
+    [Header("最高波次")] public TextMeshProUGUI historicalBest;//TODO：数据保存
 
     private PlayerSO playerSO;
     private Action<PlayerSO> onClickCallback;

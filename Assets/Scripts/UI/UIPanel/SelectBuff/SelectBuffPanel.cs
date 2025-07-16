@@ -16,8 +16,8 @@ public class SelectBuffPanel : UIFormBase
 
     [SerializeField][Header("确定Buff按钮")] private Button applyBuffButton;
     [SerializeField][Header("刷新Buff按钮")] private Button refreshBuffButton;
-    [SerializeField][Header("剩余刷新次数")] private TextMeshPro refreshCountText;
-    [SerializeField][Header("剩余选择次数")] private TextMeshPro remainingChoicesText;
+    [SerializeField][Header("剩余刷新次数")] private TextMeshProUGUI refreshCountText;
+    [SerializeField][Header("剩余选择次数")] private TextMeshProUGUI remainingChoicesText;
 
     private BuffSO selectedBuff;
     private System.Action<BuffSO> onApplyCallback;

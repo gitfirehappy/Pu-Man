@@ -10,8 +10,8 @@ using UnityEngine.UI;
 public class BuffPanel : UIFormBase, IPointerClickHandler
 {
     [SerializeField][Header("Buff图片")] private Image buffPicture;
-    [SerializeField][Header("Buff名称")] private TextMeshPro buffName;
-    [SerializeField][Header("Buff描述")] private TextMeshPro buffDiscription;
+    [SerializeField][Header("Buff名称")] private TextMeshProUGUI buffName;
+    [SerializeField][Header("Buff描述")] private TextMeshProUGUI buffDiscription;
     [Header("高亮效果")]
     [SerializeField] private Image glowBorder; // 动态颜色边框
     [SerializeField] private ParticleSystem rarityParticles; // 稀有度粒子效果

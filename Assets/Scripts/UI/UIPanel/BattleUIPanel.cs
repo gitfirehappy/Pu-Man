@@ -8,21 +8,21 @@ public class BattleUIPanel : UIFormBase
 {
     [Header("玩家战斗UI")]
     [SerializeField] private Image healthFill;
-    [SerializeField] private TextMeshPro healthText;
+    [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Image playerPicture;
 
     [Header("当前技能冷却")]
-    [SerializeField] private TextMeshPro skillCooldownText;
+    [SerializeField] private TextMeshProUGUI skillCooldownText;
     [SerializeField] private Image skillCooldownFill;
 
     //关卡倒计时，当前波次
-    [SerializeField][Header("倒计时")] private TextMeshPro timerText;
-    [SerializeField][Header("当前波次")] private TextMeshPro waveText;
+    [SerializeField][Header("倒计时")] private TextMeshProUGUI timerText;
+    [SerializeField][Header("当前波次")] private TextMeshProUGUI waveText;
 
     [Header("boss血量")]
     [SerializeField] private GameObject bossUIGroup; // 整个Boss UI的父对象（空物体）
     [SerializeField] private Image bossHealthFill;
-    [SerializeField] private TextMeshPro bossHealthText;
+    [SerializeField] private TextMeshProUGUI bossHealthText;
 
     private PlayerCore _player;
     private WaveTimer _waveTimer;
