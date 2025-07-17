@@ -3,35 +3,31 @@ using System.Collections.Generic;
 
 public class GameUIManager : SingletonMono<GameUIManager>
 {
-    [Header("需要预加载的UI预制体")]
-    [SerializeField] private GameObject[] uiPrefabsToPreload;
+    [Header("UI资源配置")]
+    [SerializeField] private UIResourceConfigSO uiResourceConfig;
 
     private Dictionary<GameState, IUIController> uiControllers = new Dictionary<GameState, IUIController>();
     private GameState currentState;
 
-    protected override void Init()
+    protected override async void Init()
     {
         base.Init();
 
-        // 1. 预加载所有UI预制体
-        PreloadAllUIForms();
+        // 1. 预加载所有UI资源
+        if (uiResourceConfig != null)
+        {
+            await UIManager.Instance.PreloadAllFormsAsync(uiResourceConfig);
+        }
+        else
+        {
+            Debug.LogWarning("未配置UIResourceConfigSO，将跳过预加载");
+        }
 
         // 2. 注册控制器
         RegisterControllers();
 
         // 3. 监听状态变化
         EventBus.OnGameStateChanged += OnGameStateChanged;
-    }
-
-    /// <summary>
-    /// 预加载UIPanel预制体
-    /// </summary>
-    private void PreloadAllUIForms()
-    {
-        if (uiPrefabsToPreload != null && uiPrefabsToPreload.Length > 0)
-        {
-            UIManager.Instance.PreLoadForms(uiPrefabsToPreload);
-        }
     }
 
     /// <summary>

@@ -3284,7 +3284,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &857439523
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3322,6 +3322,21 @@ MonoBehaviour:
   IsInited: 0
   _config: {fileID: 11400000, guid: db3ca6a053414ee4d838c04c7e039108, type: 2}
   originalLocalPos: {x: 0, y: 0, z: 0}
+  healthText: {fileID: 0}
+  armorText: {fileID: 0}
+  regenText: {fileID: 0}
+  dodgeText: {fileID: 0}
+  collisionText: {fileID: 0}
+  bulletdamageText: {fileID: 0}
+  fireRateText: {fileID: 0}
+  knockbackText: {fileID: 0}
+  projectileCountText: {fileID: 0}
+  projectileSizeText: {fileID: 0}
+  speedText: {fileID: 0}
+  commonBuffCountText: {fileID: 0}
+  rareBuffCountText: {fileID: 0}
+  epicBuffCountText: {fileID: 0}
+  legendaryBuffCountText: {fileID: 0}
   resumeButton: {fileID: 1039783263}
   overGameButton: {fileID: 459537951}
 --- !u!225 &857439525
@@ -4070,6 +4085,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1016630339}
   m_CullTransparentMesh: 1
+--- !u!1 &1023515905
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1023515906}
+  m_Layer: 5
+  m_Name: BuffCardPositions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1023515906
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023515905}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1519326596}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1039783261
 GameObject:
   m_ObjectHideFlags: 0
@@ -4414,7 +4464,7 @@ GameObject:
   - component: {fileID: 1218938574}
   - component: {fileID: 1218938573}
   m_Layer: 5
-  m_Name: SelectCharacterPanel(TODO
+  m_Name: SelectCharacterPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4457,12 +4507,11 @@ MonoBehaviour:
   IsInited: 0
   _config: {fileID: 0}
   originalLocalPos: {x: 0, y: 0, z: 0}
-  cardContainer: {fileID: 0}
   cardPrefab: {fileID: 0}
+  cardPositions: []
   characterInfoPanel: {fileID: 0}
   startGameButton: {fileID: 0}
   backButton: {fileID: 0}
-  spawnPosition: {x: 0, y: 0, z: 0}
 --- !u!225 &1218938574
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -5523,8 +5572,9 @@ GameObject:
   - component: {fileID: 1519326599}
   - component: {fileID: 1519326598}
   - component: {fileID: 1519326597}
+  - component: {fileID: 1519326601}
   m_Layer: 5
-  m_Name: SelectBuffPanel(TODO
+  m_Name: SelectBuffPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5545,6 +5595,7 @@ RectTransform:
   - {fileID: 707609736}
   - {fileID: 571225627}
   - {fileID: 1438273517}
+  - {fileID: 1023515906}
   m_Father: {fileID: 734816100}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5568,8 +5619,7 @@ MonoBehaviour:
   IsInited: 0
   _config: {fileID: 0}
   originalLocalPos: {x: 0, y: 0, z: 0}
-  cardContainer: {fileID: 0}
-  cardPrefab: {fileID: 0}
+  buffCardSpawner: {fileID: 0}
   applyBuffButton: {fileID: 707609737}
   refreshBuffButton: {fileID: 571225628}
   refreshCountText: {fileID: 956747081}
@@ -5624,6 +5674,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1519326595}
   m_CullTransparentMesh: 1
+--- !u!114 &1519326601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519326595}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66588d532141ef048826f666e63fb181, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cardPrefab: {fileID: 0}
+  cardPositions: []
 --- !u!1 &1558602772
 GameObject:
   m_ObjectHideFlags: 0
@@ -6256,6 +6320,7 @@ MonoBehaviour:
   sfxSlider: {fileID: 485247103}
   closeButton: {fileID: 1411034328}
   resetDataButton: {fileID: 571572665}
+  difficultySlider: {fileID: 0}
 --- !u!225 &1782540772
 CanvasGroup:
   m_ObjectHideFlags: 0

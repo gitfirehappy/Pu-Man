@@ -10,19 +10,39 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
     private List<PlayerSO> allCharacters;
     private SelectCharacterPanel selectCharacterPanel;
 
+    [Header("玩家生成位置")]
+    [SerializeField] private Transform spawnTransform;
+
     public async void OnEnterState()
     {
-        // 显示选择面板
-        UIManager.Instance.ShowUIForm<SelectCharacterPanel>();
-        selectCharacterPanel = UIManager.Instance.GetForm<SelectCharacterPanel>();
-
-        // 加载角色数据
-        await LoadCharactersAsync();
-
-        // 初始化面板
-        if (selectCharacterPanel != null && allCharacters != null)
+        try
         {
-            selectCharacterPanel.Initialize(allCharacters);
+            // 显示选择面板
+            UIManager.Instance.ShowUIForm<SelectCharacterPanel>();
+            selectCharacterPanel = UIManager.Instance.GetForm<SelectCharacterPanel>();
+
+            if (selectCharacterPanel == null)
+            {
+                Debug.LogError("无法获取SelectCharacterPanel!");
+                return;
+            }
+
+            // 加载角色数据
+            await LoadCharactersAsync();
+
+            // 初始化面板
+            if (allCharacters != null && allCharacters.Count > 0)
+            {
+                selectCharacterPanel.Initialize(allCharacters);
+            }
+            else
+            {
+                Debug.LogError("没有加载到任何角色数据!");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"进入角色选择状态时出错: {e.Message}");
         }
     }
 
@@ -61,7 +81,7 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
     /// <summary>
     /// 生成玩家角色
     /// </summary>
-    public void SpawnPlayer(PlayerSO characterData, Vector3 spawnPosition)
+    public void SpawnPlayer(PlayerSO characterData)
     {
         // 1. 检查预制体是否存在
         if (characterData.playerPrefab == null)
@@ -78,7 +98,7 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
         }
 
         // 3. 实例化预制体
-        var playerObj = Instantiate(characterData.playerPrefab, spawnPosition, Quaternion.identity);
+        var playerObj = Instantiate(characterData.playerPrefab, spawnTransform.position, Quaternion.identity);
 
         // 4. 获取PlayerCore组件并设置数据
         var playerCore = playerObj.GetComponent<PlayerCore>();

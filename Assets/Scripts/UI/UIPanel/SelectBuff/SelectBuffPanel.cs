@@ -9,10 +9,7 @@ using UnityEngine.UI;
 
 public class SelectBuffPanel : UIFormBase
 {
-    [Header("Buff卡片容器")]
-    [SerializeField] private Transform cardContainer;
-    [SerializeField] private GameObject cardPrefab;
-    private List<BuffPanel> buffPanels = new List<BuffPanel>();
+    [SerializeField] private BuffCardSpawner buffCardSpawner;
 
     [SerializeField][Header("确定Buff按钮")] private Button applyBuffButton;
     [SerializeField][Header("刷新Buff按钮")] private Button refreshBuffButton;
@@ -22,8 +19,6 @@ public class SelectBuffPanel : UIFormBase
     private BuffSO selectedBuff;
     private System.Action<BuffSO> onApplyCallback;
     private System.Action onRefreshCallback;
-
-    public Transform CardContainer => cardContainer;
 
 
     protected override void Init()
@@ -46,30 +41,17 @@ public class SelectBuffPanel : UIFormBase
     {
         ResetSelection();
 
-        // 清空现有卡片
-        foreach (Transform child in cardContainer)
-        {
-            Destroy(child.gameObject);
-        }
-        buffPanels.Clear();
-
         // 存储回调
         this.onApplyCallback = onApply;
         this.onRefreshCallback = onRefresh;
 
-        // 创建新卡片
-        foreach (var buff in buffs)
+        // 使用BuffCardSpawner生成卡片
+        buffCardSpawner.SpawnBuffCards(buffs, (selected) =>
         {
-            var cardObj = Instantiate(cardPrefab, cardContainer);
-            var card = cardObj.GetComponent<BuffPanel>();
-            card.Setup(buff, (selected) =>
-                {
-                    selectedBuff = selected;
-                    onSelected?.Invoke(selected);
-                    applyBuffButton.interactable = true;
-                });
-            buffPanels.Add(card); // 存入列表
-        }
+            selectedBuff = selected;
+            onSelected?.Invoke(selected);
+            applyBuffButton.interactable = true;
+        });
 
         // 重置按钮状态
         applyBuffButton.interactable = false;
@@ -105,12 +87,6 @@ public class SelectBuffPanel : UIFormBase
 
     public BuffPanel GetBuffPanel(BuffSO buff)
     {
-        // 遍历列表
-        foreach (var panel in buffPanels)
-        {
-            if (panel.CurrentBuff == buff) // CurrentBuff是BuffPanel的公共属性
-                return panel;
-        }
-        return null;
+        return buffCardSpawner.GetBuffPanel(buff);
     }
 }

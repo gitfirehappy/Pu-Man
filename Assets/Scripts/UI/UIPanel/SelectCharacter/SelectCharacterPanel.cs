@@ -8,24 +8,25 @@ using UnityEngine.UI;
 
 public class SelectCharacterPanel : UIFormBase
 {
-    [Header("角色卡片容器")]
-    [SerializeField] private Transform cardContainer;
+    [Header("角色卡片模板")]
     [SerializeField] private GameObject cardPrefab;
+
+    [Header("卡片生成位置容器")]
+    [SerializeField] private Transform[] cardPositions; // 在Inspector中拖入空物体
 
     [Header("选中时展示的信息")]
     [SerializeField] private CharacterInfoPanel characterInfoPanel;
 
-    [SerializeField][Header("开始游戏按钮")] private Button startGameButton;
-    [SerializeField][Header("返回菜单按钮")] private Button backButton;
-
-    [SerializeField][Header("生成位置")] private Vector3 spawnPosition;
+    [Header("按钮")]
+    [SerializeField] private Button startGameButton;
+    [SerializeField] private Button backButton;
 
     private PlayerSO selectedCharacter;
-    private CharacterSelectUIManager uiManager;
+    private CharacterSelectUIManager characterSelectUIManager;
 
     protected override void Init()
     {
-        uiManager = GetComponentInParent<CharacterSelectUIManager>();
+        characterSelectUIManager = GetComponentInParent<CharacterSelectUIManager>();
 
         startGameButton.onClick.AddListener(OnStartGame);
         backButton.onClick.AddListener(OnBackToMenu);
@@ -34,22 +35,40 @@ public class SelectCharacterPanel : UIFormBase
     }
 
     /// <summary>
-    /// 初始化面板，创建角色卡片
+    /// 初始化角色卡片
     /// </summary>
     public void Initialize(List<PlayerSO> characters)
     {
-        // 清空现有卡片
-        foreach (Transform child in cardContainer)
+        if (cardPrefab == null || cardPositions == null || cardPositions.Length == 0)
         {
-            Destroy(child.gameObject);
+            Debug.LogError("卡片预制体或位置未设置!");
+            return;
         }
 
-        // 创建新卡片
-        foreach (var character in characters)
+        // 清除现有卡片（如果有）
+        foreach (var pos in cardPositions)
         {
-            var cardObj = Instantiate(cardPrefab, cardContainer);
+            if (pos.childCount > 0)
+            {
+                Destroy(pos.GetChild(0).gameObject);
+            }
+        }
+
+        // 确保不超过定位点数量
+        int cardCount = Mathf.Min(characters.Count, cardPositions.Length);
+
+        for (int i = 0; i < cardCount; i++)
+        {
+            var cardObj = Instantiate(cardPrefab, cardPositions[i]);
             var card = cardObj.GetComponent<CharacterPanel>();
-            card.Setup(character, OnCharacterSelected);
+            if (card != null)
+            {
+                card.Setup(characters[i], OnCharacterSelected);
+            }
+            else
+            {
+                Debug.LogError("卡片预制体缺少CharacterPanel组件!");
+            }
         }
     }
 
@@ -72,8 +91,8 @@ public class SelectCharacterPanel : UIFormBase
     {
         if (selectedCharacter == null) return;
 
-        // 通知UIManager生成玩家
-        uiManager.SpawnPlayer(selectedCharacter, spawnPosition);
+        // 通知Manager生成玩家
+        characterSelectUIManager.SpawnPlayer(selectedCharacter);
 
         EventBus.TriggerGameStateChanged(GameState.Battle);
     }

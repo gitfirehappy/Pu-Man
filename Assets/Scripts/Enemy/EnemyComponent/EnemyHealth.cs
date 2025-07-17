@@ -25,7 +25,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     public event Action OnDeath;
 
-
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
     /// <summary>
@@ -100,7 +99,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// 敌人受伤
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(float damage, DamageSource source = DamageSource.Player)
+    public void TakeDamage(float damage, DamageSource source)
     {
         if (_isDead) return;
 

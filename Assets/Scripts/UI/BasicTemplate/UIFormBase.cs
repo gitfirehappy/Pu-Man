@@ -20,8 +20,15 @@ public class UIFormBase : MonoBehaviour, IUIForm
     public bool Cached => _config != null ? _config.cached : false;
     public FormAnimType AnimType => _config != null ? _config.animType : FormAnimType.None;
 
-
     public Vector3 originalLocalPos;
+
+    [Header("动态面板配置")]
+    [SerializeField] private bool isDynamicForm = false;
+    [SerializeField] private string dynamicGroupID = "";
+
+    public bool IsDynamicForm => isDynamicForm;
+    public string DynamicGroupID => dynamicGroupID;
+
 
     private void Awake()
     {
@@ -181,4 +188,22 @@ public class UIFormBase : MonoBehaviour, IUIForm
     }
 
     public UIFormBase GetUIFormBase() => this;
+
+    #region 动态生成面板扩展
+
+    public void InitializeAsDynamic(string groupID, UIFormConfigSO config = null)
+    {
+        isDynamicForm = true;
+        dynamicGroupID = groupID;
+        if (config != null) _config = config;
+
+        // 如果是动态面板，确保注册到UIManager
+        if (!IsInited)
+        {
+            IsInited = true;
+            Init();
+        }
+    }
+    #endregion
+
 }

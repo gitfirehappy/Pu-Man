@@ -92,22 +92,37 @@ public class EnemyManager : SingletonMono<EnemyManager>
     /// </summary>
     /// <param name="origin">技能中心点</param>
     /// <param name="radius">作用半径</param>
-    public void ChainKill(Vector2 origin, float radius, float chainKillDamage)
+    public void ChainKill(Vector2 origin, float radius, float damage, int maxChains)
     {
-        for (int i = activeEnemies.Count - 1; i >= 0; i--)
-        {
-            var enemy = activeEnemies[i];
-            if (enemy == null || enemy.IsDead) continue;
+        int chainCount = 0;
+        int totalKills = 0;
 
-            float distance = Vector2.Distance(origin, enemy.transform.position);
-            if (distance <= radius)
+        while (chainCount < maxChains)
+        {
+            var hits = Physics2D.OverlapCircleAll(origin, radius, LayerMask.GetMask("Enemy"));
+            bool killedByThisChain = false;
+
+            // 造成伤害并检测死亡
+            foreach (var hit in hits)
             {
-                //来源标记为ChainKill
-                enemy.TakeDamage(chainKillDamage, DamageSource.ChainKill);
+                var enemy = hit.GetComponent<EnemyCore>();
+                if (enemy == null || enemy.IsDead) continue;
+
+                enemy.TakeDamage(damage, DamageSource.ChainKill);
+
+                // 检测是否被当前技能击杀
+                if (enemy.IsDead && enemy.LastDamageSource == DamageSource.ChainKill)
+                {
+                    killedByThisChain = true;
+                    totalKills++;
+                }
             }
+
+            if (!killedByThisChain) break;
+            chainCount++;
         }
 
-        Debug.Log($"亵渎技能生效，杀死了{activeEnemies.Count}个敌人");
+        Debug.Log($"亵渎技能生效，连锁{chainCount}次，有效击杀{totalKills}个敌人");
     }
 
     public int GetActiveEnemyCount()

@@ -9,6 +9,8 @@ public class EnemyCore : MonoBehaviour, IPoolable
     [SerializeField] private EnemySO enemyData;
     [SerializeField] private IObjectPool<GameObject> _managedPool;
 
+    public DamageSource LastDamageSource { get; private set; }//最后伤害来源
+
     public event Action OnEnemyDeath;
 
     // 组件引用缓存
@@ -162,6 +164,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
     public void TakeDamage(float damage, DamageSource source)
     {
+        LastDamageSource = source; // 记录伤害来源
         _health?.TakeDamage(damage, source);
     }
 

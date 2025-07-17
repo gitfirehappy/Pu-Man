@@ -199,9 +199,10 @@ public class PlayerAbilities : MonoBehaviour
         // 设置技能半径（可根据需要调整或从配置读取）
         float radius = 5f;
         float damage = 1f;
+        int maxChains = 14;
 
         // 调用EnemyManager执行亵渎技能
-        EnemyManager.Instance.ChainKill(origin, radius, damage);
+        EnemyManager.Instance.ChainKill(origin, radius, damage, maxChains);
 
         // 播放特效和音效
 

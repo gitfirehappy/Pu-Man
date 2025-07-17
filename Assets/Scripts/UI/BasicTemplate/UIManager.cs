@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 /// <summary>
 /// UI 管理器（单例）
@@ -24,18 +28,70 @@ public class UIManager : Singleton<UIManager>
     /// <summary> UI 根节点（场景中应存在名为 UIRoot 的对象） </summary>
     public Transform uiRoot => GameObject.Find("UIRoot").transform;
 
+    // 动态面板分组字典
+    public Dictionary<string, List<UIFormBase>> dynamicFormGroups = new Dictionary<string, List<UIFormBase>>();
+
     #endregion
 
     #region 注册接口
 
+    /// <summary>
+    /// 普通面板注册接口
+    /// </summary>
+    /// <param name="uIForm"></param>
     public void RegisterForm(IUIForm uIForm)
     {
         var form = uIForm.GetUIFormBase();
-        string key = form.GetType().Name;
+        if (form.IsDynamicForm)
+        {
+            Debug.LogError($"Cannot register dynamic form {form.name} using RegisterForm, use RegisterDynamicForm instead");
+            return;
+        }
 
+        string key = form.GetType().Name;
+        RegisterFormInternal(key, form);
+    }
+
+    /// <summary>
+    /// 动态面板注册接口
+    /// </summary>
+    /// <param name="uIForm"></param>
+    /// <param name="groupID"></param>
+    public void RegisterDynamicForm(IUIForm uIForm, string groupID)
+    {
+        var form = uIForm.GetUIFormBase();
+        if (!form.IsDynamicForm)
+        {
+            Debug.LogError($"Cannot register non-dynamic form {form.name} using RegisterDynamicForm");
+            return;
+        }
+
+        string key = $"{groupID}_{Guid.NewGuid()}";
+        form.InitializeAsDynamic(groupID);
+        RegisterFormInternal(key, form);
+    }
+
+    /// <summary>
+    /// 内部注册方法
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="form"></param>
+    private void RegisterFormInternal(string key, UIFormBase form)
+    {
         if (!forms.ContainsKey(key))
         {
             forms.Add(key, form);
+
+            // 动态面板分组处理
+            if (form.IsDynamicForm && !string.IsNullOrEmpty(form.DynamicGroupID))
+            {
+                if (!dynamicFormGroups.ContainsKey(form.DynamicGroupID))
+                {
+                    dynamicFormGroups.Add(form.DynamicGroupID, new List<UIFormBase>());
+                }
+                dynamicFormGroups[form.DynamicGroupID].Add(form);
+            }
+
             form.Close(); // 默认关闭
         }
     }
@@ -44,6 +100,15 @@ public class UIManager : Singleton<UIManager>
     {
         var form = uIForm.GetUIFormBase();
         string key = form.GetType().Name;
+
+        // 如果是动态面板，需要从分组中移除
+        if (form.IsDynamicForm && !string.IsNullOrEmpty(form.DynamicGroupID))
+        {
+            if (dynamicFormGroups.TryGetValue(form.DynamicGroupID, out var group))
+            {
+                group.Remove(form);
+            }
+        }
 
         if (forms.ContainsKey(key))
         {
@@ -62,10 +127,16 @@ public class UIManager : Singleton<UIManager>
     }
 
     /// <summary>
-    /// 【新增】手动注册已有面板实例（用于场景中已有面板）
+    /// 手动注册已有面板实例（用于场景中已有面板）
     /// </summary>
     public void RegisterFormInstance(UIFormBase formInstance)
     {
+        if (formInstance.IsDynamicForm)
+        {
+            Debug.LogError($"Cannot register dynamic form instance {formInstance.name} using RegisterFormInstance");
+            return;
+        }
+
         string key = formInstance.GetType().Name;
         if (!forms.ContainsKey(key))
         {
@@ -129,34 +200,6 @@ public class UIManager : Singleton<UIManager>
 
     public bool HasActiveForm() => showForms.Count > 0;
 
-    #endregion
-
-    #region 资源预加载（推荐使用路径）
-
-    public void PreLoadForm(string name, string path)
-    {
-        if (!formPrefabs.ContainsKey(name))
-        {
-            var prefab = Resources.Load<GameObject>(path);
-            if (prefab != null)
-            {
-                formPrefabs.Add(name, prefab);
-            }
-            else
-            {
-                Debug.LogError($"[UIManager] Load failed: {path}");
-            }
-        }
-    }
-
-    public void PreLoadForms(Dictionary<string, string> namePathPairs)
-    {
-        foreach (var kv in namePathPairs)
-        {
-            PreLoadForm(kv.Key, kv.Value);
-        }
-    }
-
     private void CreateForm(string name)
     {
         if (formPrefabs.ContainsKey(name))
@@ -168,6 +211,65 @@ public class UIManager : Singleton<UIManager>
         {
             Debug.LogError($"[UIManager] CreateForm Failed: no prefab named {name}");
         }
+    }
+
+    #endregion
+
+    #region AB包预加载
+
+    /// <summary>
+    /// AB包预加载
+    /// </summary>
+    /// <param name="label"></param>
+    /// <returns></returns>
+    public async Task PreloadFormsByLabelAsync(string label)
+    {
+        try
+        {
+            var loadHandle = Addressables.LoadAssetsAsync<GameObject>(label, null);
+            await loadHandle.Task;
+
+            if (loadHandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                foreach (var prefab in loadHandle.Result)
+                {
+                    if (!formPrefabs.ContainsKey(prefab.name))
+                    {
+                        formPrefabs.Add(prefab.name, prefab);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"AB包标签加载失败: {label}, 错误: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// 通用预加载方法
+    /// </summary>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public async Task PreloadAllFormsAsync(UIResourceConfigSO config)
+    {
+        if (config == null) return;
+
+        // 1. 加载标签化的UI
+        foreach (var tag in config.uiTags)
+        {
+            if (tag.preloadOnStart)
+            {
+                await PreloadFormsByLabelAsync(tag.labelName);
+            }
+        }
+
+        // 2. 手动注册的UI
+        PreLoadForms(config.manualUIForms);
+
+        // 3. 特殊模板
+        PreLoadForms(config.characterCardTemplates);
+        PreLoadForms(config.buffCardTemplates);
     }
 
     public void PreLoadForm(GameObject prefab)
@@ -201,6 +303,81 @@ public class UIManager : Singleton<UIManager>
     {
         ShowUIForm(name);
         return GetForm(name);
+    }
+
+    #endregion
+
+    #region 动态生成面板扩展
+
+
+    /// <summary>
+    /// 动态面板创建方法
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="prefab"></param>
+    /// <param name="groupID"></param>
+    /// <param name="parent"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public T CreateDynamicForm<T>(GameObject prefab, string groupID, Transform parent = null,
+        UIFormConfigSO config = null) where T : UIFormBase
+    {
+        if (prefab == null) return null;
+
+        var formObj = UnityEngine.Object.Instantiate(prefab, parent ?? uiRoot);
+        var form = formObj.GetComponent<T>();
+
+        if (form == null)
+        {
+            UnityEngine.Object.Destroy(formObj);
+            Debug.LogError($"Prefab does not contain {typeof(T)} component!");
+            return null;
+        }
+
+        form.InitializeAsDynamic(groupID, config);
+        RegisterDynamicForm(form, groupID);
+        return form;
+    }
+
+    /// <summary>
+    /// 获取动态面板组的方法
+    /// </summary>
+    /// <param name="groupID"></param>
+    /// <returns></returns>
+    public List<UIFormBase> GetDynamicFormsInGroup(string groupID)
+    {
+        if (dynamicFormGroups.TryGetValue(groupID, out var forms))
+        {
+            return forms;
+        }
+        return new List<UIFormBase>();
+    }
+
+    /// <summary>
+    /// 清除动态面板组的方法
+    /// </summary>
+    /// <param name="groupID"></param>
+    /// <param name="immediate"></param>
+    public void ClearDynamicFormsInGroup(string groupID, bool immediate = false)
+    {
+        if (!dynamicFormGroups.ContainsKey(groupID)) return;
+
+        foreach (var form in dynamicFormGroups[groupID].ToArray())
+        {
+            if (form == null) continue;
+
+            if (immediate)
+            {
+                UnRegisterForm(form);
+                UnityEngine.Object.Destroy(form.gameObject);
+            }
+            else
+            {
+                form.Close();
+            }
+        }
+
+        dynamicFormGroups[groupID].Clear();
     }
 
     #endregion
