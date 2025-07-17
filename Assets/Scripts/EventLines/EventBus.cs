@@ -37,6 +37,7 @@ public static class EventBus
     }
     public static event Action OnPlayerDisabled;
     public static event Action OnPlayerEnabled;
+    public static event Action<PlayerCore> OnPlayerSpawned;
 
     #endregion
 
@@ -64,6 +65,7 @@ public static class EventBus
     public static void TriggerPlayerDeath() => _onPlayerDeath?.Invoke();
     public static void TriggerPlayerDisabled() => OnPlayerDisabled?.Invoke();
     public static void TriggerPlayerEnabled() => OnPlayerEnabled?.Invoke();
+    public static void TriggerPlayerSpawned(PlayerCore player) => OnPlayerSpawned?.Invoke(player);
 
     #endregion
 

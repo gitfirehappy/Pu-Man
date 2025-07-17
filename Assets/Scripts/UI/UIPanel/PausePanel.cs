@@ -35,6 +35,32 @@ public class PausePanel : UIFormBase
         overGameButton.onClick.AddListener(OverGame);
     }
 
+    public void UpdatePlayerStats(string health, string armor, string regen, string dodge,
+                                string collision, string bulletDamage, string fireRate,
+                                string knockback, string projectileCount, string projectileSize,
+                                string speed)
+    {
+        healthText.text = health;
+        armorText.text = armor;
+        regenText.text = regen;
+        dodgeText.text = dodge;
+        collisionText.text = collision;
+        bulletdamageText.text = bulletDamage;
+        fireRateText.text = fireRate;
+        knockbackText.text = knockback;
+        projectileCountText.text = projectileCount;
+        projectileSizeText.text = projectileSize;
+        speedText.text = speed;
+    }
+
+    public void UpdateBuffCounts(int common, int rare, int epic, int legendary)
+    {
+        commonBuffCountText.text = common.ToString();
+        rareBuffCountText.text = rare.ToString();
+        epicBuffCountText.text = epic.ToString();
+        legendaryBuffCountText.text = legendary.ToString();
+    }
+
     private void OnResume()
     {
         EventBus.TriggerGameResumed();
@@ -44,7 +70,7 @@ public class PausePanel : UIFormBase
     {
         // 自杀结束游戏
         EventBus.TriggerGameResumed();
-        //playerCore.Health.TakeDamage(float.MaxValue);
+        PlayerManager.Instance.Player.Health.TakeDamage(float.MaxValue);
     }
 
 }

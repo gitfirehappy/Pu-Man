@@ -12,7 +12,6 @@ public class PlayerCore : MonoBehaviour
     private PlayerShooting shooting;
     private PlayerMovement movement;
     private PlayerAbilities abilities;
-    private PlayerBuff buff;
     public PlayerInput playerInput; // 统一管理输入
 
 
@@ -23,6 +22,7 @@ public class PlayerCore : MonoBehaviour
             Debug.LogError("PlayerSO not assigned!");
             return;
         }
+
         // 初始化输入系统
         playerInput = new PlayerInput();
 
@@ -40,7 +40,6 @@ public class PlayerCore : MonoBehaviour
         shooting = GetOrAddComponent<PlayerShooting>();
         movement = GetOrAddComponent<PlayerMovement>();
         abilities = GetOrAddComponent<PlayerAbilities>();
-        buff = GetOrAddComponent<PlayerBuff>();
 
         // 初始化所有组件
         health.Initialize(playerData);
@@ -70,6 +69,9 @@ public class PlayerCore : MonoBehaviour
         // 注册外部系统事件
         EventBus.OnPlayerDisabled += DisableAllComponents;
         EventBus.OnPlayerEnabled += EnableAllComponents;
+
+        // 注册到PlayerManager（通过事件）
+        EventBus.TriggerPlayerSpawned(this);
     }
 
     private void OnDestroy()
@@ -82,6 +84,11 @@ public class PlayerCore : MonoBehaviour
 
         // 清理输入系统
         playerInput.Dispose();
+
+        if (PlayerManager.Instance.Player == this)
+        {
+            PlayerManager.Instance.ClearPlayer();
+        }
     }
 
     /// <summary>
@@ -94,9 +101,12 @@ public class PlayerCore : MonoBehaviour
             playerData.playerType,
             WaveCounter.Instance.CurrentWave - 1 // CurrentWave从1开始
         );
-
+        
         //通知总线游戏结束
         EventBus.TriggerPlayerDeath();
+
+        // 销毁自身
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -163,11 +173,10 @@ public class PlayerCore : MonoBehaviour
     public PlayerShooting Shooting => shooting;
     public PlayerMovement Movement => movement;
     public PlayerAbilities Abilities => abilities;
-    public PlayerBuff Buff => buff;
 
     public Dictionary<BuffID, BuffSO> GetAcquiredBuffs()
     {
-        return buff.GetAcquiredBuffs();
+        return BuffManager.Instance.GetAcquiredBuffs();
     }
 
     #endregion

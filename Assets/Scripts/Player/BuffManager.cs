@@ -1,25 +1,42 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
-public class PlayerBuff : MonoBehaviour, IBuffEffect
+public class BuffManager : SingletonMono<BuffManager>
 {
-    [Header("已获得buff")]
-    [SerializeField] private Dictionary<BuffID, BuffSO> acquiredBuffs = new Dictionary<BuffID, BuffSO>();
+    [Header("已获得Buff")]
+    [SerializeField]private Dictionary<BuffID, BuffSO> _acquiredBuffs = new Dictionary<BuffID, BuffSO>();
 
-    public void Apply(BuffSO buffData, PlayerCore player)
+    /// <summary>
+    /// 应用Buff（外部调用，如 UI 选择 Buff 时）
+    /// </summary>
+    /// <param name="buffData"></param>
+    public void ApplyBuff(BuffSO buffData)
     {
-        // 检查是否为唯一buff且已获得
-        if (buffData.isUnique && acquiredBuffs.ContainsKey(buffData.buffID))
+        // 通过 PlayerManager 获取当前玩家（避免直接依赖 PlayerCore）
+        var player = PlayerManager.Instance.Player;
+        if (player == null)
+        {
+            Debug.LogWarning("No player registered! Buff not applied.");
+            return;
+        }
+
+        // 检查唯一性 Buff
+        if (buffData.isUnique && _acquiredBuffs.ContainsKey(buffData.buffID))
         {
             Debug.Log($"已获得唯一buff: {buffData.buffID}, 无法重复获取");
             return;
         }
 
-        // 记录获得的buff
-        acquiredBuffs[buffData.buffID] = buffData;
+        // 记录 Buff
+        _acquiredBuffs[buffData.buffID] = buffData;
 
+        // 应用 Buff 效果
+        ApplyBuffEffect(buffData, player);
+    }
+
+    private void ApplyBuffEffect(BuffSO buffData, PlayerCore player)
+    {
         switch (buffData.buffID)
         {
             // ========== 普通增益 ==========
@@ -131,11 +148,6 @@ public class PlayerBuff : MonoBehaviour, IBuffEffect
         }
     }
 
-    public void Remove(BuffSO buffData, PlayerCore player)
-    {
-        // 反向操作（如减少血量等）
-    }
-
     #region case调用
 
     /// <summary>
@@ -188,8 +200,25 @@ public class PlayerBuff : MonoBehaviour, IBuffEffect
 
     #endregion case调用
 
-    public Dictionary<BuffID, BuffSO> GetAcquiredBuffs()
+
+    public void ClearBuffs()
     {
-        return new Dictionary<BuffID, BuffSO>(acquiredBuffs);
+        _acquiredBuffs.Clear();
     }
+
+    public int GetBuffCount(Rarity rarity)
+    {
+        int count = 0;
+        foreach (var buff in _acquiredBuffs.Values)
+        {
+            if (buff.rarity == rarity)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    //提供给 UI 查询已获得的 Buff
+    public Dictionary<BuffID, BuffSO> GetAcquiredBuffs() => new Dictionary<BuffID, BuffSO>(_acquiredBuffs);
 }

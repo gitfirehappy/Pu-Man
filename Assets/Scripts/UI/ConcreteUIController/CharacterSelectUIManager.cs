@@ -71,7 +71,7 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
         }
 
         // 2. 销毁现有玩家
-        var existingPlayer = FindObjectOfType<PlayerCore>();
+        var existingPlayer = PlayerManager.Instance.Player;
         if (existingPlayer != null)
         {
             Destroy(existingPlayer.gameObject);

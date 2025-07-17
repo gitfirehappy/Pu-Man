@@ -33,19 +33,22 @@ public class BattleUIPanel : UIFormBase
     protected override void Init()
     {
         // 获取关键组件
-        _player = FindObjectOfType<PlayerCore>();
+
+        // 使用异步方式获取Player
+        PlayerManager.Instance.GetPlayerAsync(player =>
+        {
+            _player = player;
+            UpdateHealthUI();
+            UpdateSkillCooldownUI();
+        });
+
         _waveTimer = WaveTimer.Instance;
         _waveCounter = WaveCounter.Instance;
 
-        // 初始化UI
-        UpdateHealthUI();
-        UpdateSkillCooldownUI();
         UpdateTimerUI();
         UpdateWaveUI();
-        UpdateBossHealthUI();
-
-        // 初始隐藏Boss UI
-        bossUIGroup.SetActive(false);
+        UpdateBossHealthUI();  
+        bossUIGroup.SetActive(false);// 初始隐藏Boss UI
 
         // 注册事件
         EventBus.OnWaveChanged += OnWaveChanged;

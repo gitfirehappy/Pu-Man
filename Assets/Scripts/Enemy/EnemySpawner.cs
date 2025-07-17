@@ -28,7 +28,11 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 
     protected override void Init()
     {
-        playerTransform = FindObjectOfType<PlayerCore>().transform;
+        PlayerManager.Instance.GetPlayerAsync(player =>
+        {
+            playerTransform = player.transform;
+        });
+
         EventBus.OnBattleStart += StartSpawning;
         EventBus.OnPlayerDeath += StopSpawning;
         EventBus.OnTimeOut += HandleWaveTimeout;

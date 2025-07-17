@@ -14,6 +14,9 @@ public class SettingsPanel : UIFormBase
 
     [SerializeField][Header("重置记录按钮按钮")] private Button resetDataButton;
 
+    //TODO:难度控制
+    [SerializeField][Header("难度控制滑块")] private Slider difficultySlider;
+
     protected override void Init()
     {
         // 自动绑定音量滑块（无需手动赋值）

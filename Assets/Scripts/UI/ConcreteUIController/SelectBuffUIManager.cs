@@ -210,8 +210,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         Debug.Log($"应用Buff: {selectedBuff.buffID}, 剩余次数: {remainingChoices - 1}");
 
         // 应用Buff效果
-        var player = FindObjectOfType<PlayerCore>();
-        player?.GetComponent<PlayerBuff>()?.Apply(selectedBuff, player);
+        BuffManager.Instance.ApplyBuff(selectedBuff);
 
         // 减少选择次数
         remainingChoices--;
