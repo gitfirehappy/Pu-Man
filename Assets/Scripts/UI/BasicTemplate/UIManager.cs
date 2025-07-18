@@ -267,9 +267,8 @@ public class UIManager : Singleton<UIManager>
         // 2. 手动注册的UI
         PreLoadForms(config.manualUIForms);
 
-        // 3. 特殊模板
-        PreLoadForms(config.characterCardTemplates);
-        PreLoadForms(config.buffCardTemplates);
+        // 3. 额外预加载的UI（角色卡片、Buff卡片等）
+        PreLoadForms(config.additionalPreloadForms); // 统一加载，不区分具体类型
     }
 
     public void PreLoadForm(GameObject prefab)

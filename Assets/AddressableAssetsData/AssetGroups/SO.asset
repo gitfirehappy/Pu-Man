@@ -49,8 +49,7 @@ MonoBehaviour:
   - m_GUID: bbca7777d61c75b418df1522cb505fbc
     m_Address: Assets/SO/UI
     m_ReadOnly: 0
-    m_SerializedLabels:
-    - UISO
+    m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4c73a92acb4556f4a89840446eb3feaa, type: 2}

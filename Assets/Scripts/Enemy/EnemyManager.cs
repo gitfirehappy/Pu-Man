@@ -10,9 +10,14 @@ public class EnemyManager : SingletonMono<EnemyManager>
 
     private List<EnemyCore> activeEnemies = new List<EnemyCore>();
 
+    private float _currentSpawnInterval;
+    public WaveScalingConfig ScalingConfig => scalingConfig;
+
     protected override void Init()
     {
         InitializeScalingOverrides();
+        _currentSpawnInterval = scalingConfig.initialSpawnInterval;
+
         EventBus.OnWaveChanged += ApplyWaveScaling;
 
         EnemyEvent.OnSpawned += OnEnemySpawned;
@@ -38,6 +43,9 @@ public class EnemyManager : SingletonMono<EnemyManager>
         }
     }
 
+    /// <summary>
+    /// 差异化增长配置
+    /// </summary>
     private void InitializeScalingOverrides()
     {
         _typeOverrides = new Dictionary<EnemyType, EnemyTypeScalingOverride>();
@@ -51,11 +59,17 @@ public class EnemyManager : SingletonMono<EnemyManager>
     }
 
     /// <summary>
-    /// 应用敌人属性成长
+    /// 应用敌人属性成长TODO：属性增长逻辑不对
     /// </summary>
     /// <param name="wave"></param>
     private void ApplyWaveScaling(int wave)
     {
+        // 更新生成间隔
+        _currentSpawnInterval = Mathf.Max(
+            scalingConfig.minSpawnInterval,
+            scalingConfig.initialSpawnInterval - (wave * scalingConfig.intervalReductionPerWave)
+        );
+
         foreach (var enemy in activeEnemies)
         {
             if (enemy == null || enemy.IsDead) continue;
@@ -138,5 +152,18 @@ public class EnemyManager : SingletonMono<EnemyManager>
     public EnemyCore GetActiveBoss()
     {
         return activeEnemies.Find(e => e.EnemyData.isBoss);
+    }
+
+    public float GetCurrentSpawnInterval()
+    {
+        return Mathf.Max(
+            scalingConfig.minSpawnInterval,
+            _currentSpawnInterval * scalingConfig.difficultyMultiplier
+        );
+    }
+
+    public void SetDifficultyMultiplier(float multiplier)
+    {
+        scalingConfig.difficultyMultiplier = Mathf.Clamp(multiplier, 0.5f, 2f);
     }
 }

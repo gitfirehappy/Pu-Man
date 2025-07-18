@@ -45,22 +45,19 @@ public class SelectCharacterPanel : UIFormBase
             return;
         }
 
-        // 清除现有卡片（如果有）
-        foreach (var pos in cardPositions)
-        {
-            if (pos.childCount > 0)
-            {
-                Destroy(pos.GetChild(0).gameObject);
-            }
-        }
+        // 清除现有卡片
+        UIManager.Instance.ClearDynamicFormsInGroup("CharacterCards");
 
         // 确保不超过定位点数量
         int cardCount = Mathf.Min(characters.Count, cardPositions.Length);
 
         for (int i = 0; i < cardCount; i++)
         {
-            var cardObj = Instantiate(cardPrefab, cardPositions[i]);
-            var card = cardObj.GetComponent<CharacterPanel>();
+            var card = UIManager.Instance.CreateDynamicForm<CharacterPanel>(
+                cardPrefab,
+                "CharacterCards",
+                cardPositions[i]);
+
             if (card != null)
             {
                 card.Setup(characters[i], OnCharacterSelected);

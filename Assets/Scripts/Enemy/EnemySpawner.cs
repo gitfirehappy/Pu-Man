@@ -16,9 +16,6 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     [SerializeField] private float mapWidth = 50f;  // 地图宽度（X轴范围±值）
     [SerializeField] private float mapHeight = 50f; // 地图高度（Y轴范围±值）
 
-    [Header("动态配置")]
-    [SerializeField] private float spawnInterval = 3f;        // 每次生成的时间间隔
-
     [Header("敌人预制体池")]
     [SerializeField] private List<GameObject> enemyPrefabs;
 
@@ -93,8 +90,10 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 
     private void Update()
     {
-        if (!isSpawning || Time.time % spawnInterval > Time.deltaTime)
-            return;
+        if (!isSpawning) return;
+
+        float currentInterval = EnemyManager.Instance.GetCurrentSpawnInterval();
+        if (Time.time % currentInterval > Time.deltaTime) return;
 
         if (EnemyManager.Instance.GetActiveEnemyCount() < maxEnemies)
         {

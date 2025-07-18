@@ -25,8 +25,11 @@ public class BuffCardSpawner : MonoBehaviour
 
         for (int i = 0; i < cardCount; i++)
         {
-            var cardObj = Instantiate(cardPrefab, cardPositions[i]);
-            var card = cardObj.GetComponent<BuffPanel>();
+            var card = UIManager.Instance.CreateDynamicForm<BuffPanel>(
+            cardPrefab,
+            "BuffCards", // 分组ID
+            cardPositions[i]);
+
             if (card != null)
             {
                 card.Setup(buffs[i], onSelectedCallback);
@@ -44,13 +47,7 @@ public class BuffCardSpawner : MonoBehaviour
     /// </summary>
     public void ClearCards()
     {
-        foreach (var panel in buffPanels)
-        {
-            if (panel != null && panel.gameObject != null)
-            {
-                Destroy(panel.gameObject);
-            }
-        }
+        UIManager.Instance.ClearDynamicFormsInGroup("BuffCards");
         buffPanels.Clear();
     }
 

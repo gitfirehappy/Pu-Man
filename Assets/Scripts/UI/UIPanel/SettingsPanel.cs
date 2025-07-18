@@ -11,11 +11,8 @@ public class SettingsPanel : UIFormBase
     [SerializeField][Header("音效音量滑块")] private Slider sfxSlider;
 
     [SerializeField][Header("关闭界面按钮")] private Button closeButton;
-
     [SerializeField][Header("重置记录按钮按钮")] private Button resetDataButton;
-
-    //TODO:难度控制
-    [SerializeField][Header("难度控制滑块")] private Slider difficultySlider;
+    [SerializeField][Header("打开难度控制面板")] private Button difficultyButton;
 
     protected override void Init()
     {
@@ -25,6 +22,8 @@ public class SettingsPanel : UIFormBase
         TryBindSlider(sfxSlider, VolumeType.SFX);
 
         closeButton.onClick.AddListener(CloseSettingsPanel);
+        resetDataButton.onClick.AddListener(ResetHighestWaveRecords);
+        difficultyButton.onClick.AddListener(OpenDifficultySettings);
     }
 
 
@@ -51,10 +50,16 @@ public class SettingsPanel : UIFormBase
     /// <summary>
     /// 重置最高记录
     /// </summary>
-    public void ResetHighestWaveRecords()
+    private void ResetHighestWaveRecords()
     {
         CharacterDataManager.Instance.ResetAllRecords();
         Debug.Log("已重置所有角色记录");
+    }
+
+    private void OpenDifficultySettings()
+    {
+        UIManager.Instance.HideUIForm<SettingsPanel>();
+        UIManager.Instance.ShowUIForm<DifficultySettingsPanel>();
     }
 
 }

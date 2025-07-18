@@ -16,9 +16,6 @@ public class UIResourceConfigSO : ScriptableObject
     [Header("手动注册的UI预制体")]
     public GameObject[] manualUIForms;
 
-    [Header("角色卡片模板")]
-    public GameObject[] characterCardTemplates;
-
-    [Header("Buff卡片模板")]
-    public GameObject[] buffCardTemplates;
+    [Header("额外预加载的UI预制体（角色卡片、Buff卡片等）")]
+    public GameObject[] additionalPreloadForms;
 }
