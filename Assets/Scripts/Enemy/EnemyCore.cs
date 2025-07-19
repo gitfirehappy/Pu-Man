@@ -41,6 +41,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _health = GetOrAddComponent<EnemyHealth>();
         _movement = GetOrAddComponent<EnemyMovement>();
 
+        // 获取当前类型的额外属性
+        var bonusStats = EnemyManager.Instance.GetBonusStats(enemyData.enemyType);
+
         // 根据EnemyType动态添加组件
         switch (enemyData.enemyType)
         {
@@ -67,9 +70,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
 
         // 初始化
-        _health.Initialize(enemyData, this);
+        _health.Initialize(enemyData, this, bonusStats);
         _movement.Initialize(enemyData);
-        _shooting?.Initialize(enemyData);
+        _shooting?.Initialize(enemyData, bonusStats);
         _clash?.Initialize(enemyData);
         _reward?.Initialize(enemyData);
     }
@@ -166,40 +169,6 @@ public class EnemyCore : MonoBehaviour, IPoolable
     {
         LastDamageSource = source; // 记录伤害来源
         _health?.TakeDamage(damage, source);
-    }
-
-    /// <summary>
-    /// 敌人属性成长
-    /// </summary>
-    /// <param name="wave"></param>
-    /// <param name="healthPerWave"></param>
-    /// <param name="damagePerWave"></param>
-    /// <param name="bossProjectilesPerSpawn"></param>
-    /// <param name="maxBossProjectiles"></param>
-    public void ApplyWaveScaling(
-        int wave,
-        float healthPerWave,
-        float damagePerWave,
-        int bossProjectilesPerSpawn,
-        int maxBossProjectiles)
-    {
-        // 计算成长系数
-        float healthMultiplier = 1 + healthPerWave * wave;
-        float damageMultiplier = 1 + damagePerWave * wave;
-
-        // 应用基础成长
-        _health?.ApplyWaveScaling(healthMultiplier);
-        _shooting?.ApplyWaveScaling(damageMultiplier);
-
-        // 特殊处理Boss弹道
-        if (EnemyData.isBoss && _shooting != null)
-        {
-            int extraProjectiles = Mathf.Min(
-                wave / WaveCounter.Instance.BossInterval * bossProjectilesPerSpawn,
-                maxBossProjectiles
-            );
-            _shooting.AddProjectiles(extraProjectiles);
-        }
     }
 
     #region 公共属性

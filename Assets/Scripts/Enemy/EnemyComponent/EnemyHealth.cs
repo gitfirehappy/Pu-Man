@@ -31,19 +31,18 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// 敌人血量系统初始化
     /// </summary>
     /// <param name="data"></param>
-    public void Initialize(EnemySO data,EnemyCore enemyCore)
+    public void Initialize(EnemySO data, EnemyCore enemyCore, EnemyBonusStats bonusStats)
     {
         rb = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
 
-        maxHealth = data.maxHealth;
-        currentHealth = maxHealth;
-        collisionDamage = data.collisionDamage;
+        // 获取基础值+增长值
+        maxHealth = data.maxHealth + bonusStats.maxHealthBonus;
+        collisionDamage = data.collisionDamage + bonusStats.collisionDamageBonus;
+
         collisionImmunityDuration = data.collisionImmunityDuration;
         attackRadius = data.attackRadius;
         detectionInterval = data.detectionInterval;
-
-        lastCollisionDamageTime = -collisionImmunityDuration;
 
         ResetToBaseStats();
         FindPlayer();
@@ -139,14 +138,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         OnDeath?.Invoke();
         EnemyEvent.TriggerDeath(enemyCore, source); // 传递死亡来源
     }
-
-    public void ApplyWaveScaling(float multiplier)
-    {
-        maxHealth *= multiplier;
-        collisionDamage *= multiplier;
-        currentHealth = maxHealth; // 重置当前血量
-    }
-
 
     private void OnDrawGizmosSelected()
     {

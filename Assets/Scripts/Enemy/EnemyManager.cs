@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyManager : SingletonMono<EnemyManager>
@@ -8,6 +9,9 @@ public class EnemyManager : SingletonMono<EnemyManager>
 
     private Dictionary<EnemyType, EnemyTypeScalingOverride> _typeOverrides;
 
+    private Dictionary<EnemyType, EnemyBaseStats> _baseStatsTable = new Dictionary<EnemyType, EnemyBaseStats>();
+    private Dictionary<EnemyType, EnemyBonusStats> _bonusStatsTable = new Dictionary<EnemyType, EnemyBonusStats>();
+
     private List<EnemyCore> activeEnemies = new List<EnemyCore>();
 
     private float _currentSpawnInterval;
@@ -15,6 +19,7 @@ public class EnemyManager : SingletonMono<EnemyManager>
 
     protected override void Init()
     {
+        InitializeBaseStats(); // 初始化基础属性表
         InitializeScalingOverrides();
         _currentSpawnInterval = scalingConfig.initialSpawnInterval;
 
@@ -22,6 +27,29 @@ public class EnemyManager : SingletonMono<EnemyManager>
 
         EnemyEvent.OnSpawned += OnEnemySpawned;
         EnemyEvent.OnDeath += OnEnemyDeath;
+    }
+
+    /// <summary>
+    /// 初始化敌人基础属性表
+    /// </summary>
+    private void InitializeBaseStats()
+    {
+        foreach (var prefab in EnemySpawner.Instance.EnemyPrefabs)
+        {
+            var core = prefab.GetComponent<EnemyCore>();
+            if (core == null || core.EnemyData == null) continue;
+
+            var type = core.EnemyData.enemyType;
+            if (_baseStatsTable.ContainsKey(type)) continue;
+
+            var data = core.EnemyData;
+            _baseStatsTable[type] = new EnemyBaseStats
+            {
+                maxHealth = data.maxHealth,
+                bulletDamage = data.shootingConfig?.bulletDamage ?? 0,
+                collisionDamage = data.collisionDamage
+            };
+        }
     }
 
     private void OnEnemySpawned(EnemyCore enemy)
@@ -59,7 +87,7 @@ public class EnemyManager : SingletonMono<EnemyManager>
     }
 
     /// <summary>
-    /// 应用敌人属性成长TODO：属性增长逻辑不对
+    /// 应用敌人属性成长
     /// </summary>
     /// <param name="wave"></param>
     private void ApplyWaveScaling(int wave)
@@ -70,36 +98,72 @@ public class EnemyManager : SingletonMono<EnemyManager>
             scalingConfig.initialSpawnInterval - (wave * scalingConfig.intervalReductionPerWave)
         );
 
-        foreach (var enemy in activeEnemies)
+        //更新bonus增长数值表
+        //达到随波次增加怪越强
+        foreach (EnemyType type in Enum.GetValues(typeof(EnemyType))) 
         {
-            if (enemy == null || enemy.IsDead) continue;
+            if (!_bonusStatsTable.ContainsKey(type))
+            {
+                _bonusStatsTable[type] = new EnemyBonusStats();
+            }
 
-            // 获取敌人类型特定的成长系数
-            var enemyType = enemy.EnemyType;
-            float healthMultiplier = 1f;
-            float damageMultiplier = 1f;
+            // 获取特定类型成长系数
+            float healthMultiplier = scalingConfig.healthPerWave;
+            float damageMultiplier = scalingConfig.damagePerWave;
 
-            if (_typeOverrides.TryGetValue(enemyType, out var overrideConfig))
+            if (_typeOverrides.TryGetValue(type, out var overrideConfig))
             {
                 healthMultiplier = overrideConfig.healthPerWave;
                 damageMultiplier = overrideConfig.damagePerWave;
             }
-            else
-            {
-                healthMultiplier = scalingConfig.healthPerWave;
-                damageMultiplier = scalingConfig.damagePerWave;
-            }
 
-            // 应用成长
-            enemy.ApplyWaveScaling(
-                wave,
-                healthMultiplier,
-                damageMultiplier,
-                scalingConfig.bossProjectilesPerSpawn,
+            //更新公式：xxbonus +=（EnemySo基础值+xxbonus）* 系数
+            //或        xxbonus = （EnemySo基础值+xxbonus）* (1+系数) - 基础值
+            var baseStats = GetBaseStatsForType(type); // 需要实现这个方法获取基础值
+            var currentBonus = _bonusStatsTable[type];
+
+            _bonusStatsTable[type] = new EnemyBonusStats
+            {
+                maxHealthBonus = (baseStats.maxHealth + currentBonus.maxHealthBonus) * (1 + healthMultiplier) - baseStats.maxHealth,
+                bulletDamageBonus = (baseStats.bulletDamage + currentBonus.bulletDamageBonus) * (1 + damageMultiplier) - baseStats.bulletDamage,
+                collisionDamageBonus = (baseStats.collisionDamage + currentBonus.collisionDamageBonus) * (1 + damageMultiplier) - baseStats.collisionDamage,
+                projectileCountBonus = caculateBossProjectileCountBonus(type, wave)
+            };
+        }
+
+
+        //内部初始化：data.xx + core.xxbonus
+        //下面不需要操作，在内部组件初始化可以完成
+    }
+
+    /// <summary>
+    /// 获取指定类型的基础属性
+    /// </summary>
+    private EnemyBaseStats GetBaseStatsForType(EnemyType type)
+    {
+        return _baseStatsTable.TryGetValue(type, out var stats) ? stats : new EnemyBaseStats();
+    }
+
+    /// <summary>
+    /// 特殊处理Boss弹道增长
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="wave"></param>
+    /// <returns></returns>
+    private int caculateBossProjectileCountBonus(EnemyType type, int wave)
+    {
+        int projectileBonus = 0;
+        if (type == EnemyType.Boss)
+        {
+            projectileBonus = Mathf.Min(
+                wave / WaveCounter.Instance.BossInterval * scalingConfig.bossProjectilesPerSpawn,
                 scalingConfig.maxBossProjectiles
             );
         }
+        return projectileBonus;
     }
+
+    #region 外部调用方法
 
     /// <summary>
     /// 亵渎技能
@@ -166,4 +230,34 @@ public class EnemyManager : SingletonMono<EnemyManager>
     {
         scalingConfig.difficultyMultiplier = Mathf.Clamp(multiplier, 0.5f, 2f);
     }
+
+    public EnemyBonusStats GetBonusStats(EnemyType type)
+    {
+        return _bonusStatsTable.TryGetValue(type, out var stats) ? stats : new EnemyBonusStats();
+    }
+
+    #endregion
+}
+
+/// <summary>
+/// 增长数值表
+/// </summary>
+[System.Serializable]
+public struct EnemyBonusStats
+{
+    public float maxHealthBonus;
+    public float bulletDamageBonus;
+    public float collisionDamageBonus;
+    public int projectileCountBonus;//boss特有
+}
+
+/// <summary>
+/// 基础数值表(和增长数值表同步）
+/// </summary>
+[System.Serializable]
+public struct EnemyBaseStats
+{
+    public float maxHealth;
+    public float bulletDamage;
+    public float collisionDamage;
 }

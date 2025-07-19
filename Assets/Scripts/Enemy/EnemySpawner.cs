@@ -22,6 +22,8 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     private Transform playerTransform;
     private bool isSpawning;
 
+    public List<GameObject> EnemyPrefabs => enemyPrefabs;
+
 
     protected override void Init()
     {

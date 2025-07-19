@@ -20,7 +20,7 @@ public class EnemyShooting : MonoBehaviour
     /// <summary>
     /// 敌人射击系统初始化
     /// </summary>
-    public void Initialize(EnemySO data)
+    public void Initialize(EnemySO data, EnemyBonusStats bonusStats)
     {
         if (data.shootingConfig == null)
         {
@@ -29,15 +29,24 @@ public class EnemyShooting : MonoBehaviour
         }
 
         bulletPrefab = data.shootingConfig.bulletPrefab;
-        bulletDamage = data.shootingConfig.bulletDamage;
+
+        // 获取基础值+增长值
+        bulletDamage = data.shootingConfig.bulletDamage + bonusStats.bulletDamageBonus;
+
         bulletSpeed = data.shootingConfig.bulletSpeed;
         bulletSize = data.shootingConfig.bulletSize;
         shootRate = data.shootingConfig.shootRate;
         shootRadius = data.shootingConfig.shootRadius;
+
         projectileCount = data.shootingConfig.projectileCount;
+        if (GetComponent<EnemyCore>().EnemyData.isBoss)
+        {
+            projectileCount += bonusStats.projectileCountBonus;
+        }
+
         bulletLifeTime = data.shootingConfig.bulletLifeTime;
 
-        playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+        playerTransform = PlayerManager.Instance.Player.transform;
         firePoint = firePoint != null ? firePoint : transform;
     }
 
@@ -97,16 +106,6 @@ public class EnemyShooting : MonoBehaviour
             EnemyBullet bullet = bulletObj.GetComponent<EnemyBullet>();
             bullet.Initialize(config, direction);
         }
-    }
-
-    public void ApplyWaveScaling(float multiplier)
-    {
-        bulletDamage *= multiplier;
-    }
-
-    public void AddProjectiles(int count)
-    {
-        projectileCount += count;
     }
 
     private void OnDrawGizmosSelected()
