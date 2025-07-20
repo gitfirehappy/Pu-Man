@@ -8,9 +8,9 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 {
     [Header("固定配置")]
     [SerializeField] private float minSpawnDistance = 5f; // 避免刷脸的最小距离
-    [SerializeField] private float maxSpawnDistance = 15f; // 最大生成半径
     [SerializeField] private float groupSpawnRadius = 3f;   //敌人组生成半径
     [SerializeField] private int maxEnemies = 100;            // 全局敌人数上限
+    [SerializeField] private float bossRadius = 20f;            // BOSS生成范围
 
     [Header("地图边界配置")]
     [SerializeField] private float mapWidth = 50f;  // 地图宽度（X轴范围±值）
@@ -21,6 +21,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 
     private Transform playerTransform;
     private bool isSpawning;
+    private Coroutine spawnRoutine;
 
     public List<GameObject> EnemyPrefabs => enemyPrefabs;
 
@@ -80,6 +81,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     private void StartSpawning()
     {
         isSpawning = true;
+        spawnRoutine = StartCoroutine(SpawnLoop());
         Debug.Log("[EnemySpawner] 敌人生成已开始");
     }
 
@@ -87,19 +89,22 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     private void StopSpawning()
     {
         isSpawning = false;
+        if (spawnRoutine != null)
+            StopCoroutine(spawnRoutine);
         Debug.Log("[EnemySpawner] 敌人生成已停止");
     }
 
-    private void Update()
+    private IEnumerator SpawnLoop()
     {
-        if (!isSpawning) return;
-
-        float currentInterval = EnemyManager.Instance.GetCurrentSpawnInterval();
-        if (Time.time % currentInterval > Time.deltaTime) return;
-
-        if (EnemyManager.Instance.GetActiveEnemyCount() < maxEnemies)
+        while (isSpawning)
         {
-            SpawnEnemyGroup();
+            if (EnemyManager.Instance.GetActiveEnemyCount() < maxEnemies)
+            {
+                SpawnEnemyGroup();
+            }
+
+            float interval = EnemyManager.Instance.GetCurrentSpawnInterval();
+            yield return new WaitForSeconds(interval);
         }
     }
 
@@ -118,39 +123,15 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         GameObject bossPrefab = GetBossEnemy();
         if (bossPrefab != null)
         {
-            Vector2 spawnPos = GetValidSpawnPosition();
-            SpawnSingleEnemy(bossPrefab, spawnPos);
-            //不用对boss做标记，事件会处理
-
-            // 通知AudioManager更新BGM
-            AudioManager.Instance.UpdateBGM();
-        }
-    }
-
-    /// <summary>
-    /// 普通生成敌人组
-    /// </summary>
-    private void SpawnEnemyGroup()
-    {
-        int currentWave = WaveCounter.Instance.CurrentWave;
-
-        // 普通敌人生成逻辑（Boss波也会执行）
-        GameObject enemyPrefab = GetRandomEnemy(currentWave);
-        if (enemyPrefab == null) return;
-
-        EnemySO enemyData = enemyPrefab.GetComponent<EnemyCore>().EnemyData;
-        Vector2 spawnCenter = GetValidSpawnPosition();
-
-        int spawnCount = enemyData.isLargeEnemy ?
-            UnityEngine.Random.Range(1, 3) :  // 大型敌人1-2只
-            UnityEngine.Random.Range(3, 6);   // 普通敌人3-5只
-
-        for (int i = 0; i < spawnCount; i++)
-        {
-            Vector2 spawnPos = spawnCenter + UnityEngine.Random.insideUnitCircle * groupSpawnRadius;
-            if (IsPositionInMap(spawnPos))
+            Vector2? bossSpawnPos = SampleBossSpawnPosition(bossRadius);
+            if (bossSpawnPos.HasValue)
             {
-                SpawnSingleEnemy(enemyPrefab, spawnPos);
+                SpawnSingleEnemy(bossPrefab, bossSpawnPos.Value);
+                AudioManager.Instance.UpdateBGM();//切换音乐
+            }
+            else
+            {
+                Debug.LogWarning("[EnemySpawner] 无法找到合适的Boss生成点！");
             }
         }
     }
@@ -168,6 +149,43 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         return bossPrefabs.Count > 0 ?
             bossPrefabs[UnityEngine.Random.Range(0, bossPrefabs.Count)] :
             null;
+    }
+
+    /// <summary>
+    /// 普通生成敌人组
+    /// </summary>
+    private void SpawnEnemyGroup()
+    {
+        int currentWave = WaveCounter.Instance.CurrentWave;
+
+        // 普通敌人生成逻辑（Boss波也会执行）
+        GameObject enemyPrefab = GetRandomEnemy(currentWave);
+        if (enemyPrefab == null) return;
+
+        EnemySO enemyData = enemyPrefab.GetComponent<EnemyCore>().EnemyData;
+
+        int spawnCount = enemyData.isLargeEnemy ?
+            UnityEngine.Random.Range(1, 3) :  // 大型敌人1-2只
+            UnityEngine.Random.Range(3, 6);   // 普通敌人3-5只
+
+        // 获取一个合适的生成点（外部 Poisson）
+        var candidateCenters = SampleEnemyGroupPositions(10);
+        if (candidateCenters.Count == 0) return;
+
+        Vector2 spawnCenter = candidateCenters[0]; // 这里只用一个位置
+        Vector2 worldCenter = spawnCenter - new Vector2(mapWidth, mapHeight) / 2f;
+
+        // 获取组内敌人位置（圆形 Poisson）
+        var offsets = SampleGroupInnerPositions(spawnCount, groupSpawnRadius);
+
+        for (int i = 0; i < Mathf.Min(spawnCount, offsets.Count); i++)
+        {
+            Vector2 localOffset = offsets[i] - Vector2.one * groupSpawnRadius;
+            Vector2 spawnPos = worldCenter + localOffset;
+
+            if (IsPositionInMap(spawnPos))
+                SpawnSingleEnemy(enemyPrefab, spawnPos);
+        }
     }
 
     /// <summary>
@@ -204,36 +222,6 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     }
 
     /// <summary>
-    /// 随机生成位置
-    /// </summary>
-    /// <returns></returns>
-    private Vector2 GetValidSpawnPosition()
-    {
-        Vector2 spawnPos;
-        int attempts = 0;
-        do
-        {
-            Vector2 dir = UnityEngine.Random.insideUnitCircle.normalized;
-            float distance = UnityEngine.Random.Range(minSpawnDistance, maxSpawnDistance);
-            spawnPos = (Vector2)playerTransform.position + dir * distance;
-            attempts++;
-        } while (!IsPositionInMap(spawnPos) && attempts < 10);
-
-        return spawnPos;
-    }
-
-    /// <summary>
-    /// 是否超出边界
-    /// </summary>
-    /// <param name="pos"></param>
-    /// <returns></returns>
-    private bool IsPositionInMap(Vector2 pos)
-    {
-        return pos.x > -mapWidth / 2 && pos.x < mapWidth / 2 &&
-               pos.y > -mapHeight / 2 && pos.y < mapHeight / 2;
-    }
-
-    /// <summary>
     /// 生成单个敌人
     /// </summary>
     /// <param name="enemyPrefab"></param>
@@ -249,5 +237,94 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 
         enemy?.InitializeComponents();
     }
+
+    #region 采样条件判断
+
+    /// <summary>
+    /// 敌人组采样条件判断
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns></returns>
+    private List<Vector2> SampleEnemyGroupPositions(int count)
+    {
+        Vector2 mapSize = new Vector2(mapWidth, mapHeight);
+
+        return PoissonDiskSampler.GeneratePoints(
+            radius: groupSpawnRadius * 2f, // 确保不同组不会重叠
+            regionSize: mapSize,
+            isValid: (pos) =>
+            {
+                // 坐标转为世界坐标（地图中心为0）
+                Vector2 worldPos = pos - mapSize / 2f;
+                bool insideMap = IsPositionInMap(worldPos);
+                bool safeFromPlayer = playerTransform != null &&
+                    Vector2.Distance(worldPos, playerTransform.position) > (minSpawnDistance + groupSpawnRadius);
+                return insideMap && safeFromPlayer;
+            }
+        );
+    }
+
+    /// <summary>
+    /// 是否超出边界
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <returns></returns>
+    private bool IsPositionInMap(Vector2 pos)
+    {
+        return pos.x > -mapWidth / 2 && pos.x < mapWidth / 2 &&
+               pos.y > -mapHeight / 2 && pos.y < mapHeight / 2;
+    }
+
+    /// <summary>
+    /// 组内单个敌人采样
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="radius"></param>
+    /// <returns></returns>
+    private List<Vector2> SampleGroupInnerPositions(int count, float radius)
+    {
+        float regionDiameter = radius * 2;
+
+        return PoissonDiskSampler.GeneratePoints(
+            radius: 1.0f, // 敌人之间最小距离
+            regionSize: new Vector2(regionDiameter, regionDiameter),
+            isValid: (pos) =>
+            {
+                // 保证在圆形范围内（用于组内视觉分布）
+                Vector2 center = new Vector2(regionDiameter / 2, regionDiameter / 2);
+                return (pos - center).sqrMagnitude < radius * radius;
+            }
+        );
+    }
+
+    /// <summary>
+    /// boss采样坐标
+    /// </summary>
+    /// <param name="bossSafeRadius"></param>
+    /// <returns></returns>
+    private Vector2? SampleBossSpawnPosition(float bossSafeRadius = 10f)
+    {
+        Vector2 regionSize = new Vector2(mapWidth, mapHeight);
+
+        var candidates = PoissonDiskSampler.GeneratePoints(
+            radius: 5f, // boss 本身距离其他 boss / 边界距离（不重要，因为只生成一个）
+            regionSize: regionSize,
+            isValid: (pos) =>
+            {
+                Vector2 worldPos = pos - regionSize / 2f;
+                bool insideMap = IsPositionInMap(worldPos);
+                bool awayFromPlayer = playerTransform != null &&
+                    Vector2.Distance(worldPos, playerTransform.position) > bossSafeRadius;
+                return insideMap && awayFromPlayer;
+            }
+        );
+
+        if (candidates.Count > 0)
+            return candidates[0] - regionSize / 2f;
+
+        return null;
+    }
+
+    #endregion
 
 }
