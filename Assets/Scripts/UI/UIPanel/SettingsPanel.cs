@@ -1,14 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingsPanel : UIFormBase
 {
+
     [Header("音量控制")]
     [SerializeField][Header("主音量滑块")] private Slider masterSlider;
     [SerializeField][Header("音乐音量滑块")] private Slider musicSlider;
     [SerializeField][Header("音效音量滑块")] private Slider sfxSlider;
+
+    [SerializeField][Header("主音量数值")] private TextMeshProUGUI masterValueText;
+    [SerializeField][Header("音乐音量数值")] private TextMeshProUGUI musicValueText;
+    [SerializeField][Header("音效音量数值")] private TextMeshProUGUI sfxValueText;
 
     [SerializeField][Header("关闭界面按钮")] private Button closeButton;
     [SerializeField][Header("重置记录按钮按钮")] private Button resetDataButton;
@@ -16,16 +22,46 @@ public class SettingsPanel : UIFormBase
 
     protected override void Init()
     {
-        // 自动绑定音量滑块（无需手动赋值）
-        TryBindSlider(masterSlider, VolumeType.Master);
-        TryBindSlider(musicSlider, VolumeType.Music);
-        TryBindSlider(sfxSlider, VolumeType.SFX);
+        // 初始化音量滑块数值显示
+        InitSliderWithText(masterSlider, VolumeType.Master, masterValueText);
+        InitSliderWithText(musicSlider, VolumeType.Music, musicValueText);
+        InitSliderWithText(sfxSlider, VolumeType.SFX, sfxValueText);
 
         closeButton.onClick.AddListener(CloseSettingsPanel);
         resetDataButton.onClick.AddListener(ResetHighestWaveRecords);
         difficultyButton.onClick.AddListener(OpenDifficultySettings);
     }
 
+    /// <summary>
+    /// 初始化带数值显示的音量滑块
+    /// </summary>
+    private void InitSliderWithText(Slider slider, VolumeType type, TextMeshProUGUI valueText)
+    {
+        // 自动绑定音量控制
+        TryBindSlider(slider, type);
+
+        // 设置滑块范围（0-1对应0%-100%）
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+
+        // 添加数值变更监听
+        slider.onValueChanged.AddListener((value) => {
+            UpdateVolumeText(value, valueText);
+        });
+
+        // 初始化文本显示
+        UpdateVolumeText(slider.value, valueText);
+    }
+
+    /// <summary>
+    /// 更新音量百分比文本
+    /// </summary>
+    private void UpdateVolumeText(float value, TextMeshProUGUI textComponent)
+    {
+        // 转换为百分比整数 (0% - 100%)
+        int percentage = Mathf.RoundToInt(value * 100);
+        textComponent.text = $"{percentage}%";
+    }
 
     private void TryBindSlider(Slider slider, VolumeType type)
     {

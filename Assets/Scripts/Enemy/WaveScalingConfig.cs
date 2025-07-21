@@ -15,10 +15,6 @@ public class WaveScalingConfig
     [Tooltip("最小生成间隔(秒)")]
     public float minSpawnInterval = 0.2f;
 
-    [Tooltip("难度系数(0.5-2.0)")]
-    [Range(0.5f, 2f)]
-    public float difficultyMultiplier = 1f;
-
     [Header("基础增长")]
     [Tooltip("每波血量增长百分比(0.1=10%)")]
     public float healthPerWave = 0.1f;

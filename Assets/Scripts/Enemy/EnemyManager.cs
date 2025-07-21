@@ -14,7 +14,10 @@ public class EnemyManager : SingletonMono<EnemyManager>
 
     private List<EnemyCore> activeEnemies = new List<EnemyCore>();
 
-    private float _currentSpawnInterval;
+    [Header("生成频率")]
+    [SerializeField] private float spawnRateReductionFactor = 1f;
+    [SerializeField]private float _currentSpawnInterval;
+
     public WaveScalingConfig ScalingConfig => scalingConfig;
 
     protected override void Init()
@@ -222,18 +225,19 @@ public class EnemyManager : SingletonMono<EnemyManager>
     {
         return Mathf.Max(
             scalingConfig.minSpawnInterval,
-            _currentSpawnInterval * scalingConfig.difficultyMultiplier
-        );
-    }
-
-    public void SetDifficultyMultiplier(float multiplier)
-    {
-        scalingConfig.difficultyMultiplier = Mathf.Clamp(multiplier, 0.5f, 2f);
+            _currentSpawnInterval
+        )/ spawnRateReductionFactor;
     }
 
     public EnemyBonusStats GetBonusStats(EnemyType type)
     {
         return _bonusStatsTable.TryGetValue(type, out var stats) ? stats : new EnemyBonusStats();
+    }
+
+    public void ReduceSpawnRate(float reductionFactor)
+    {
+        spawnRateReductionFactor *= reductionFactor;
+        Debug.Log($"敌人生成频率降低至原来的{spawnRateReductionFactor * 100}%");
     }
 
     #endregion

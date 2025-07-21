@@ -131,8 +131,8 @@ public class BuffManager : SingletonMono<BuffManager>
                 break;
 
             case BuffID.ReduceEnemy:
-                // 需要在敌人生成器中实现
-                // EnemySpawner.Instance.ReduceSpawnRate();
+                // 减少敌人生成频率
+                EnemyManager.Instance.ReduceSpawnRate(buffData.reduceEnemySpawn);
                 var NoneAbilityData = new AbilityData(AbilityType.None);
                 player.Abilities.ChangeAbility(NoneAbilityData); // 禁用技能
                 break;
