@@ -26,6 +26,8 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         transform.Translate(_direction * _speed * Time.deltaTime);
 
         if (Time.time - _lastDetectionTime >= _detectionInterval)

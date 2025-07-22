@@ -113,7 +113,9 @@ public class PlayerShooting : MonoBehaviour
 
     private void Update()
     {
-        if(!_isShootingEnabled) return;
+        if (PauseManager.Instance.IsPaused || !_isShootingEnabled) return;
+
+        if (!_isShootingEnabled) return;
 
         if (isRotating)
         {

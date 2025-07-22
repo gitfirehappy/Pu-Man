@@ -92,6 +92,8 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void ActivateAbility(InputAction.CallbackContext context)
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         if (waveCounter == null) return;
 
         int currentWave = waveCounter.CurrentWave;

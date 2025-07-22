@@ -9,24 +9,22 @@ public class WaveCounter : SingletonMono<WaveCounter>
     [SerializeField] private float initialTime = 15f;
     [SerializeField] private float timeIncreasePerWave = 5f;
 
-    [Header("通关后选择无尽波次时间")]
+    [Header("通关后无尽波次时间")]
     [SerializeField] private float endlessModeTime = 45f;
 
     [Header("波次设置")]
     [SerializeField] private int totalWaves = 10;
     [SerializeField] private int bossInterval = 5; // 每N波出现Boss
 
-    [Header("无尽模式")]
-    [SerializeField] private bool enableEndless = false;
-
+    private bool _isInEndlessMode;
     private int _currentWave;
-    private bool _isEndlessMode;
     private float _currentTimeLimit; // 当前波次时间上限
 
     #region 公共属性
-    public bool IsInEndlessMode => _isEndlessMode;
+    public bool EnableEndless { get; set; } = false; // 现在可以通过设置面板修改
+    public bool IsInEndlessMode => _isInEndlessMode;
+
     public int CurrentWave => _currentWave;
-    public bool IsEndlessMode => _isEndlessMode;
     public float TimeIncrease => timeIncreasePerWave;
     public float CurrentTimeLimit => _currentTimeLimit;
     public int TotalWaves => totalWaves;
@@ -53,7 +51,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     public void ResetCounter()
     {
         _currentWave = 0;
-        _isEndlessMode = false;
+        _isInEndlessMode = false;
         _currentTimeLimit = initialTime; // 初始时间15秒
     }
 
@@ -68,14 +66,14 @@ public class WaveCounter : SingletonMono<WaveCounter>
         _currentWave++;
 
         // 更新波次时间上限
-        if (!_isEndlessMode)
+        if (!IsInEndlessMode)
         {
             _currentTimeLimit = Mathf.Min(60f, _currentTimeLimit + timeIncreasePerWave);
 
             //是否完成所有波次
             if (_currentWave >= totalWaves)
             {
-                if (enableEndless)
+                if (EnableEndless)
                 {
                     EnterEndlessMode();
                     return;
@@ -100,7 +98,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     /// </summary>
     private void EnterEndlessMode()
     {
-        _isEndlessMode = true;
+        _isInEndlessMode = true;
         _currentTimeLimit = endlessModeTime; // 无尽模式固定45秒
         EventBus.TriggerEndlessModeActivated();
     }

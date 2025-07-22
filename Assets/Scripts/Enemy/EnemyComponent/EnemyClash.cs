@@ -32,7 +32,7 @@ public class EnemyClash : MonoBehaviour
         clashSpeed = data.clashConfig.clashSpeed;
         clashCooldown = data.clashConfig.clashCooldown;
 
-        playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+        playerTransform = PlayerManager.Instance.Player.transform;
         movement = GetComponent<EnemyMovement>();
         rb = GetComponent<Rigidbody2D>();
     }
@@ -58,6 +58,8 @@ public class EnemyClash : MonoBehaviour
 
     private void Update()
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         if (playerTransform == null || isClashing)
             return;
 
@@ -74,6 +76,12 @@ public class EnemyClash : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (PauseManager.Instance.IsPaused)
+        {
+            if (rb != null) rb.velocity = Vector2.zero;
+            return;
+        }
+
         if (!isClashing) return;
 
         // 冲撞移动（直线运动）

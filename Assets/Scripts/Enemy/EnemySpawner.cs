@@ -98,6 +98,12 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     {
         while (isSpawning)
         {
+            if (PauseManager.Instance.IsPaused)
+            {
+                yield return null;
+                continue;
+            }
+
             if (EnemyManager.Instance.GetActiveEnemyCount() < maxEnemies)
             {
                 SpawnEnemyGroup();

@@ -158,7 +158,6 @@ MonoBehaviour:
   endlessModeTime: 45
   totalWaves: 10
   bossInterval: 5
-  enableEndless: 0
 --- !u!4 &15359209
 Transform:
   m_ObjectHideFlags: 0
@@ -404,7 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf41e941480e13443a93738e37a68dde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnTransform: {fileID: 0}
+  spawnTransform: {fileID: 788189453}
 --- !u!1 &514820825
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,7 +611,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
-  uiPrefabsToPreload: []
+  uiResourceConfig: {fileID: 0}
 --- !u!4 &684775746
 Transform:
   m_ObjectHideFlags: 0
@@ -1063,106 +1062,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1666191119
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1666191122}
-  - component: {fileID: 1666191121}
-  - component: {fileID: 1666191120}
-  m_Layer: 0
-  m_Name: EnemySpawnTest
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1666191120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1666191119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c54288263957e2f4a847442bffa9cb74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enemyData: {fileID: 11400000, guid: ecd21b92db7d08b4289ac507562f91bf, type: 2}
-  spawnPoint: {fileID: 1666191122}
-  spawnKey: 116
---- !u!212 &1666191121
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1666191119}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 1, g: 0.908468, b: 0, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
---- !u!4 &1666191122
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1666191119}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.28, y: 1.49, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1786949523
 GameObject:
   m_ObjectHideFlags: 0
@@ -1283,12 +1182,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
   minSpawnDistance: 5
-  maxSpawnDistance: 15
   groupSpawnRadius: 3
   maxEnemies: 100
+  bossRadius: 20
   mapWidth: 50
   mapHeight: 50
-  spawnInterval: 3
   enemyPrefabs: []
 --- !u!4 &1913417111
 Transform:
@@ -1336,11 +1234,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
   scalingConfig:
+    initialSpawnInterval: 2
+    intervalReductionPerWave: 0.1
+    minSpawnInterval: 0.2
     healthPerWave: 0.1
     damagePerWave: 0.05
     bossProjectilesPerSpawn: 3
     maxBossProjectiles: 12
     typeOverrides: []
+  spawnRateReductionFactor: 1
+  _currentSpawnInterval: 0
 --- !u!4 &1946335553
 Transform:
   m_ObjectHideFlags: 0
@@ -1400,6 +1303,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 107b51cc2a2a13645877df47a6607247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2082362501
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2082362503}
+  - component: {fileID: 2082362502}
+  m_Layer: 0
+  m_Name: PauseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2082362502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082362501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c9874a58dd53c441aeb450fd2ae276d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dontDestroyOnLoad: 1
+--- !u!4 &2082362503
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2082362501}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2119051817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1508,11 +1456,11 @@ SceneRoots:
   - {fileID: 1221782495}
   - {fileID: 2119051821}
   - {fileID: 346737749}
-  - {fileID: 1666191122}
   - {fileID: 788189453}
   - {fileID: 788875709}
   - {fileID: 1257875563}
   - {fileID: 1786949525}
+  - {fileID: 2082362503}
   - {fileID: 684775746}
   - {fileID: 1946335553}
   - {fileID: 1913417111}

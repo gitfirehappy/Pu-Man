@@ -175,6 +175,8 @@ public class EnemyManager : SingletonMono<EnemyManager>
     /// <param name="radius">作用半径</param>
     public void ChainKill(Vector2 origin, float radius, float damage, int maxChains)
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         int chainCount = 0;
         int totalKills = 0;
 

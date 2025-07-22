@@ -90,6 +90,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     /// <param name="damage">原伤害</param>
     public void TakeDamage(float damage, DamageSource source = DamageSource.Enemy)
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         //无敌判定
         if (isInvincible) return;
 

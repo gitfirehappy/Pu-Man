@@ -9,13 +9,14 @@ public class MainMenuPanel : UIFormBase
     [SerializeField][Header("开始游戏按钮")] private Button startButton;
     [SerializeField][Header("游戏设置按钮")] private Button settingsButton;
     [SerializeField][Header("退出游戏按钮")] private Button exitButton;
-
+    [SerializeField][Header("制作人员按钮")] private Button creditsButton;
 
     protected override void Init()
     {
         startButton.onClick.AddListener(OnStartClick);
         settingsButton.onClick.AddListener(OnSettingsClick);
         exitButton.onClick.AddListener(OnExitClick);
+        creditsButton.onClick.AddListener(OnCreditsClick);
     }
 
     /// <summary>
@@ -32,6 +33,14 @@ public class MainMenuPanel : UIFormBase
     private void OnSettingsClick()
     {
         UIManager.Instance.ShowUIForm<SettingsPanel>();
+    }
+
+    /// <summary>
+    /// 打开制作人员面板
+    /// </summary>
+    private void OnCreditsClick()
+    {
+        UIManager.Instance.ShowUIForm<CreditsPanel>();
     }
 
     /// <summary>

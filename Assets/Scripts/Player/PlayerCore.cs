@@ -66,9 +66,8 @@ public class PlayerCore : MonoBehaviour
         // 注册内部组件事件
         health.OnDeath += HandlePlayerDeath;
 
-        // 注册外部系统事件
-        EventBus.OnPlayerDisabled += DisableAllComponents;
         EventBus.OnPlayerEnabled += EnableAllComponents;
+        EventBus.OnPlayerDisabled += DisableAllComponents;
 
         // 注册到PlayerManager（通过事件）
         EventBus.TriggerPlayerSpawned(this);
@@ -79,8 +78,8 @@ public class PlayerCore : MonoBehaviour
         // 注销事件
         if (health != null) health.OnDeath -= HandlePlayerDeath;
 
-        EventBus.OnPlayerDisabled -= DisableAllComponents;
         EventBus.OnPlayerEnabled -= EnableAllComponents;
+        EventBus.OnPlayerDisabled -= DisableAllComponents;
 
         // 清理输入系统
         playerInput.Dispose();

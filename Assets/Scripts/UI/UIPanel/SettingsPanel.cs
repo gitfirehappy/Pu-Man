@@ -20,6 +20,10 @@ public class SettingsPanel : UIFormBase
     [SerializeField][Header("重置记录按钮按钮")] private Button resetDataButton;
     [SerializeField][Header("打开难度控制面板")] private Button difficultyButton;
 
+    [SerializeField][Header("无尽模式按钮")] private Button endlessModeButton;
+    [SerializeField][Header("无尽模式状态文本")] private TextMeshProUGUI endlessModeStatusText;
+    [SerializeField][Header("无尽模式提示文本")] private TextMeshProUGUI endlessModeHintText;
+
     protected override void Init()
     {
         // 初始化音量滑块数值显示
@@ -30,6 +34,9 @@ public class SettingsPanel : UIFormBase
         closeButton.onClick.AddListener(CloseSettingsPanel);
         resetDataButton.onClick.AddListener(ResetHighestWaveRecords);
         difficultyButton.onClick.AddListener(OpenDifficultySettings);
+
+        // 初始化无尽模式开关
+        InitEndlessModeButton();
     }
 
     /// <summary>
@@ -96,6 +103,35 @@ public class SettingsPanel : UIFormBase
     {
         UIManager.Instance.HideUIForm<SettingsPanel>();
         UIManager.Instance.ShowUIForm<DifficultySettingsPanel>();
+    }
+
+    /// <summary>
+    /// 初始化无尽模式按钮
+    /// </summary>
+    private void InitEndlessModeButton()
+    {
+        // 设置初始状态
+        UpdateEndlessModeUI();
+
+        // 添加点击监听
+        endlessModeButton.onClick.AddListener(() => {
+            WaveCounter.Instance.EnableEndless = !WaveCounter.Instance.EnableEndless;
+            UpdateEndlessModeUI();
+        });
+    }
+
+    private void UpdateEndlessModeUI()
+    {
+        bool isEndlessEnabled = WaveCounter.Instance.EnableEndless;
+
+        // 更新按钮颜色和文本
+        endlessModeButton.image.color = isEndlessEnabled ? Color.green : Color.red;
+        endlessModeStatusText.text = isEndlessEnabled ? "ON" : "OFF";
+        endlessModeStatusText.color = isEndlessEnabled ? Color.green : Color.red;
+
+        endlessModeHintText.text = isEndlessEnabled
+            ? "无尽模式已开启: 完成所有波次后将进入无尽挑战"
+            : "无尽模式已关闭: 完成所有波次后游戏结束";
     }
 
 }

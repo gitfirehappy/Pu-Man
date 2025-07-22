@@ -60,6 +60,8 @@ public class EnemyShooting : MonoBehaviour
 
     private void Update()
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         if (playerTransform == null || Time.time < nextShootTime)
             return;
 

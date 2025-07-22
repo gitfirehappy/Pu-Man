@@ -91,6 +91,13 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
     /// </summary>
     private void UpdatePlayerState()
     {
+        // 暂停状态优先判断
+        if (PauseManager.Instance.IsPaused)
+        {
+            EventBus.TriggerPlayerDisabled();
+            return;
+        }
+
         switch (currentState)
         {
             case GameState.Battle:

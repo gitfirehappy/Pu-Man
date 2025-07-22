@@ -20,6 +20,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (PauseManager.Instance.IsPaused)
+        {
+            inputDirection = Vector2.zero;
+            return;
+        }
+
         inputDirection = inputControl.Player.Move.ReadValue<Vector2>();
     }
 

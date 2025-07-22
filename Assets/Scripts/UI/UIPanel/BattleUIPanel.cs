@@ -139,7 +139,7 @@ public class BattleUIPanel : UIFormBase
     {
         if (_waveCounter == null) return;
 
-        if (_waveCounter.IsEndlessMode)
+        if (_waveCounter.IsInEndlessMode)
         {
             waveText.text = $"波次: {_waveCounter.CurrentWave}∞";
         }

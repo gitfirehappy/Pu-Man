@@ -15,5 +15,6 @@ public class MenuUIManager : MonoBehaviour, IUIController
         //清理所有菜单UI
         UIManager.Instance.HideUIForm<MainMenuPanel>();
         UIManager.Instance.HideUIForm<SettingsPanel>();
+        UIManager.Instance.HideUIForm<CreditsPanel>();
     }
 }

@@ -34,6 +34,8 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         if (playerTransform == null || (enemyClash != null && enemyClash.IsClashing)) 
             return;
         MoveTowardsPlayer();

@@ -69,6 +69,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private void Update()
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         if (playerTransform == null || Time.time - lastDetectionTime < detectionInterval)
             return;
 
@@ -100,6 +102,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     /// <param name="damage"></param>
     public void TakeDamage(float damage, DamageSource source)
     {
+        if (PauseManager.Instance.IsPaused) return;
+
         if (_isDead) return;
 
         currentHealth -= damage;
