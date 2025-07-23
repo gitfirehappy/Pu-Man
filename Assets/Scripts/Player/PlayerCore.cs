@@ -99,7 +99,7 @@ public class PlayerCore : MonoBehaviour
     private void HandlePlayerDeath()
     {
         // 保存记录
-        CharacterDataManager.Instance.UpdateRecord(
+        DataManager.Instance.UpdateRecord(
             playerData.playerType,
             WaveCounter.Instance.CurrentWave - 1 // CurrentWave从1开始
         );

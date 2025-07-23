@@ -26,7 +26,6 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     private SelectBuffPanel selectBuffPanel;
     private BuffSO currentlySelectedBuff;
 
-    private List<BuffSO> allBuffs = new List<BuffSO>();
     private List<BuffSO> currentBuffOptions = new List<BuffSO>();
     private Dictionary<Rarity, float> rarityWeights;
 
@@ -43,8 +42,11 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         remainingRefreshCount = defaultRefreshCount;
         InitializeWeights();//初始化权重
 
-        // 加载所有Buff数据
-        await LoadAllBuffsAsync();
+        // 等待Buff数据加载完成
+        while (!DataManager.Instance.IsBuffDataLoaded)
+        {
+            await Task.Yield();
+        }
 
         // 显示选择面板
         UIManager.Instance.ShowUIForm<SelectBuffPanel>();
@@ -61,31 +63,6 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     public void OnExitState()
     {
         UIManager.Instance.HideUIForm<SelectBuffPanel>();
-    }
-
-    /// <summary>
-    /// 异步加载所有Buff数据
-    /// </summary>
-    private async Task LoadAllBuffsAsync()
-    {
-        try
-        {
-            var loadHandle = Addressables.LoadAssetsAsync<BuffSO>("BuffSO", null);
-            await loadHandle.Task;
-
-            if (loadHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                allBuffs = new List<BuffSO>(loadHandle.Result);
-            }
-            else
-            {
-                Debug.LogError("Buff加载失败！");
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"加载Buff时出错: {e.Message}");
-        }
     }
 
     /// <summary>
@@ -150,8 +127,6 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// </summary>
     private BuffSO GetRandomBuffByRarity()
     {
-        if (allBuffs.Count == 0) return null;
-
         // 根据权重随机选择稀有度
         float randomValue = UnityEngine.Random.Range(0f, 1f);
         Rarity selectedRarity = Rarity.Common;
@@ -167,8 +142,8 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
             }
         }
 
-        // 从对应稀有度的Buff中随机选择一个
-        var eligibleBuffs = allBuffs.FindAll(b => b.rarity == selectedRarity);
+        // 从DataManager获取对应稀有度的Buff列表
+        var eligibleBuffs = DataManager.Instance.GetBuffsByRarity(selectedRarity);
         if (eligibleBuffs.Count == 0) return null;
 
         return eligibleBuffs[UnityEngine.Random.Range(0, eligibleBuffs.Count)];
@@ -205,15 +180,22 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// </summary>
     private void OnApplyBuff(BuffSO selectedBuff)
     {
-        if (selectedBuff == null || remainingChoices <= 0) return;
+        if (selectedBuff == null || remainingChoices <= 0)
+        {
+            // 添加边界情况处理
+            if (remainingChoices <= 0)
+            {
+                EventBus.TriggerGameStateChanged(GameState.Battle);
+            }
+            return;
+        }
 
         Debug.Log($"应用Buff: {selectedBuff.buffID}, 剩余次数: {remainingChoices - 1}");
 
         // 应用Buff效果
         BuffManager.Instance.ApplyBuff(selectedBuff);
+        remainingChoices--;// 减少选择次数
 
-        // 减少选择次数
-        remainingChoices--;
         selectBuffPanel.SetRemainingChoices(remainingChoices);
 
         if (remainingChoices > 0)

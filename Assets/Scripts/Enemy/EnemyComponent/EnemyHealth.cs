@@ -22,6 +22,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private float lastCollisionDamageTime;
     private float lastDetectionTime;
     private Transform playerTransform;
+    private SpriteRenderer spriteRenderer;
 
     public event Action OnDeath;
 
@@ -35,6 +36,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         rb = GetComponent<Rigidbody2D>();
         _collider = GetComponent<Collider2D>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         // 获取基础值+增长值
         maxHealth = data.maxHealth + bonusStats.maxHealthBonus;
@@ -56,6 +58,10 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         _isDead = false;
         if (_collider != null) _collider.enabled = true;
         if (rb != null) rb.simulated = true;
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = Color.white;
+        }
 
         currentHealth = maxHealth;
         lastCollisionDamageTime = -collisionImmunityDuration;
@@ -107,12 +113,38 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (_isDead) return;
 
         currentHealth -= damage;
-
         Debug.Log($"{source} caused {damage} damage to Enemy! Current HP: {currentHealth}");
+
+        StartCoroutine(HitAnimationRoutine());
+
         if (currentHealth <= 0)
         {
             Die(source);
         }
+    }
+
+    private IEnumerator HitAnimationRoutine()
+    {
+        if (spriteRenderer == null) yield break;
+
+        float duration = 0.3f; // 比Player更短
+        float blinkSpeed = 0.07f; // 更快的闪烁频率
+        float timer = 0;
+
+        while (timer < duration)
+        {
+            // 使用较暗的半透明效果（alpha=0.5）
+            spriteRenderer.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
+            yield return new WaitForSeconds(blinkSpeed);
+
+            spriteRenderer.color = Color.white;
+            yield return new WaitForSeconds(blinkSpeed);
+
+            timer += blinkSpeed * 2;
+        }
+
+        // 确保最终状态正常
+        spriteRenderer.color = Color.white;
     }
 
     public bool TryTakeCollisionDamage(float damage)

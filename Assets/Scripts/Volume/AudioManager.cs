@@ -15,31 +15,33 @@ public class AudioManager : SingletonMono<AudioManager>
     [Header("音源")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private int maxConcurrentSFX = 5; // 最大并发SFX数量
 
     private GameState currentState;
     private int currentSceneIndex;
+    private List<AudioSource> sfxSources = new List<AudioSource>(); // SFX音源池
 
     protected override void Init()
     {
+        // 空引用保护
+        if (mixer == null) Debug.LogWarning("AudioMixer 未分配！");
+        if (bgmConfig == null) Debug.LogWarning("BGM配置 未分配！");
+
         // 初始化音量服务
         AudioVolumeService.Init(mixer);
 
-        // 自动创建 AudioSource
-        bgmSource = gameObject.AddComponent<AudioSource>();
-        sfxSource = gameObject.AddComponent<AudioSource>();
+        // 创建SFX音源池
+        for (int i = 0; i < maxConcurrentSFX; i++)
+        {
+            CreateSFXSource();
+        }
 
+        // BGM音源初始化
+        bgmSource = gameObject.AddComponent<AudioSource>();
         bgmSource.loop = true;
         bgmSource.playOnAwake = false;
-        sfxSource.playOnAwake = false;
-
-        // 自动绑定 AudioMixerGroup
-        var musicGroup = mixer.FindMatchingGroups("Music");
-        if (musicGroup.Length > 0)
-            bgmSource.outputAudioMixerGroup = musicGroup[0];
-
-        var sfxGroup = mixer.FindMatchingGroups("SFX");
-        if (sfxGroup.Length > 0)
-            sfxSource.outputAudioMixerGroup = sfxGroup[0];
+        var musicGroup = mixer.FindMatchingGroups("Music")[0];
+        bgmSource.outputAudioMixerGroup = musicGroup;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
         EventBus.OnGameStateChanged += OnGameStateChanged;
@@ -49,6 +51,26 @@ public class AudioManager : SingletonMono<AudioManager>
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         EventBus.OnGameStateChanged -= OnGameStateChanged;
+    }
+
+    // 创建新的SFX音源
+    private AudioSource CreateSFXSource()
+    {
+        var source = gameObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.outputAudioMixerGroup = mixer.FindMatchingGroups("SFX")[0];
+        sfxSources.Add(source);
+        return source;
+    }
+
+    // 获取空闲的SFX音源
+    private AudioSource GetAvailableSFXSource()
+    {
+        foreach (var source in sfxSources)
+        {
+            if (!source.isPlaying) return source;
+        }
+        return CreateSFXSource(); // 没有空闲时创建新音源
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -96,8 +118,10 @@ public class AudioManager : SingletonMono<AudioManager>
 
     public void PlaySFX(AudioClip clip)
     {
-        if (clip != null)
-            sfxSource.PlayOneShot(clip);
+        if (clip == null) return;
+
+        var source = GetAvailableSFXSource();
+        source.PlayOneShot(clip);
     }
 
     // 添加淡入淡出功能(可选)

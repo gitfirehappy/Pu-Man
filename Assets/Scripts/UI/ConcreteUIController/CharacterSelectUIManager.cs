@@ -27,8 +27,14 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
                 return;
             }
 
-            // 加载角色数据
-            await LoadCharactersAsync();
+            // 等待PlayerSO加载完成
+            while (!DataManager.Instance.IsPlayerDataLoaded)
+            {
+                await Task.Yield();
+            }
+
+            // 从DataManager获取角色数据
+            allCharacters = DataManager.Instance.GetAllPlayerSOs();
 
             // 初始化面板
             if (allCharacters != null && allCharacters.Count > 0)
@@ -50,32 +56,6 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
     {
         UIManager.Instance.HideUIForm<SelectCharacterPanel>();
 
-    }
-
-    /// <summary>
-    /// 异步加载所有角色数据
-    /// </summary>
-    private async Task LoadCharactersAsync()
-    {
-        try
-        {
-            // 加载所有带 "PlayerSO" Label 的 ScriptableObject
-            var loadHandle = Addressables.LoadAssetsAsync<PlayerSO>("PlayerSO", null);
-            await loadHandle.Task;
-
-            if (loadHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                allCharacters = new List<PlayerSO>(loadHandle.Result);
-            }
-            else
-            {
-                Debug.LogError("角色加载失败！");
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"加载角色时出错: {e.Message}");
-        }
     }
 
     /// <summary>

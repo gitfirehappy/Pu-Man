@@ -6,7 +6,6 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class PlayerAnimatorController : MonoBehaviour
 {
     public Animator animator;
-    public string animationLabel = "PlayerAnimationSO"; // 统一的资源标签
 
     private AnimatorOverrideController overrideController;
     private PlayerAnimationSO animationSO;
@@ -25,35 +24,24 @@ public class PlayerAnimatorController : MonoBehaviour
             animator = GetComponent<Animator>();
             if (animator == null)
             {
-                Debug.LogError("Animator component not found!");
+                Debug.LogError("未找到玩家的Animator组件!");
             }
         }
     }
 
-    public async void Init()
+    public void Init()
     {
-        // 使用统一标签加载所有PlayerAnimationSO
-        var loadHandle = Addressables.LoadAssetsAsync<PlayerAnimationSO>(animationLabel, null);
-        await loadHandle.Task;
+        // 直接从DataManager获取SO
+        var playerType = playerCore.GetPlayerType();
+        animationSO = DataManager.Instance.GetPlayerAnimationSO(playerType);
 
-        if (loadHandle.Status == AsyncOperationStatus.Succeeded)
+        if (animationSO != null)
         {
-            // 从加载的SO中查找与当前玩家类型匹配的
-            var playerType = playerCore.GetPlayerType();
-            animationSO = loadHandle.Result.FirstOrDefault(so => so.playerType == playerType);
-
-            if (animationSO != null)
-            {
-                ApplyAnimationSet(currentSet);
-            }
-            else
-            {
-                Debug.LogError($"No animation data found for player type: {playerType}");
-            }
+            ApplyAnimationSet(currentSet);
         }
         else
         {
-            Debug.LogError("Failed to load animation data!");
+            Debug.LogError($"未找到玩家类型的动画数据: {playerType}");
         }
     }
 
@@ -102,7 +90,7 @@ public class PlayerAnimatorController : MonoBehaviour
         var set = animationSO.GetSet(setType);
         if (set == null)
         {
-            Debug.LogWarning($"No animation set found for {setType}");
+            Debug.LogWarning($"没找到 {setType} 的AnimationSet");
             return;
         }
 

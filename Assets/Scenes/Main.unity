@@ -325,7 +325,7 @@ GameObject:
   - component: {fileID: 379128870}
   - component: {fileID: 379128869}
   m_Layer: 0
-  m_Name: CharacterDataManager
+  m_Name: DataManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -905,7 +905,7 @@ MonoBehaviour:
   _dontDestroyOnLoad: 1
   _addToDontDestroyOnLoad: 1
   _defaultPoolCapacity: 10
-  _maxPoolSize: 20
+  _maxPoolSize: 50
   _showDebugInfo: 0
 --- !u!4 &1257875563
 Transform:
@@ -1043,10 +1043,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
   mixer: {fileID: 24100000, guid: ce9f70b363dac1d4b8928b001dab66a8, type: 2}
-  bgmConfig: {fileID: 0}
+  bgmConfig: {fileID: 11400000, guid: 59ed351027adb3a429c7f95a85908c19, type: 2}
   defaultBGM: {fileID: 0}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
+  maxConcurrentSFX: 5
 --- !u!4 &1322850875
 Transform:
   m_ObjectHideFlags: 0

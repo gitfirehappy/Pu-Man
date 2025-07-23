@@ -95,7 +95,7 @@ public class SettingsPanel : UIFormBase
     /// </summary>
     private void ResetHighestWaveRecords()
     {
-        CharacterDataManager.Instance.ResetAllRecords();
+        DataManager.Instance.ResetAllRecords();
         Debug.Log("已重置所有角色记录");
     }
 

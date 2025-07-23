@@ -10,12 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3539a0758a5b3d4aaf0c56728366cdb, type: 3}
-  m_Name: SceneBGMConfigSO
+  m_Name: AudioSO
   m_EditorClassIdentifier: 
   sceneBGMs:
   - sceneBuildIndex: 0
     stateBGMs:
     - state: 0
+      bgmClips:
+      - {fileID: 0}
+      condition: 
+    - state: 2
+      bgmClips:
+      - {fileID: 0}
+      - {fileID: 0}
+      condition: 
+    - state: 3
+      bgmClips:
+      - {fileID: 0}
+      condition: 
+    - state: 4
       bgmClips:
       - {fileID: 0}
       condition: 

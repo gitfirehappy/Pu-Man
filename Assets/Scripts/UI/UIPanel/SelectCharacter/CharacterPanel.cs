@@ -26,7 +26,7 @@ public class CharacterPanel : UIFormBase, IPointerClickHandler
         characterName.text = data.playerName;
 
         // 显示最高波次
-        int highestWave = CharacterDataManager.Instance.GetHighestWave(data.playerType);
+        int highestWave = DataManager.Instance.GetHighestWave(data.playerType);
         historicalBest.text = $"最高记录: {highestWave}波";
     }
 

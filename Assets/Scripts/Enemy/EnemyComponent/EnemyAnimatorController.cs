@@ -8,7 +8,6 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class EnemyAnimatorController : MonoBehaviour
 {
     public Animator animator;
-    public string animationLabel = "EnemyAnimationSO"; // 资源标签
 
     private AnimatorOverrideController overrideController;
     private EnemyAnimationSO animationSO;
@@ -23,35 +22,24 @@ public class EnemyAnimatorController : MonoBehaviour
             animator = GetComponent<Animator>();
             if (animator == null)
             {
-                Debug.LogError("Animator component not found on enemy!");
+                Debug.LogError("未找到敌人的Animator组件!");
             }
         }
     }
 
-    public async void Initialize()
+    public void Initialize()
     {
-        // 使用统一标签加载所有EnemyAnimationSO
-        var loadHandle = Addressables.LoadAssetsAsync<EnemyAnimationSO>(animationLabel, null);
-        await loadHandle.Task;
+        // 直接从DataManager获取SO
+        var enemyType = enemyCore.EnemyType;
+        animationSO = DataManager.Instance.GetEnemyAnimationSO(enemyType);
 
-        if (loadHandle.Status == AsyncOperationStatus.Succeeded)
+        if (animationSO != null)
         {
-            // 查找匹配当前敌人类型的SO
-            var enemyType = enemyCore.EnemyType;
-            animationSO = loadHandle.Result.FirstOrDefault(so => so.enemyType == enemyType);
-
-            if (animationSO != null)
-            {
-                ApplyAnimationSet();
-            }
-            else
-            {
-                Debug.LogWarning($"No animation data found for enemy type: {enemyType}");
-            }
+            ApplyAnimationSet();
         }
         else
         {
-            Debug.LogError("Failed to load enemy animation data!");
+            Debug.LogWarning($"未找到敌方类型的动画数据: {enemyType}");
         }
     }
 

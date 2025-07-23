@@ -30,8 +30,11 @@ public class PlayerShooting : MonoBehaviour
     [Header("设置")]
     [SerializeField] private GameObject bulletPrefab;
     [SerializeField] private Transform firePoint;
+    [SerializeField] private AudioClip shootingSFX;
 
+    private float lastShootTime;//高频音效处理
     private float nextFireTime;
+
     [SerializeField][Header("是否跟随鼠标")]private bool isRotating;
     private InputAction fireAction;
     public bool IsShooting { get; private set; }//射击状态
@@ -79,6 +82,7 @@ public class PlayerShooting : MonoBehaviour
 
         // 存储基础值
         bulletPrefab = playerData.shootingConfig.bulletPrefab;
+        shootingSFX = playerData.shootingConfig.shootingSFX;
 
         baseDamage = playerData.shootingConfig.damage;
         baseFireRate = playerData.shootingConfig.fireRate;
@@ -141,8 +145,15 @@ public class PlayerShooting : MonoBehaviour
         // 添加预制体检查
         if (bulletPrefab == null)
         {
-            Debug.LogError("BulletPrefab is not assigned in PlayerShooting!");
+            Debug.LogError("PlayerShooting中子弹预制体未设置!");
             return;
+        }
+
+        // 播放射击音效 (高频播放优化)
+        if (shootingSFX != null && Time.time > lastShootTime + 0.05f)
+        {
+            AudioManager.Instance.PlaySFX(shootingSFX);
+            lastShootTime = Time.time;
         }
 
         float angleStep = currentProjectileCount > 1 ? 15f / (currentProjectileCount - 1) : 0f;

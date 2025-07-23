@@ -14,9 +14,11 @@ public class PlayerAbilities : MonoBehaviour
     public int nextAvailableWave; // 下次可用技能的波次
     public bool isAbilityActive;
 
+    [SerializeField] private AudioClip abilityActivationSFX;
+
     private Coroutine activeAbilityCoroutine;
     private PlayerCore playerCore;
-    private PlayerInput playerInput;
+    private PlayerInput playerInput;//TODO:检查上级是否禁用
     private WaveCounter waveCounter;
 
     private void Awake()
@@ -63,6 +65,8 @@ public class PlayerAbilities : MonoBehaviour
     {
         nextAvailableWave = 0;
 
+        abilityActivationSFX = playerData.abilitiesConfig.abilityActivationSFX;
+
         baseAbilityData = new AbilityData(playerData.abilitiesConfig.startingAbility);
         // 从 playerData 中读取其他配置（如冷却、持续时间等）
         ResetToBaseStats(); // 初始化时调用重置方法
@@ -105,6 +109,11 @@ public class PlayerAbilities : MonoBehaviour
         }
 
         isAbilityActive = true;
+
+        if (abilityActivationSFX != null)
+        {
+            AudioManager.Instance.PlaySFX(abilityActivationSFX);
+        }
 
         switch (currentAbilityData.type)
         {

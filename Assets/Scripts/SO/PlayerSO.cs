@@ -46,7 +46,7 @@ public class PlayerSO : ScriptableObject
         [Header("生命周期")] public float projectileLifeTime;
 
         [Header("玩家子弹预制体")] public GameObject bulletPrefab;
-
+        [Header("射击音效")] public AudioClip shootingSFX;
     }
 
     [System.Serializable]
@@ -59,6 +59,7 @@ public class PlayerSO : ScriptableObject
     public class AbilitiesConfig
     {
         [Header("初始技能")] public AbilityType startingAbility;
+        [Header("技能音效")]public AudioClip abilityActivationSFX;
         public AbilityData startingAbilityData;
     }
 
