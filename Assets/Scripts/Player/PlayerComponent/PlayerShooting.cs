@@ -33,9 +33,8 @@ public class PlayerShooting : MonoBehaviour
 
     private float nextFireTime;
     [SerializeField][Header("是否跟随鼠标")]private bool isRotating;
-    private PlayerInput playerInput;
     private InputAction fireAction;
-
+    public bool IsShooting { get; private set; }//射击状态
 
     private void Awake()
     {
@@ -126,6 +125,11 @@ public class PlayerShooting : MonoBehaviour
         {
             Shoot();
             nextFireTime = Time.time + 1f / currentFireRate;
+            IsShooting = true;
+        }
+        else
+        {
+            IsShooting = false;
         }
     }
 

@@ -20,7 +20,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     [Header("无敌效果")]
     public bool isInvincible; // 当前是否无敌
-
     public float invincibleDuration; // 无敌剩余时间
 
     //碰撞
@@ -28,8 +27,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
+    private SpriteRenderer spriteRenderer;//图片
     // 添加死亡事件
     public event Action OnDeath;
+
+    private void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+    }
 
     private void Update()
     {
@@ -117,9 +122,27 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         currentHealth -= damageTaken;
         Debug.Log($"{source} caused {damageTaken} damage to Player! Current HP: {currentHealth}");
 
+        StartCoroutine(HitAnimationRoutine());//简单动画
+
         if (currentHealth <= 0)
         {
             Die(source);
+        }
+    }
+
+    private IEnumerator HitAnimationRoutine()
+    {
+        float duration = 0.5f;
+        float blinkSpeed = 0.1f;
+        float timer = 0;
+
+        while (timer < duration)
+        {
+            spriteRenderer.color = new Color(1, 1, 1, 0.3f);
+            yield return new WaitForSeconds(blinkSpeed);
+            spriteRenderer.color = Color.white;
+            yield return new WaitForSeconds(blinkSpeed);
+            timer += blinkSpeed * 2;
         }
     }
 

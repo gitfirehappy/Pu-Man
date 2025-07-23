@@ -12,6 +12,7 @@ public class PlayerCore : MonoBehaviour
     private PlayerShooting shooting;
     private PlayerMovement movement;
     private PlayerAbilities abilities;
+    private PlayerAnimatorController animatorController;
     public PlayerInput playerInput; // 统一管理输入
 
 
@@ -40,12 +41,14 @@ public class PlayerCore : MonoBehaviour
         shooting = GetOrAddComponent<PlayerShooting>();
         movement = GetOrAddComponent<PlayerMovement>();
         abilities = GetOrAddComponent<PlayerAbilities>();
+        animatorController = GetOrAddComponent<PlayerAnimatorController>();
 
         // 初始化所有组件
         health.Initialize(playerData);
         shooting.Initialize(playerData);
         movement.Initialize(playerData);
         abilities.Initialize(playerData);
+        animatorController.Init();
     }
 
     private T GetOrAddComponent<T>() where T : Component
@@ -148,6 +151,7 @@ public class PlayerCore : MonoBehaviour
         shooting.ResetToBaseStats();
         movement.ResetToBaseStats();
         abilities.ResetToBaseStats();
+        animatorController?.ResetToBaseStats();
     }
 
     /// <summary>

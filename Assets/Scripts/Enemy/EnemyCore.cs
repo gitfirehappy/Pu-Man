@@ -19,6 +19,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
     private EnemyShooting _shooting;
     private EnemyClash _clash;
     private EnemyReward _reward;
+    private EnemyAnimatorController animatorController;
 
     private void Awake()
     {
@@ -40,6 +41,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
         // 确保基础组件存在
         _health = GetOrAddComponent<EnemyHealth>();
         _movement = GetOrAddComponent<EnemyMovement>();
+        animatorController = GetOrAddComponent<EnemyAnimatorController>();
 
         // 获取当前类型的额外属性
         var bonusStats = EnemyManager.Instance.GetBonusStats(enemyData.enemyType);
@@ -75,6 +77,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _shooting?.Initialize(enemyData, bonusStats);
         _clash?.Initialize(enemyData);
         _reward?.Initialize(enemyData);
+        animatorController?.Initialize();
     }
 
     private T GetOrAddComponent<T>() where T : Component
@@ -124,6 +127,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _clash?.ResetToBaseStats();
         _reward?.ResetToBaseStats();
         _health?.ResetToBaseStats();
+        animatorController?.ResetToBaseStats();
     }
 
     /// <summary>

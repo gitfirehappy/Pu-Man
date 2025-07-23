@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Animation/Player Animation Set", fileName = "PlayerAnimationSO")]
+[CreateAssetMenu(fileName = "PlayerAnimationSO",menuName = "Animation/PlayerAnimationSet")]
 public class PlayerAnimationSO : ScriptableObject
 {
+    public PlayerType playerType;
     public List<AnimationSetEntry> animationSets;
 
     [System.Serializable]
