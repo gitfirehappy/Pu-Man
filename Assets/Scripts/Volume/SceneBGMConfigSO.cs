@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 [CreateAssetMenu(fileName = "SceneBGMConfigSO", menuName = "Audio/Scene BGM Config SO")]
 public class SceneBGMConfigSO : ScriptableObject
@@ -7,8 +8,15 @@ public class SceneBGMConfigSO : ScriptableObject
     public struct StateBGM
     {
         public GameState state;
-        public AudioClip[] bgmClips; // 改为数组支持多个音乐
-        public string condition; // 条件标识符，如"BossBattle"
+        public AudioClip defaultBGM; // 默认背景音乐
+        public TaggedBGM[] taggedBGMs; // 带标签的BGM配置
+    }
+
+    [System.Serializable]
+    public struct TaggedBGM
+    {
+        public string tag; // 音乐标签（如"BossBattle"）
+        public AudioClip bgmClip; // 对应的音乐
     }
 
     [System.Serializable]
@@ -20,29 +28,25 @@ public class SceneBGMConfigSO : ScriptableObject
 
     public SceneBGM[] sceneBGMs;
 
-    public AudioClip GetBGMForSceneAndState(int buildIndex, GameState state, string condition = null)
+    public AudioClip GetBGMForSceneAndState(int buildIndex, GameState state, string conditionTag)
     {
-        foreach (var sceneBGM in sceneBGMs)
+        // 查找匹配的场景配置
+        var sceneConfig = sceneBGMs.FirstOrDefault(s => s.sceneBuildIndex == buildIndex);
+        if (sceneConfig.Equals(default(SceneBGM))) return null;
+
+        // 查找匹配的状态配置
+        var stateConfig = sceneConfig.stateBGMs.FirstOrDefault(s => s.state == state);
+        if (stateConfig.Equals(default(StateBGM))) return null;
+
+        // 优先使用标签匹配的音乐
+        if (!string.IsNullOrEmpty(conditionTag))
         {
-            if (sceneBGM.sceneBuildIndex == buildIndex)
-            {
-                foreach (var stateBGM in sceneBGM.stateBGMs)
-                {
-                    if (stateBGM.state == state)
-                    {
-                        // 如果没有条件或条件匹配
-                        if (string.IsNullOrEmpty(condition) ||
-                            stateBGM.condition == condition)
-                        {
-                            // 随机选择一个音乐
-                            if (stateBGM.bgmClips != null && stateBGM.bgmClips.Length > 0)
-                                return stateBGM.bgmClips[Random.Range(0, stateBGM.bgmClips.Length)];
-                        }
-                    }
-                }
-                return null;
-            }
+            var taggedBGM = stateConfig.taggedBGMs.FirstOrDefault(t => t.tag == conditionTag);
+            if (taggedBGM.bgmClip != null) return taggedBGM.bgmClip;
         }
-        return null;
+
+        // 返回默认BGM
+        return stateConfig.defaultBGM;
     }
+
 }

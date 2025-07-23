@@ -66,12 +66,6 @@ public class EnemyManager : SingletonMono<EnemyManager>
     private void OnEnemyDeath(EnemyCore enemy, DamageSource source)
     {
         activeEnemies.Remove(enemy);
-
-        // 如果死亡的是Boss，通知AudioManager更新BGM
-        if (enemy.EnemyData.isBoss)
-        {
-            AudioManager.Instance.UpdateBGM();
-        }
     }
 
     /// <summary>

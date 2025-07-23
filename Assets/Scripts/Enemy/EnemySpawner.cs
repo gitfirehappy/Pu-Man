@@ -133,7 +133,9 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
             if (bossSpawnPos.HasValue)
             {
                 SpawnSingleEnemy(bossPrefab, bossSpawnPos.Value);
-                AudioManager.Instance.UpdateBGM();//切换音乐
+
+                string BGMTag = "BossBattle";
+                AudioManager.Instance.UpdateBGM(BGMTag);//切换音乐
             }
             else
             {

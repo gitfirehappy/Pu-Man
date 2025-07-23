@@ -20,6 +20,7 @@ public class AudioManager : SingletonMono<AudioManager>
     private GameState currentState;
     private int currentSceneIndex;
     private List<AudioSource> sfxSources = new List<AudioSource>(); // SFX音源池
+    private string currentConditionTag = null; // 当前条件标签
 
     protected override void Init()
     {
@@ -85,21 +86,17 @@ public class AudioManager : SingletonMono<AudioManager>
         UpdateBGM();
     }
 
-    public void UpdateBGM()
+    /// <summary>
+    /// 更新BGM
+    /// </summary>
+    /// <param name="conditionTag">音乐标签</param>
+    public void UpdateBGM(string conditionTag = null)
     {
-        string condition = null;
-
-        // 检查是否是Boss战
-        if (currentState == GameState.Battle &&
-            EnemyManager.Instance.GetActiveBoss() != null)
-        {
-            condition = "BossBattle";
-        }
-
+        currentConditionTag = conditionTag;
         AudioClip newBGM = bgmConfig?.GetBGMForSceneAndState(
             currentSceneIndex,
             currentState,
-            condition) ?? defaultBGM;
+            conditionTag) ?? defaultBGM;
 
         if (newBGM == null)
         {
@@ -115,6 +112,13 @@ public class AudioManager : SingletonMono<AudioManager>
         }
     }
 
+    /// <summary>
+    /// 清除当前条件标签
+    /// </summary>
+    public void ClearConditionTag()
+    {
+        UpdateBGM(null);
+    }
 
     public void PlaySFX(AudioClip clip)
     {

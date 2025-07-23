@@ -111,6 +111,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
         if (EnemyData.isBoss)
         {
             EventBus.TriggerBossWaveEnded();
+            AudioManager.Instance.ClearConditionTag();
         }
 
         ReturnToPool();

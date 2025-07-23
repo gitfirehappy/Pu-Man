@@ -91,6 +91,12 @@ public class WaveCounter : SingletonMono<WaveCounter>
         {
             EventBus.TriggerBossWaveStarted();
         }
+
+        //重置玩家状态
+        if (PlayerManager.Instance.Player != null)
+        {
+            PlayerManager.Instance.Player.ResetState();
+        }
     }
 
     /// <summary>
