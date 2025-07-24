@@ -19,8 +19,8 @@ public class UIResourceConfigSO : ScriptableObject
     [System.Serializable]
     public class UIRegistrationGroup
     {
-        [Header("父Canvas")]
-        public Canvas parentCanvas;
+        [Header("父Canvas名称（场景中Canvas物体的名字）")]
+        public string parentCanvasName;
 
         [Header("分组配置")]
         public UIGroupDefinition[] uiGroups;

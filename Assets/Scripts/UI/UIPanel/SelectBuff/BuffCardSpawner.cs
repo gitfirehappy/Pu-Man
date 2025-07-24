@@ -29,7 +29,7 @@ public class BuffCardSpawner : MonoBehaviour
                 cardPrefab,
                  UIGroupID.BUFF_CARDS,
                 cardPositions[i],
-                onCreated: card => card.Setup(buffs[i], onSelectedCallback)
+                onCreated:card => card.Setup(buffs[i], onSelectedCallback)
             );
 
             if (card != null)

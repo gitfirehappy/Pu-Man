@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UIResourceConfig
   m_EditorClassIdentifier: 
   uiRegistrationGroups:
-  - parentCanvas: {fileID: 0}
+  - parentCanvasName: FixedCanvas
     uiGroups:
     - groupID: CharacterCards
       manualUIForms: []

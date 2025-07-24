@@ -13,6 +13,8 @@ public class MainMenuPanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         startButton.onClick.AddListener(OnStartClick);
         settingsButton.onClick.AddListener(OnSettingsClick);
         exitButton.onClick.AddListener(OnExitClick);

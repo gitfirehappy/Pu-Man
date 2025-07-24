@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerType: 0
   playerName: ClassicPlayer
-  playerSprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  playerSprite: {fileID: 21300000, guid: 2100a039d9bbb7a4e9af7759c7f1d719, type: 3}
   playerPrefab: {fileID: 2408863001739500776, guid: f78be7a758c0a4e4c87f6876f2aeed06, type: 3}
   description: 
   healthConfig:
@@ -36,10 +36,12 @@ MonoBehaviour:
     projectileSpeed: 4
     projectileLifeTime: 1
     bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
+    shootingSFX: {fileID: 8300000, guid: 6fd72ba20b9e206439dc213a9968a1f1, type: 3}
   movementConfig:
     runSpeed: 4
   abilitiesConfig:
     startingAbility: 1
+    abilityActivationSFX: {fileID: 0}
     startingAbilityData:
       type: 1
       cooldownWaves: 0

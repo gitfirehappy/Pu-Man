@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerType: 1
   playerName: BerserkPlayer
-  playerSprite: {fileID: 0}
+  playerSprite: {fileID: 21300000, guid: a1e64e76acb770242829306c26484dce, type: 3}
   playerPrefab: {fileID: 2408863001739500776, guid: 8d3f935c134acc248868539e2ace2de9, type: 3}
   description: 
   healthConfig:
@@ -35,11 +35,13 @@ MonoBehaviour:
     isAoeDamage: 0
     projectileSpeed: 0
     projectileLifeTime: 0
-    bulletPrefab: {fileID: 0}
+    bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
+    shootingSFX: {fileID: 8300000, guid: 33ec1f953044b4543bdea7784b87bd05, type: 3}
   movementConfig:
     runSpeed: 0
   abilitiesConfig:
     startingAbility: 2
+    abilityActivationSFX: {fileID: 0}
     startingAbilityData:
       type: 2
       cooldownWaves: 0

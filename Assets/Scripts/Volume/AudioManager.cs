@@ -17,6 +17,9 @@ public class AudioManager : SingletonMono<AudioManager>
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private int maxConcurrentSFX = 5; // 最大并发SFX数量
 
+    [Header("按钮音效")]
+    [SerializeField] private AudioClip defaultButtonClickSFX;
+
     private GameState currentState;
     private int currentSceneIndex;
     private List<AudioSource> sfxSources = new List<AudioSource>(); // SFX音源池
@@ -126,6 +129,12 @@ public class AudioManager : SingletonMono<AudioManager>
 
         var source = GetAvailableSFXSource();
         source.PlayOneShot(clip);
+    }
+
+    public void PlayDefaultButtonClick()
+    {
+        if (defaultButtonClickSFX != null)
+            PlaySFX(defaultButtonClickSFX);
     }
 
     // 添加淡入淡出功能(可选)

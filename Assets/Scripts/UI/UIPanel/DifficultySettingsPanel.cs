@@ -23,6 +23,8 @@ public class DifficultySettingsPanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         // 初始化滑块值
         var config = EnemyManager.Instance.ScalingConfig;
 

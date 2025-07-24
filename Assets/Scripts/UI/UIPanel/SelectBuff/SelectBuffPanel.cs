@@ -23,6 +23,8 @@ public class SelectBuffPanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         // 初始化按钮状态
         applyBuffButton.interactable = false;
         refreshBuffButton.interactable = false; // 初始状态由ShowBuffOptions设置

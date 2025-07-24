@@ -40,17 +40,29 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void Initialize(UIResourceConfigSO config)
     {
-        // 注册Canvas组和分组
+        // 注册Canvas分组
         foreach (var registrationGroup in config.uiRegistrationGroups)
         {
-            if (registrationGroup.parentCanvas == null) continue;
+            if (string.IsNullOrEmpty(registrationGroup.parentCanvasName))
+            {
+                Debug.LogError("UIResourceConfigSO contains empty parentCanvasName!");
+                continue;
+            }
+
+            // 通过名称查找场景中的Canvas
+            Canvas targetCanvas = FindCanvasByName(registrationGroup.parentCanvasName);
+            if (targetCanvas == null)
+            {
+                Debug.LogError($"Canvas named '{registrationGroup.parentCanvasName}' not found in scene!");
+                continue;
+            }
 
             foreach (var uiGroup in registrationGroup.uiGroups)
             {
                 if (string.IsNullOrEmpty(uiGroup.groupID)) continue;
 
-                // 注册Canvas组
-                RegisterCanvasGroup(uiGroup.groupID, registrationGroup.parentCanvas);
+                // 注册Canvas组（允许多个分组ID对应同一个Canvas）
+                RegisterCanvasGroup(uiGroup.groupID, targetCanvas);
 
                 // 预加载资源
                 PreLoadForms(uiGroup.manualUIForms);
@@ -82,6 +94,24 @@ public class UIManager : Singleton<UIManager>
         if (canvasGroups.TryGetValue(groupID, out Canvas canvas))
         {
             return canvas;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 通过名称查找场景中的Canvas
+    /// </summary>
+    /// <param name="canvasName"></param>
+    /// <returns></returns>
+    private Canvas FindCanvasByName(string canvasName)
+    {
+        Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>(true);
+        foreach (Canvas canvas in allCanvases)
+        {
+            if (canvas.name.Equals(canvasName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return canvas;
+            }
         }
         return null;
     }
@@ -337,7 +367,7 @@ public class UIManager : Singleton<UIManager>
     public T CreateDynamicForm<T>(
         GameObject prefab,
         string groupID,
-        Transform parent = null,
+         Transform parent,
         UIFormConfigSO config = null,
         Action<T> onCreated = null
         ) where T : UIFormBase
@@ -350,7 +380,13 @@ public class UIManager : Singleton<UIManager>
 
         // 自动从配置获取Canvas
         Canvas targetCanvas = GetCanvasGroup(groupID);
-        Transform spawnParent = parent ?? targetCanvas?.transform;
+        if (targetCanvas == null)
+        {
+            Debug.LogError($"Canvas for group '{groupID}' not found!");
+            return null;
+        }
+
+        Transform spawnParent = parent != null ? parent : targetCanvas?.transform;
 
         var formObj = UnityEngine.Object.Instantiate(prefab, spawnParent);
         var form = formObj.GetComponent<T>();

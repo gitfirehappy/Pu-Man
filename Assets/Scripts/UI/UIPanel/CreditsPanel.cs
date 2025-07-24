@@ -7,6 +7,8 @@ public class CreditsPanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         closeButton.onClick.AddListener(ClosePanel);
     }
 

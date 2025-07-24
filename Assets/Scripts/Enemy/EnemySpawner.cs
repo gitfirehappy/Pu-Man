@@ -23,6 +23,8 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     private bool isSpawning;
     private Coroutine spawnRoutine;
 
+    public string BossBGMTag = "BossBattle";
+
     public List<GameObject> EnemyPrefabs => enemyPrefabs;
 
 
@@ -134,8 +136,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
             {
                 SpawnSingleEnemy(bossPrefab, bossSpawnPos.Value);
 
-                string BGMTag = "BossBattle";
-                AudioManager.Instance.UpdateBGM(BGMTag);//切换音乐
+                AudioManager.Instance.UpdateBGM(BossBGMTag);//切换音乐
             }
             else
             {

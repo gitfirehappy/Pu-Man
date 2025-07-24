@@ -26,6 +26,8 @@ public class SettingsPanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         // 初始化音量滑块数值显示
         InitSliderWithText(masterSlider, VolumeType.Master, masterValueText);
         InitSliderWithText(musicSlider, VolumeType.Music, musicValueText);

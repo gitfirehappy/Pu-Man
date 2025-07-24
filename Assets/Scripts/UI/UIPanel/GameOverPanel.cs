@@ -11,7 +11,9 @@ public class GameOverPanel : UIFormBase
 
     protected override void Init()
     {
-       backButton.onClick.AddListener(OnBackToMenu);
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
+        backButton.onClick.AddListener(OnBackToMenu);
         UpdateWaveCount();
     }
 

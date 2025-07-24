@@ -31,6 +31,8 @@ public class PausePanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         resumeButton.onClick.AddListener(OnResume);
         overGameButton.onClick.AddListener(OverGame);
     }

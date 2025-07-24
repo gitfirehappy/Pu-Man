@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 984ca4b7eea95884c901e372664c7c85, type: 3}
-  m_Name: PlayerAnimationSOTest
+  m_Name: ClassicPlayerAnimation
   m_EditorClassIdentifier: 
   animationSets:
   - setType: 0

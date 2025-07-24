@@ -12,6 +12,8 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
     [SerializeField][Header("Buff图片")] private Image buffPicture;
     [SerializeField][Header("Buff名称")] private TextMeshProUGUI buffName;
     [SerializeField][Header("Buff描述")] private TextMeshProUGUI buffDiscription;
+    [SerializeField][Header("Buff稀有度")] private TextMeshProUGUI buffRarityText;
+
     [Header("高亮效果")]
     [SerializeField] private Image glowBorder; // 动态颜色边框
     [SerializeField] private ParticleSystem rarityParticles; // 稀有度粒子效果
@@ -37,7 +39,10 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
         buffName.text = buff.buffID.ToString();
         buffDiscription.text = buff.Description;
 
-        // 根据稀有度设置边框颜色
+        // 设置稀有度文字和颜色
+        buffRarityText.text = GetRarityName(buff.rarity);
+        buffRarityText.color = GetRarityColor(buff.rarity);
+
         // 设置初始高亮状态
         SetHighlight(false);
     }
@@ -74,6 +79,18 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
             case Rarity.Epic: return epicColor;
             case Rarity.Legendary: return legendaryColor;
             default: return commonColor;
+        }
+    }
+
+    private string GetRarityName(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.Common: return "普通";
+            case Rarity.Rare: return "稀有";
+            case Rarity.Epic: return "史诗";
+            case Rarity.Legendary: return "传说";
+            default: return "未知";
         }
     }
 }

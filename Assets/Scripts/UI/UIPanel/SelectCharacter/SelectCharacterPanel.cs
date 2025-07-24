@@ -26,6 +26,8 @@ public class SelectCharacterPanel : UIFormBase
 
     protected override void Init()
     {
+        gameObject.AddComponent<ButtonSoundInitializer>();
+
         characterSelectUIManager = GetComponentInParent<CharacterSelectUIManager>();
 
         startGameButton.onClick.AddListener(OnStartGame);

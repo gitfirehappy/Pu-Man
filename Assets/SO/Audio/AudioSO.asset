@@ -16,19 +16,19 @@ MonoBehaviour:
   - sceneBuildIndex: 0
     stateBGMs:
     - state: 0
-      bgmClips:
-      - {fileID: 0}
-      condition: 
+      defaultBGM: {fileID: 8300000, guid: 29e1b3cf28fe6204699b8404e7f55e6a, type: 3}
+      taggedBGMs: []
     - state: 2
-      bgmClips:
-      - {fileID: 0}
-      - {fileID: 0}
-      condition: 
+      defaultBGM: {fileID: 8300000, guid: d58677af013f6854bb14a09996c5b7c3, type: 3}
+      taggedBGMs:
+      - tag: BossBattle
+        bgmClip: {fileID: 8300000, guid: 36608b41437323e49acf323d1f99eeeb, type: 3}
     - state: 3
-      bgmClips:
-      - {fileID: 0}
-      condition: 
+      defaultBGM: {fileID: 8300000, guid: d58677af013f6854bb14a09996c5b7c3, type: 3}
+      taggedBGMs: []
     - state: 4
-      bgmClips:
-      - {fileID: 0}
-      condition: 
+      defaultBGM: {fileID: 8300000, guid: d58677af013f6854bb14a09996c5b7c3, type: 3}
+      taggedBGMs: []
+    - state: 1
+      defaultBGM: {fileID: 8300000, guid: 29e1b3cf28fe6204699b8404e7f55e6a, type: 3}
+      taggedBGMs: []
