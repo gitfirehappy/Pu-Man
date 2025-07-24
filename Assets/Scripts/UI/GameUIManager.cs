@@ -5,25 +5,17 @@ public class GameUIManager : SingletonMono<GameUIManager>
 {
     [Header("UI资源配置")]
     [SerializeField] private UIResourceConfigSO uiResourceConfig;
+    [Header("子控制器")]
+    [SerializeField] private Dictionary<GameState, IUIController> uiControllers = new Dictionary<GameState, IUIController>();
+    [Header("当前游戏状态")]
+    [SerializeField]private GameState currentState;
 
-    private Dictionary<GameState, IUIController> uiControllers = new Dictionary<GameState, IUIController>();
-    private GameState currentState;
-
-    protected override async void Init()
+    protected override void Init()
     {
-        base.Init();
+        // 初始化UI管理器
+        UIManager.Instance.Initialize(uiResourceConfig);
 
-        // 1. 预加载所有UI资源
-        if (uiResourceConfig != null)
-        {
-            await UIManager.Instance.PreloadAllFormsAsync(uiResourceConfig);
-        }
-        else
-        {
-            Debug.LogWarning("未配置UIResourceConfigSO，将跳过预加载");
-        }
-
-        // 2. 注册控制器
+        // 注册控制器
         RegisterControllers();
 
         // 3. 监听状态变化
@@ -99,4 +91,11 @@ public class GameUIManager : SingletonMono<GameUIManager>
         }
         return default;
     }
+}
+
+// UI分组常量管理类
+public static class UIGroupID
+{
+    public const string CHARACTER_CARDS = "CharacterCards";
+    public const string BUFF_CARDS = "BuffCards";
 }

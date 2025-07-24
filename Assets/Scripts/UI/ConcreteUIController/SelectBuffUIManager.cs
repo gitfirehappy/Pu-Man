@@ -117,8 +117,13 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         // 更新UI显示
         if (selectBuffPanel != null)
         {
-            selectBuffPanel.ShowBuffOptions(currentBuffOptions,
-                OnBuffSelected, OnApplyBuff, OnRefreshBuff, remainingRefreshCount);
+            selectBuffPanel.ShowBuffOptions(
+                 currentBuffOptions,
+                 OnBuffSelected,
+                 OnApplyBuff,
+                 OnRefreshBuff,
+                 remainingRefreshCount
+             );
         }
     }
 

@@ -55,8 +55,10 @@ public class SelectCharacterPanel : UIFormBase
         {
             var card = UIManager.Instance.CreateDynamicForm<CharacterPanel>(
                 cardPrefab,
-                "CharacterCards",
-                cardPositions[i]);
+                UIGroupID.CHARACTER_CARDS,
+                cardPositions[i],
+                onCreated: card => card.Setup(characters[i], OnCharacterSelected)
+            );
 
             if (card != null)
             {

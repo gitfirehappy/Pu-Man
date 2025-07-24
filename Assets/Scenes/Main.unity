@@ -611,7 +611,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
-  uiResourceConfig: {fileID: 0}
+  uiResourceConfig: {fileID: 11400000, guid: 6cc47f8cbc632054280f00393b6dc1dd, type: 2}
+  currentState: 0
 --- !u!4 &684775746
 Transform:
   m_ObjectHideFlags: 0

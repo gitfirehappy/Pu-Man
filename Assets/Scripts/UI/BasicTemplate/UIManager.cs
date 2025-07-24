@@ -25,13 +25,69 @@ public class UIManager : Singleton<UIManager>
     /// <summary> 面板显示堆栈（用于顺序关闭） </summary>
     public Stack<UIFormBase> showFormStack = new();
 
-    /// <summary> UI 根节点（场景中应存在名为 UIRoot 的对象） </summary>
-    public Transform uiRoot => GameObject.Find("UIRoot").transform;
-
-    // 动态面板分组字典
+    /// <summary>动态面板分组字典</summary>
     public Dictionary<string, List<UIFormBase>> dynamicFormGroups = new Dictionary<string, List<UIFormBase>>();
 
+    /// <summary> Canvas分组映射</summary>
+    private Dictionary<string, Canvas> canvasGroups = new Dictionary<string, Canvas>();
+
     #endregion
+
+    #region 初始化(可给管理器调用)
+
+    /// <summary>
+    /// 初始化UI管理器
+    /// </summary>
+    public void Initialize(UIResourceConfigSO config)
+    {
+        // 注册Canvas组和分组
+        foreach (var registrationGroup in config.uiRegistrationGroups)
+        {
+            if (registrationGroup.parentCanvas == null) continue;
+
+            foreach (var uiGroup in registrationGroup.uiGroups)
+            {
+                if (string.IsNullOrEmpty(uiGroup.groupID)) continue;
+
+                // 注册Canvas组
+                RegisterCanvasGroup(uiGroup.groupID, registrationGroup.parentCanvas);
+
+                // 预加载资源
+                PreLoadForms(uiGroup.manualUIForms);
+                PreLoadForms(uiGroup.additionalPreloadForms);
+            }
+        }
+    }
+
+    #endregion
+
+    #region Canvas管理
+
+    /// <summary>
+    /// 注册Canvas分组
+    /// </summary>
+    public void RegisterCanvasGroup(string groupID, Canvas canvas)
+    {
+        if (!canvasGroups.ContainsKey(groupID))
+        {
+            canvasGroups.Add(groupID, canvas);
+        }
+    }
+
+    /// <summary>
+    /// 获取Canvas组
+    /// </summary>
+    public Canvas GetCanvasGroup(string groupID)
+    {
+        if (canvasGroups.TryGetValue(groupID, out Canvas canvas))
+        {
+            return canvas;
+        }
+        return null;
+    }
+
+    #endregion
+
 
     #region 注册接口
 
@@ -149,15 +205,15 @@ public class UIManager : Singleton<UIManager>
 
     #region 显示与隐藏
 
-    public void ShowUIForm(string name)
+    public void ShowUIForm(string className, string canvasGroupID = null)
     {
-        if (!forms.ContainsKey(name))
+        if (!forms.ContainsKey(className))
         {
-            CreateForm(name);
-            if (!forms.ContainsKey(name)) return;
+            CreateForm(className, canvasGroupID);
+            if (!forms.ContainsKey(className)) return;
         }
 
-        var form = forms[name];
+        var form = forms[className];
         if (form != null && !showForms.Contains(form))
         {
             form.Open(this);
@@ -166,11 +222,11 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void ShowUIForm<T>() where T : UIFormBase => ShowUIForm(typeof(T).Name);
+    public void ShowUIForm<T>(string canvasGroupID = null) where T : UIFormBase => ShowUIForm(typeof(T).Name, canvasGroupID);
 
-    public void HideUIForm(string name)
+    public void HideUIForm(string className)
     {
-        var form = GetForm(name);
+        var form = GetForm(className);
         if (form != null && showForms.Contains(form))
         {
             showForms.Remove(form);
@@ -200,83 +256,50 @@ public class UIManager : Singleton<UIManager>
 
     public bool HasActiveForm() => showForms.Count > 0;
 
-    private void CreateForm(string name)
+    private void CreateForm(string className, string canvasGroupID = null)
     {
-        if (formPrefabs.ContainsKey(name))
+        if (formPrefabs.TryGetValue(className, out GameObject prefab))
         {
-            var formObj = GameObject.Instantiate(formPrefabs[name], uiRoot);
-            formObj.name = name;
+            Transform parent = null;
+
+            // 查找指定的Canvas组
+            if (!string.IsNullOrEmpty(canvasGroupID) && canvasGroups.TryGetValue(canvasGroupID, out Canvas canvas))
+            {
+                parent = canvas.transform;
+            }
+            else
+            {
+                Debug.LogWarning($"Canvas group {canvasGroupID} not found. Creating form at root level.");
+            }
+
+            var formObj = GameObject.Instantiate(prefab, parent);
+            formObj.name = className;
         }
         else
         {
-            Debug.LogError($"[UIManager] CreateForm Failed: no prefab named {name}");
+            Debug.LogError($"[UIManager] CreateForm Failed: no prefab registered for class {className}");
         }
     }
 
     #endregion
 
-    #region AB包预加载
-
-    /// <summary>
-    /// AB包预加载
-    /// </summary>
-    /// <param name="label"></param>
-    /// <returns></returns>
-    public async Task PreloadFormsByLabelAsync(string label)
-    {
-        try
-        {
-            var loadHandle = Addressables.LoadAssetsAsync<GameObject>(label, null);
-            await loadHandle.Task;
-
-            if (loadHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                foreach (var prefab in loadHandle.Result)
-                {
-                    if (!formPrefabs.ContainsKey(prefab.name))
-                    {
-                        formPrefabs.Add(prefab.name, prefab);
-                    }
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"AB包标签加载失败: {label}, 错误: {e.Message}");
-        }
-    }
-
-    /// <summary>
-    /// 通用预加载方法
-    /// </summary>
-    /// <param name="config"></param>
-    /// <returns></returns>
-    public async Task PreloadAllFormsAsync(UIResourceConfigSO config)
-    {
-        if (config == null) return;
-
-        // 1. 加载标签化的UI
-        foreach (var tag in config.uiTags)
-        {
-            if (tag.preloadOnStart)
-            {
-                await PreloadFormsByLabelAsync(tag.labelName);
-            }
-        }
-
-        // 2. 手动注册的UI
-        PreLoadForms(config.manualUIForms);
-
-        // 3. 额外预加载的UI（角色卡片、Buff卡片等）
-        PreLoadForms(config.additionalPreloadForms); // 统一加载，不区分具体类型
-    }
+    #region 预加载
 
     public void PreLoadForm(GameObject prefab)
     {
         if (prefab == null) return;
-        if (!formPrefabs.ContainsKey(prefab.name))
+
+        var formBase = prefab.GetComponent<UIFormBase>();
+        if (formBase == null)
         {
-            formPrefabs.Add(prefab.name, prefab);
+            Debug.LogError($"Prefab {prefab.name} does not have UIFormBase component!");
+            return;
+        }
+
+        string className = formBase.GetType().Name;
+        if (!formPrefabs.ContainsKey(className))
+        {
+            formPrefabs.Add(className, prefab);
         }
     }
 
@@ -292,38 +315,44 @@ public class UIManager : Singleton<UIManager>
 
     #region 快捷访问
 
-    public UIFormBase GetForm(string name) => forms.TryGetValue(name, out var f) ? f : null;
+    public UIFormBase GetForm(string className) => forms.TryGetValue(className, out var f) ? f : null;
 
     public T GetForm<T>() where T : UIFormBase => GetForm(typeof(T).Name) as T;
 
-    public bool IsShown(string name) => GetForm(name)?.IsOpen ?? false;
+    public bool IsShown(string className) => GetForm(className)?.IsOpen ?? false;
 
-    public UIFormBase TryShowForm(string name)
+    public UIFormBase TryShowForm(string className, string canvasGroupID = null)
     {
-        ShowUIForm(name);
-        return GetForm(name);
+        ShowUIForm(className, canvasGroupID);
+        return GetForm(className);
     }
 
     #endregion
 
     #region 动态生成面板扩展
 
-
     /// <summary>
     /// 动态面板创建方法
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="prefab"></param>
-    /// <param name="groupID"></param>
-    /// <param name="parent"></param>
-    /// <param name="config"></param>
-    /// <returns></returns>
-    public T CreateDynamicForm<T>(GameObject prefab, string groupID, Transform parent = null,
-        UIFormConfigSO config = null) where T : UIFormBase
+    public T CreateDynamicForm<T>(
+        GameObject prefab,
+        string groupID,
+        Transform parent = null,
+        UIFormConfigSO config = null,
+        Action<T> onCreated = null
+        ) where T : UIFormBase
     {
-        if (prefab == null) return null;
+        if (prefab == null)
+        {
+            Debug.LogError("CreateDynamicForm failed: prefab is null");
+            return null;
+        }
 
-        var formObj = UnityEngine.Object.Instantiate(prefab, parent ?? uiRoot);
+        // 自动从配置获取Canvas
+        Canvas targetCanvas = GetCanvasGroup(groupID);
+        Transform spawnParent = parent ?? targetCanvas?.transform;
+
+        var formObj = UnityEngine.Object.Instantiate(prefab, spawnParent);
         var form = formObj.GetComponent<T>();
 
         if (form == null)
@@ -335,6 +364,10 @@ public class UIManager : Singleton<UIManager>
 
         form.InitializeAsDynamic(groupID, config);
         RegisterDynamicForm(form, groupID);
+
+        // 调用创建后回调
+        onCreated?.Invoke(form);
+
         return form;
     }
 
@@ -403,5 +436,3 @@ public enum FormAnimType
     FadeSlide,
 
 }
-
-

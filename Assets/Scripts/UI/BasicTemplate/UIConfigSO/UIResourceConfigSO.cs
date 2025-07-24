@@ -4,18 +4,28 @@
 public class UIResourceConfigSO : ScriptableObject
 {
     [System.Serializable]
-    public class UIResourceTag
+    public class UIGroupDefinition
     {
-        public string labelName;
-        public bool preloadOnStart = true;
+        [Header("组ID")]
+        public string groupID;
+
+        [Header("静态UI预制体")]
+        public GameObject[] manualUIForms;
+
+        [Header("模版UI预制体（注册）")]
+        public GameObject[] additionalPreloadForms;
     }
 
-    [Header("AB包标签配置")]
-    public UIResourceTag[] uiTags;
+    [System.Serializable]
+    public class UIRegistrationGroup
+    {
+        [Header("父Canvas")]
+        public Canvas parentCanvas;
 
-    [Header("手动注册的UI预制体")]
-    public GameObject[] manualUIForms;
+        [Header("分组配置")]
+        public UIGroupDefinition[] uiGroups;
+    }
 
-    [Header("额外预加载的UI预制体（角色卡片、Buff卡片等）")]
-    public GameObject[] additionalPreloadForms;
+    [Header("UI注册组配置")]
+    public UIRegistrationGroup[] uiRegistrationGroups;
 }

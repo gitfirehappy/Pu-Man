@@ -12,11 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d05fcfb5d5f8ff439233b6d78bbbbce, type: 3}
   m_Name: UIResourceConfig
   m_EditorClassIdentifier: 
-  uiTags:
-  - labelName: UISO
-    preloadOnStart: 1
-  manualUIForms:
-  - {fileID: 0}
-  additionalPreloadForms:
-  - {fileID: 0}
-  - {fileID: 0}
+  uiRegistrationGroups:
+  - parentCanvas: {fileID: 0}
+    uiGroups:
+    - groupID: CharacterCards
+      manualUIForms: []
+      additionalPreloadForms:
+      - {fileID: 0}
+    - groupID: BuffCards
+      manualUIForms: []
+      additionalPreloadForms:
+      - {fileID: 0}
+    - groupID: 
+      manualUIForms:
+      - {fileID: 0}
+      - {fileID: 0}
+      - {fileID: 0}
+      additionalPreloadForms:
+      - {fileID: 0}
