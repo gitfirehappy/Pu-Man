@@ -18,15 +18,20 @@ MonoBehaviour:
     - groupID: CharacterCards
       manualUIForms: []
       additionalPreloadForms:
-      - {fileID: 0}
+      - {fileID: 5345283915039925600, guid: c4c97861d7a0036479ceeaf94c28772f, type: 3}
     - groupID: BuffCards
       manualUIForms: []
       additionalPreloadForms:
-      - {fileID: 0}
+      - {fileID: 2865224232912442227, guid: b70905167d75a9f4684a495fb45d2502, type: 3}
     - groupID: 
       manualUIForms:
-      - {fileID: 0}
-      - {fileID: 0}
-      - {fileID: 0}
-      additionalPreloadForms:
-      - {fileID: 0}
+      - {fileID: 1221308002913311472, guid: 423084c5112c7f34287a4f78907c9054, type: 3}
+      - {fileID: 2531743421118524986, guid: 2265e381585f97b47829e2cf13b8113d, type: 3}
+      - {fileID: 2196400180870096836, guid: b86b7e8f5c0acb04cba768754563a359, type: 3}
+      - {fileID: 1013982175537055879, guid: 9563f35316030b844a0dcb8cf91241ac, type: 3}
+      - {fileID: 8234308977894399090, guid: 930e96e30c9c56848a51cca0cc4d1d2d, type: 3}
+      - {fileID: 6810924469423745053, guid: fdd6af372019b8c4cbab21429552c715, type: 3}
+      - {fileID: 549380492396592768, guid: b0cb9350e4d5f1b43a295c1eb04541c1, type: 3}
+      - {fileID: 7191494835610202456, guid: 1a6414c4d29b4414b8eee847a77caa1d, type: 3}
+      - {fileID: 1654035356029797687, guid: 82f76ae174ef886479344185667780e6, type: 3}
+      additionalPreloadForms: []

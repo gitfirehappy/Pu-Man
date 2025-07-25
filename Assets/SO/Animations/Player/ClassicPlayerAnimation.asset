@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 984ca4b7eea95884c901e372664c7c85, type: 3}
   m_Name: ClassicPlayerAnimation
   m_EditorClassIdentifier: 
+  playerType: 0
   animationSets:
   - setType: 0
-    idle: {fileID: 0}
-    shoot: {fileID: 0}
-    hurt: {fileID: 0}
+    idle: {fileID: 7400000, guid: 96ee09a9f170ddc408d56c8433c47095, type: 2}
+    shoot: {fileID: 7400000, guid: b5604124f3befdc4cbecdd829bff360c, type: 2}

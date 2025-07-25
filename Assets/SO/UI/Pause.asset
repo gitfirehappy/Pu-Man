@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pause
   m_EditorClassIdentifier: 
   displayName: Pause
-  majorOrder: 0
+  majorOrder: 1
   minorOrder: 0
   cached: 1
   animType: 7

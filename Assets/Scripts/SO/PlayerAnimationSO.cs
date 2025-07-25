@@ -13,7 +13,6 @@ public class PlayerAnimationSO : ScriptableObject
         public AnimationSetType setType;
         public AnimationClip idle;
         public AnimationClip shoot;
-        public AnimationClip hurt;
     }
 
     private Dictionary<AnimationSetType, AnimationSetEntry> _cache;

@@ -71,7 +71,7 @@ public class PlayerAnimatorController : MonoBehaviour
         if (newShooting != isShooting)
         {
             isShooting = newShooting;
-            if (isShooting) PlayShoot();
+            SetShootingState(isShooting);
         }
     }
 
@@ -100,11 +100,17 @@ public class PlayerAnimatorController : MonoBehaviour
             animator.runtimeAnimatorController = overrideController;
         }
 
-        overrideController["Idle"] = set.idle;
-        overrideController["Shoot"] = set.shoot;
+        overrideController[AnimationConstants.Base.PlayerIdle] = set.idle;
+        overrideController[AnimationConstants.Base.PlayerShoot] = set.shoot;
     }
 
-    public void PlayShoot() => animator.SetTrigger("Shoot");
+    private void SetShootingState(bool isShooting)
+    {
+        if (animator != null)
+        {
+            animator.SetBool(AnimationConstants.Player.Shooting, isShooting);
+        }
+    }
 
     public void ResetToBaseStats()
     {
@@ -123,9 +129,17 @@ public class PlayerAnimatorController : MonoBehaviour
         // 重置所有触发器
         foreach (var param in animator.parameters)
         {
-            if (param.type == AnimatorControllerParameterType.Trigger)
+            switch (param.type)
             {
-                animator.ResetTrigger(param.name);
+                case AnimatorControllerParameterType.Trigger:
+                    animator.ResetTrigger(param.name);
+                    break;
+                case AnimatorControllerParameterType.Bool:
+                    if (param.name == AnimationConstants.Player.Shooting)
+                    {
+                        animator.SetBool(param.name, false);
+                    }
+                    break;
             }
         }
 

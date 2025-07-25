@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Difficulty
   m_EditorClassIdentifier: 
   displayName: Difficulty
-  majorOrder: 0
-  minorOrder: 0
+  majorOrder: 1
+  minorOrder: 1
   cached: 0
   animType: 3

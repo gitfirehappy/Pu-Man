@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Credits
   m_EditorClassIdentifier: 
   displayName: Credits
-  majorOrder: 0
+  majorOrder: 1
   minorOrder: 0
   cached: 0
   animType: 8

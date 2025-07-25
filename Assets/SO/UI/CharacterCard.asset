@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CharacterCard
   m_EditorClassIdentifier: 
   displayName: CharacterCard
-  majorOrder: 0
+  majorOrder: 1
   minorOrder: 0
   cached: 0
   animType: 0

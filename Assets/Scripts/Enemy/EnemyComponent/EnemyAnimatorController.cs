@@ -56,7 +56,7 @@ public class EnemyAnimatorController : MonoBehaviour
         // 只需要设置Idle动画
         if (animationSO.idleAnimation != null)
         {
-            overrideController["Idle"] = animationSO.idleAnimation;
+            overrideController[AnimationConstants.Base.EnemyIdle] = animationSO.idleAnimation;
         }
     }
 

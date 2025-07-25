@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Settings
   m_EditorClassIdentifier: 
   displayName: Settings
-  majorOrder: 0
+  majorOrder: 1
   minorOrder: 0
   cached: 1
   animType: 3
