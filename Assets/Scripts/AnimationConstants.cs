@@ -7,6 +7,7 @@ public static class AnimationConstants
     public static class Base
     {
         public const string EnemyIdle = "BaseEnemyIdle";
+        public const string EnemyClash = "BaseEnemyClash";
         public const string PlayerIdle = "BasePlayerIdle";
         public const string PlayerShoot = "BasePlayerShoot";
     }
@@ -15,5 +16,10 @@ public static class AnimationConstants
     public static class Player
     {
         public const string Shooting = "Shoot"; // Bool参数名
+    }
+
+    public static class Enemy
+    {
+        public const string Clashing = "IsClashing"; // 新增冲撞状态参数
     }
 }

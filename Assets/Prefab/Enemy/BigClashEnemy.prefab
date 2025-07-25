@@ -12,11 +12,11 @@ GameObject:
   - component: {fileID: 4225181432506997977}
   - component: {fileID: 2290163428169906220}
   - component: {fileID: 2434167446748542864}
-  - component: {fileID: 6165298772871698724}
+  - component: {fileID: -6403384169698351633}
   - component: {fileID: -4982132133625340833}
   - component: {fileID: 2046982245987576610}
   m_Layer: 7
-  m_Name: BaseEnemy
+  m_Name: BigClashEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.52, y: 0.63, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e2e0d15f05bea7445be2418a2066ac4f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 743b5e0249e3a1140a02a0d811fc9ad2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -151,7 +151,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!95 &6165298772871698724
+--- !u!95 &-6403384169698351633
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc2f3deaa8b25d241abc34a98e133a91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyData: {fileID: 11400000, guid: ecd21b92db7d08b4289ac507562f91bf, type: 2}
+  enemyData: {fileID: 11400000, guid: 210c77b81dab9d246bd595ff4017efa7, type: 2}
 --- !u!114 &2046982245987576610
 MonoBehaviour:
   m_ObjectHideFlags: 0

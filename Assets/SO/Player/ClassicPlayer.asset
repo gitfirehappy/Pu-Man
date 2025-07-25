@@ -18,12 +18,12 @@ MonoBehaviour:
   playerPrefab: {fileID: 2408863001739500776, guid: f78be7a758c0a4e4c87f6876f2aeed06, type: 3}
   description: 
   healthConfig:
-    maxHealth: 100
+    maxHealth: 10
     armor: 0
     healthRegen: 0
     dodgeChance: 0
-    collisionDamage: 0
-    collisionImmunityDuration: 1
+    collisionDamage: 2
+    collisionImmunityDuration: 0.5
     cheatDeathInvincibleTime: 0
     hasCheatDeath: 0
   shootingConfig:
@@ -31,7 +31,7 @@ MonoBehaviour:
     fireRate: 2
     knockback: 0
     projectileCount: 1
-    projectileSize: 0.5
+    projectileSize: 0.25
     isAoeDamage: 0
     projectileSpeed: 4
     projectileLifeTime: 1
@@ -40,12 +40,11 @@ MonoBehaviour:
   movementConfig:
     runSpeed: 4
   abilitiesConfig:
-    startingAbility: 1
     abilityActivationSFX: {fileID: 0}
     startingAbilityData:
       type: 1
-      cooldownWaves: 0
-      duration: 0
+      cooldownWaves: 5
+      duration: 10
       effectValue: 0
       isPassive: 0
       extraRefreshPerWave: 0

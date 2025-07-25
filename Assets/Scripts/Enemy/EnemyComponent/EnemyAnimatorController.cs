@@ -13,10 +13,13 @@ public class EnemyAnimatorController : MonoBehaviour
     private EnemyAnimationSO animationSO;
 
     private EnemyCore enemyCore;
+    private EnemyClash enemyClash;
+    private bool lastClashState;
 
     private void Awake()
     {
         enemyCore = GetComponent<EnemyCore>();
+        enemyClash = GetComponent<EnemyClash>(); // 获取冲撞组件
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -24,6 +27,18 @@ public class EnemyAnimatorController : MonoBehaviour
             {
                 Debug.LogError("未找到敌人的Animator组件!");
             }
+        }
+    }
+
+    private void Update()
+    {
+        if (PauseManager.Instance.IsPaused) return;
+
+        // 检测冲撞状态变化
+        if (enemyClash != null && enemyClash.IsClashing != lastClashState)
+        {
+            lastClashState = enemyClash.IsClashing;
+            animator.SetBool(AnimationConstants.Enemy.Clashing, lastClashState);
         }
     }
 
@@ -52,11 +67,13 @@ public class EnemyAnimatorController : MonoBehaviour
             overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
             animator.runtimeAnimatorController = overrideController;
         }
+        // 设置基础动画
+        overrideController[AnimationConstants.Base.EnemyIdle] = animationSO.idleAnimation;
 
-        // 只需要设置Idle动画
-        if (animationSO.idleAnimation != null)
+        // 设置冲撞动画（如果存在）
+        if (animationSO.clashAnimation != null)
         {
-            overrideController[AnimationConstants.Base.EnemyIdle] = animationSO.idleAnimation;
+            overrideController[AnimationConstants.Base.EnemyClash] = animationSO.clashAnimation;
         }
     }
 
@@ -65,7 +82,8 @@ public class EnemyAnimatorController : MonoBehaviour
         // 重置动画参数
         if (animator != null)
         {
-            animator.Play("Idle", 0, 0f);
+            animator.SetBool(AnimationConstants.Enemy.Clashing, false);
+            animator.Play(AnimationConstants.Base.EnemyIdle, 0, 0f);
         }
     }
 }

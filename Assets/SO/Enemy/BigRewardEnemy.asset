@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aef6142bf23ed6438c1f5bb1b9c6ca9, type: 3}
+  m_Name: BigRewardEnemy
+  m_EditorClassIdentifier: 
+  enemyType: 7
+  enemyPrefab: {fileID: 4221185578653224041, guid: bfffc57f51d895340948819472e1a021, type: 3}
+  description: 
+  spawnWeight: 1
+  unlockWave: 0
+  isBoss: 0
+  isLargeEnemy: 0
+  moveSpeed: 0
+  maxHealth: 0
+  collisionDamage: 0
+  collisionImmunityDuration: 0
+  attackRadius: 0
+  detectionInterval: 0
+  shootingConfig:
+    bulletPrefab: {fileID: 0}
+    bulletDamage: 0
+    bulletSpeed: 0
+    bulletSize: 0
+    shootRate: 0
+    shootRadius: 0
+    projectileCount: 0
+    bulletLifeTime: 0
+  clashConfig:
+    seekRadius: 0
+    clashSpeed: 0
+    clashCooldown: 0
+  rewardConfig:
+    hasHealthReward: 0
+    healthUp: 0
+    hasRefreshReward: 0
+    extraRefreshChance: 0

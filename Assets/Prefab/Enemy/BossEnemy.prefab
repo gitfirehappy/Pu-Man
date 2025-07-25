@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -4982132133625340833}
   - component: {fileID: 2046982245987576610}
   m_Layer: 7
-  m_Name: BaseEnemy
+  m_Name: BossEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e2e0d15f05bea7445be2418a2066ac4f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7be23ba9a1fcb5a4cab8150475d9e7ac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc2f3deaa8b25d241abc34a98e133a91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyData: {fileID: 11400000, guid: ecd21b92db7d08b4289ac507562f91bf, type: 2}
+  enemyData: {fileID: 11400000, guid: 6792a5c6b9b51de4da11fe3ac849f141, type: 2}
 --- !u!114 &2046982245987576610
 MonoBehaviour:
   m_ObjectHideFlags: 0

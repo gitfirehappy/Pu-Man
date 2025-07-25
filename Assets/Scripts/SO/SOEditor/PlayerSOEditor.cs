@@ -28,9 +28,6 @@ public class PlayerSOEditor : Editor
         EditorGUILayout.LabelField("技能配置", EditorStyles.boldLabel);
         var abilitiesConfig = serializedObject.FindProperty("abilitiesConfig");
 
-        // 显示初始技能类型
-        EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("startingAbility"));
-
         // 显示AbilityData结构体
         EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("startingAbilityData"), true);
 

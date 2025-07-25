@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4225181432506997977}
   - component: {fileID: 2290163428169906220}
   - component: {fileID: 2434167446748542864}
+  - component: {fileID: 3597142159096715057}
   - component: {fileID: -4982132133625340833}
   - component: {fileID: 2046982245987576610}
   m_Layer: 7
@@ -150,6 +151,27 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!95 &3597142159096715057
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4221185578653224041}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a0713f3717a377d4eb66f7b98e0d9e63, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-4982132133625340833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc2f3deaa8b25d241abc34a98e133a91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyData: {fileID: 11400000, guid: ecd21b92db7d08b4289ac507562f91bf, type: 2}
+  enemyData: {fileID: 11400000, guid: 803c746a89e04664793cea191fe7b3a0, type: 2}
 --- !u!114 &2046982245987576610
 MonoBehaviour:
   m_ObjectHideFlags: 0

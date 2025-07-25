@@ -18,8 +18,8 @@ public class PlayerAbilities : MonoBehaviour
 
     private Coroutine activeAbilityCoroutine;
     private PlayerCore playerCore;
-    private PlayerInput playerInput;//TODO:检查上级是否禁用
     private WaveCounter waveCounter;
+    private InvertEffect invertEffect;
 
     private void Awake()
     {
@@ -63,12 +63,25 @@ public class PlayerAbilities : MonoBehaviour
     /// </summary>
     public void Initialize(PlayerSO playerData)
     {
+        // 初始化反色效果
+        var mainCam = Camera.main;
+        if (mainCam != null && invertEffect == null)
+        {
+            invertEffect = mainCam.GetComponent<InvertEffect>();
+            if (invertEffect == null)
+            {
+                invertEffect = mainCam.gameObject.AddComponent<InvertEffect>();
+                invertEffect.fadeDuration = 0.3f; // 可配置渐变时长
+            }
+        }
+
+
         nextAvailableWave = 0;
 
         abilityActivationSFX = playerData.abilitiesConfig.abilityActivationSFX;
 
-        baseAbilityData = new AbilityData(playerData.abilitiesConfig.startingAbility);
-        // 从 playerData 中读取其他配置（如冷却、持续时间等）
+        baseAbilityData = playerData.abilitiesConfig.startingAbilityData;
+
         ResetToBaseStats(); // 初始化时调用重置方法
     }
 
@@ -141,7 +154,21 @@ public class PlayerAbilities : MonoBehaviour
     {
         Debug.Log("释放了无敌技能！");
         playerCore.Health.AddInvincible(currentAbilityData.duration);
+
+        // 启动渐变反色
+        if (invertEffect != null)
+        {
+            invertEffect.ToggleEffect(true);
+            StartCoroutine(EndEffectAfterDuration(currentAbilityData.duration));
+        }
+
         isAbilityActive = false;
+    }
+
+    private IEnumerator EndEffectAfterDuration(float delay)
+    {
+        yield return new WaitForSeconds(delay - invertEffect.fadeDuration);
+        invertEffect?.ToggleEffect(false);
     }
 
     /// <summary>
@@ -264,6 +291,7 @@ public class PlayerAbilities : MonoBehaviour
 
             case AbilityType.Classic:
                 playerCore.Health.RemoveInvincible();
+                invertEffect?.ToggleEffect(false);
                 break;
         }
         isAbilityActive = false;

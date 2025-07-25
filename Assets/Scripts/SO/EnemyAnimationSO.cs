@@ -7,4 +7,5 @@ public class EnemyAnimationSO : ScriptableObject
 {
     public EnemyType enemyType;
     public AnimationClip idleAnimation;
+    public AnimationClip clashAnimation;
 }

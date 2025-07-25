@@ -58,7 +58,6 @@ public class PlayerSO : ScriptableObject
     [System.Serializable]
     public class AbilitiesConfig
     {
-        [Header("初始技能")] public AbilityType startingAbility;
         [Header("技能音效")]public AudioClip abilityActivationSFX;
         public AbilityData startingAbilityData;
     }
