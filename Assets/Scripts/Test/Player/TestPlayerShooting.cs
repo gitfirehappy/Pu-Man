@@ -90,7 +90,7 @@ public class TestPlayerShooting : MonoBehaviour
             Vector2 direction = Quaternion.Euler(0, 0, currentAngle) * transform.right;
 
             GameObject bulletObj = ObjectPoolManager.SpawnObject(bulletPrefab, firePoint.position, Quaternion.identity, ObjectPoolManager.PoolType.PlayerBullet);
-            Bullet bullet = bulletObj.GetComponent<Bullet>();
+            TestPlayerBullet bullet = bulletObj.GetComponent<TestPlayerBullet>();
             bullet.Initialize(config, direction);
         }
     }

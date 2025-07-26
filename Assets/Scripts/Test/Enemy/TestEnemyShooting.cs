@@ -73,7 +73,7 @@ public class TestEnemyShooting : MonoBehaviour
                 Quaternion.identity,
                 ObjectPoolManager.PoolType.EnemyBullet);
 
-            EnemyBullet bullet = bulletObj.GetComponent<EnemyBullet>();
+            TestEnemyBullet bullet = bulletObj.GetComponent<TestEnemyBullet>();
             bullet.Initialize(config, direction);
         }
     }

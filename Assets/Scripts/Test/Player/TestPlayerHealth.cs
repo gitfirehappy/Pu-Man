@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class TestPlayerHealth : MonoBehaviour
+public class TestPlayerHealth : MonoBehaviour, IDamageable
 {
     [Header("当前状态")]
     [Header("当前血量")] public float currentHealth;
@@ -32,6 +32,7 @@ public class TestPlayerHealth : MonoBehaviour
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         currentHealth = maxHealth;
+        currentHasCheatDeath = hasCheatDeath;
     }
 
     private void Update()
@@ -73,10 +74,11 @@ public class TestPlayerHealth : MonoBehaviour
         // 致命伤害检查,名刀
         if (damageTaken >= currentHealth)
         {
-            TryApplyCheatDeath();
-            AddInvincible(cheatDeathInvincibleTime);
-            Debug.Log("Cheat death activated!");
-            return;
+            if (currentHasCheatDeath && hasCheatDeath)
+            {
+                ApplyCheatDeath();
+                return;
+            }
         }
 
         currentHealth -= damageTaken;
@@ -123,12 +125,11 @@ public class TestPlayerHealth : MonoBehaviour
     /// <summary>
     /// 应用名刀
     /// </summary>
-    public void TryApplyCheatDeath()
+    public void ApplyCheatDeath()
     {
-        if (hasCheatDeath && currentHasCheatDeath)
-        {
-            currentHasCheatDeath = false;
-        }
+        currentHasCheatDeath = false;
+        AddInvincible(cheatDeathInvincibleTime);
+        Debug.Log("触发名刀!");
     }
 
     /// <summary>

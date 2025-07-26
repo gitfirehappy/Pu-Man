@@ -103,24 +103,25 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         // 闪避判定
         if (UnityEngine.Random.value < dodgeChance)
         {
-            Debug.Log("Dodged the attack!");
+            Debug.Log("闪避了攻击!");
             return;
         }
 
         // 护甲减伤
-        float damageTaken = damage - armor;
+        float damageTaken = Mathf.Max(0, damage - armor); // 伤害下限为0
 
         // 致命伤害检查,名刀
         if (damageTaken >= currentHealth)
         {
-            TryApplyCheatDeath();
-            AddInvincible(cheatDeathInvincibleTime);
-            Debug.Log("Cheat death activated!");
-            return;
+            if (currentHasCheatDeath && hasCheatDeath)
+            {
+                ApplyCheatDeath();
+                return;
+            }
         }
 
         currentHealth -= damageTaken;
-        Debug.Log($"{source} caused {damageTaken} damage to Player! Current HP: {currentHealth}");
+        Debug.Log($"{source} 对Player造成了 {damageTaken} 伤害! Player当前血量: {currentHealth}");
 
         StartCoroutine(HitAnimationRoutine());//简单动画
 
@@ -163,12 +164,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     /// <summary>
     /// 应用名刀
     /// </summary>
-    public void TryApplyCheatDeath()
+    public void ApplyCheatDeath()
     {
-        if (hasCheatDeath && currentHasCheatDeath)
-        {
-            currentHasCheatDeath = false;
-        }
+        currentHasCheatDeath = false;
+        AddInvincible(cheatDeathInvincibleTime);
+        Debug.Log("触发名刀!");
     }
 
     /// <summary>
@@ -209,7 +209,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     /// </summary>
     private void Die(DamageSource source)
     {
-        Debug.Log("Player died!");
+        Debug.Log("玩家死亡!");
         OnDeath?.Invoke(); // 通知Core死亡事件
     }
 

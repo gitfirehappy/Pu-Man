@@ -110,7 +110,7 @@ public class EnemyShooting : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (shootRadius > 0)
         {

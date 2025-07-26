@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestEnemyHealth : MonoBehaviour
+public class TestEnemyHealth : MonoBehaviour,IDamageable
 {
     [Header("References")]
     public Rigidbody2D rb;
@@ -79,7 +79,7 @@ public class TestEnemyHealth : MonoBehaviour
             LayerMask.GetMask("Player"));
 
         if (playerCollider != null &&
-            playerCollider.TryGetComponent<PlayerHealth>(out var playerHealth))
+            playerCollider.TryGetComponent<TestPlayerHealth>(out var playerHealth))
         {
             // 对玩家造成伤害
             playerHealth.TryTakeCollisionDamage(collisionDamage);
@@ -158,7 +158,7 @@ public class TestEnemyHealth : MonoBehaviour
 
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);

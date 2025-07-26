@@ -6,7 +6,7 @@ public class TestEnemyClash : MonoBehaviour
 {
     [Header("References")]
     public Rigidbody2D rb;
-    public EnemyMovement movement;
+    public TestEnemyMovement movement;
     public Transform playerTransform;
 
     [Header("基本参数")]
@@ -24,7 +24,7 @@ public class TestEnemyClash : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        movement = GetComponent<EnemyMovement>();
+        movement = GetComponent<TestEnemyMovement>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -87,7 +87,7 @@ public class TestEnemyClash : MonoBehaviour
             movement.enabled = true;
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (seekRadius > 0)
         {

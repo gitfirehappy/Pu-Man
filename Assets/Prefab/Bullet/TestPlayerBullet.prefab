@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 2199927288581385707}
   - component: {fileID: -7393123230196513761}
   - component: {fileID: -2800362544590935895}
-  - component: {fileID: 8702523423581643429}
   - component: {fileID: 5288875364052950543}
+  - component: {fileID: -1711371248235383485}
   m_Layer: 0
-  m_Name: PlayerBullet
+  m_Name: TestPlayerBullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -150,18 +150,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &8702523423581643429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5579274564280302287}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6457160d5d2e284493da627e87d4cd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5288875364052950543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,3 +171,15 @@ MonoBehaviour:
   radius3: 2
   color3: {r: 0, g: 1, b: 0, a: 1}
   showRange3: 0
+--- !u!114 &-1711371248235383485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5579274564280302287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20631cef20a3ac24c9def195eb815db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

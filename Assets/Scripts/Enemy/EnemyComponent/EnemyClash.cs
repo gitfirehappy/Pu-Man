@@ -122,7 +122,7 @@ public class EnemyClash : MonoBehaviour
             movement.enabled = true;
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         if (seekRadius > 0)
         {

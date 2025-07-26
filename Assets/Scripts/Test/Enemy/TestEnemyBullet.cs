@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using static ObjectPoolManager;
 
-public class EnemyBullet : MonoBehaviour
+public class TestEnemyBullet : MonoBehaviour
 {
     private float _damage;
     private Vector2 _direction;
@@ -60,7 +62,7 @@ public class EnemyBullet : MonoBehaviour
 
     private void ApplyDamage(Collider2D playerCollider, float damageAmount)
     {
-        if (playerCollider.TryGetComponent<PlayerHealth>(out var player))
+        if (playerCollider.TryGetComponent<TestPlayerHealth>(out var player))
         {
             player.TakeDamage(damageAmount, DamageSource.Enemy);
         }
@@ -77,13 +79,4 @@ public class EnemyBullet : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, _detectionRadius);
     }
-}
-
-[System.Serializable]
-public struct EnemyBulletConfig
-{
-    public float damage;
-    public float speed;
-    public float size;
-    public float lifeTime;
 }

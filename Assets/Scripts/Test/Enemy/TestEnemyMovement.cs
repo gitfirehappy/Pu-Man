@@ -6,7 +6,7 @@ public class TestEnemyMovement : MonoBehaviour
 {
     [Header("References")]
     public Rigidbody2D rb;
-    public EnemyClash enemyClash;
+    public TestEnemyClash enemyClash;
     public Transform playerTransform;
 
     [Header("移动速度")] public float moveSpeed;
@@ -21,7 +21,7 @@ public class TestEnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        if (playerTransform == null || (enemyClash != null && enemyClash.IsClashing))
+        if (playerTransform == null || (enemyClash != null && enemyClash.isClashing))
             return;
         MoveTowardsPlayer();
     }

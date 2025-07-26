@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class TestPlayerBullet : MonoBehaviour
 {
     private float _damage;
     private float _knockbackForce;
@@ -81,8 +83,8 @@ public class Bullet : MonoBehaviour
             return;
 
         if (enemyCollider.TryGetComponent<IDamageable>(out var enemy) &&
-            enemyCollider.TryGetComponent<EnemyHealth>(out var health) &&
-            !health.IsDead)
+            enemyCollider.TryGetComponent<TestEnemyHealth>(out var health) &&
+            !health._isDead)
         {
             enemy.TakeDamage(damageAmount, DamageSource.Player);
 
@@ -122,18 +124,4 @@ public class Bullet : MonoBehaviour
         Gizmos.color = _isAoeDamage ? Color.black : Color.red;
         Gizmos.DrawWireSphere(transform.position, _detectionRadius);
     }
-}
-
-/// <summary>
-/// 子弹属性
-/// </summary>
-[System.Serializable]
-public struct BulletConfig
-{
-    public float damage;
-    public float knockback;
-    public bool isAoeDamage;
-    public float speed;
-    public float size;
-    public float lifeTime;
 }

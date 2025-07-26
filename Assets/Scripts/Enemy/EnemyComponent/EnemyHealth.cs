@@ -175,7 +175,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         EnemyEvent.TriggerDeath(enemyCore, source); // 传递死亡来源
     }
 
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRadius);
