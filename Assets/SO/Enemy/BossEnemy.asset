@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 
   spawnWeight: 1
   unlockWave: 0
-  isBoss: 0
+  isBoss: 1
   isLargeEnemy: 0
   moveSpeed: 0
   maxHealth: 0
@@ -41,5 +41,5 @@ MonoBehaviour:
   rewardConfig:
     hasHealthReward: 0
     healthUp: 0
-    hasRefreshReward: 0
-    extraRefreshChance: 0
+    hasRefreshReward: 1
+    extraRefreshChance: 2

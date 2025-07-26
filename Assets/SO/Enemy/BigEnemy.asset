@@ -16,15 +16,15 @@ MonoBehaviour:
   enemyPrefab: {fileID: 4221185578653224041, guid: aaa5af26a4bae7e46b1dcaf52c9227c1, type: 3}
   description: 
   spawnWeight: 1
-  unlockWave: 0
+  unlockWave: 4
   isBoss: 0
   isLargeEnemy: 0
-  moveSpeed: 0
-  maxHealth: 0
-  collisionDamage: 0
-  collisionImmunityDuration: 0
-  attackRadius: 0
-  detectionInterval: 0
+  moveSpeed: 2
+  maxHealth: 15
+  collisionDamage: 3
+  collisionImmunityDuration: 0.5
+  attackRadius: 1.3
+  detectionInterval: 0.2
   shootingConfig:
     bulletPrefab: {fileID: 0}
     bulletDamage: 0

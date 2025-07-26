@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b6b1590a85b2443aba9a557a568d74, type: 3}
+  m_Name: ChainKill
+  m_EditorClassIdentifier: 
+  buffID: 19
+  rarity: 2
+  buffPicture: {fileID: 21300000, guid: 1caf21c36dc0f21458ab1f7991a54f41, type: 3}
+  Description: "\u6280\u80FD\u53D8\u4E3A\u6559\u8BFE\u4E66\u822C\u7684\u4EB5\u6E0E\uFF1A\u5BF9\u6240\u6709\u654C\u4EBA\u9020\u62101\u70B9\u4F24\u5BB3\uFF0C\u5982\u679C\u6709\u654C\u4EBA\u6B7B\u4EA1\u91CD\u590D\u6267\u884C"
+  isUnique: 1
+  healthModifier: 0
+  armorModifier: 0
+  healthRegenModifier: 0
+  dodgeChanceModifier: 0
+  collisionDamageModifier: 0
+  damageModifier: 0
+  fireRateModifier: 0
+  knockbackModifier: 0
+  projectileCountModifier: 0
+  projectileSizeModifier: 0
+  speedModifier: 0
+  extraBuffChoices: 0
+  extraRefreshChance: 0
+  reduceAbilityCooldown: 0
+  allNormalBuffModifier: 0
+  cheatDeathInvisibleTime: 0
+  chainKillCooldown: 2
+  reduceEnemySpawn: 0
+  amorToDamageModifier: 0

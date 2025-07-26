@@ -16,25 +16,25 @@ MonoBehaviour:
   playerName: ClassicPlayer
   playerSprite: {fileID: 21300000, guid: 2100a039d9bbb7a4e9af7759c7f1d719, type: 3}
   playerPrefab: {fileID: 2408863001739500776, guid: f78be7a758c0a4e4c87f6876f2aeed06, type: 3}
-  description: 
+  description: "\u65E0\u654C"
   healthConfig:
     maxHealth: 10
-    armor: 0
+    armor: 1
     healthRegen: 0
     dodgeChance: 0
-    collisionDamage: 2
-    collisionImmunityDuration: 0.5
+    collisionDamage: 3
+    collisionImmunityDuration: 0.75
     cheatDeathInvincibleTime: 0
     hasCheatDeath: 0
   shootingConfig:
     damage: 1
-    fireRate: 2
+    fireRate: 1
     knockback: 0
     projectileCount: 1
     projectileSize: 0.25
     isAoeDamage: 0
-    projectileSpeed: 4
-    projectileLifeTime: 1
+    projectileSpeed: 5
+    projectileLifeTime: 7
     bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
     shootingSFX: {fileID: 8300000, guid: 6fd72ba20b9e206439dc213a9968a1f1, type: 3}
   movementConfig:

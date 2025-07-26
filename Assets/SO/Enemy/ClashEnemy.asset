@@ -16,15 +16,15 @@ MonoBehaviour:
   enemyPrefab: {fileID: 4221185578653224041, guid: 125041cb4b2da6746b7c50286da3b25c, type: 3}
   description: 
   spawnWeight: 1
-  unlockWave: 0
+  unlockWave: 3
   isBoss: 0
   isLargeEnemy: 0
-  moveSpeed: 0
-  maxHealth: 0
-  collisionDamage: 0
-  collisionImmunityDuration: 0
-  attackRadius: 0
-  detectionInterval: 0
+  moveSpeed: 2
+  maxHealth: 9
+  collisionDamage: 2
+  collisionImmunityDuration: 0.5
+  attackRadius: 0.7
+  detectionInterval: 0.2
   shootingConfig:
     bulletPrefab: {fileID: 0}
     bulletDamage: 0
@@ -35,9 +35,9 @@ MonoBehaviour:
     projectileCount: 0
     bulletLifeTime: 0
   clashConfig:
-    seekRadius: 0
-    clashSpeed: 0
-    clashCooldown: 0
+    seekRadius: 5
+    clashSpeed: 9
+    clashCooldown: 3
   rewardConfig:
     hasHealthReward: 0
     healthUp: 0

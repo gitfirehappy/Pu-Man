@@ -20,10 +20,10 @@ MonoBehaviour:
   isBoss: 0
   isLargeEnemy: 0
   moveSpeed: 2
-  maxHealth: 10
+  maxHealth: 5
   collisionDamage: 1
-  collisionImmunityDuration: 1
-  attackRadius: 1
+  collisionImmunityDuration: 0.5
+  attackRadius: 0.7
   detectionInterval: 0.2
   shootingConfig:
     bulletPrefab: {fileID: 5579274564280302287, guid: 15bd73bb293a4094eb48fb632039c624, type: 3}

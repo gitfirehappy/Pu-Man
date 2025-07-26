@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e5b6b1590a85b2443aba9a557a568d74, type: 3}
-  m_Name: PlayerBuffTest
+  m_Name: ExtraRefresh
   m_EditorClassIdentifier: 
-  buffID: 22
-  rarity: 0
-  buffPicture: {fileID: 0}
-  Description: 
+  buffID: 13
+  rarity: 1
+  buffPicture: {fileID: 21300000, guid: f901e5f6b2507b94d91bc41015e663fe, type: 3}
+  Description: "\u5237\u65B0+3"
   isUnique: 0
   healthModifier: 0
   armorModifier: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
   projectileSizeModifier: 0
   speedModifier: 0
   extraBuffChoices: 0
-  extraRefreshChance: 0
+  extraRefreshChance: 3
   reduceAbilityCooldown: 0
   allNormalBuffModifier: 0
   cheatDeathInvisibleTime: 0

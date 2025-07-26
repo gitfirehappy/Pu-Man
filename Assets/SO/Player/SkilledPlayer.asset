@@ -16,36 +16,35 @@ MonoBehaviour:
   playerName: SkilledPlayer
   playerSprite: {fileID: 21300000, guid: bdf8847715b13aa4486087edd95c2d71, type: 3}
   playerPrefab: {fileID: 2408863001739500776, guid: 9c3ce89091de26844b27a979a1858218, type: 3}
-  description: 
+  description: "\u989D\u5916\u5237\u65B0"
   healthConfig:
-    maxHealth: 0
+    maxHealth: 12
     armor: 0
     healthRegen: 0
-    dodgeChance: 0
-    collisionDamage: 0
-    collisionImmunityDuration: 0
+    dodgeChance: 0.2
+    collisionDamage: 2
+    collisionImmunityDuration: 0.75
     cheatDeathInvincibleTime: 0
     hasCheatDeath: 0
   shootingConfig:
-    damage: 0
-    fireRate: 0
+    damage: 1
+    fireRate: 1
     knockback: 0
-    projectileCount: 0
-    projectileSize: 0
+    projectileCount: 1
+    projectileSize: 0.25
     isAoeDamage: 0
-    projectileSpeed: 0
-    projectileLifeTime: 0
+    projectileSpeed: 5
+    projectileLifeTime: 7
     bulletPrefab: {fileID: 5579274564280302287, guid: 6b5c1b5b861003c47996ecc0a63ccbe5, type: 3}
     shootingSFX: {fileID: 8300000, guid: 6fd72ba20b9e206439dc213a9968a1f1, type: 3}
   movementConfig:
-    runSpeed: 0
+    runSpeed: 4
   abilitiesConfig:
-    startingAbility: 3
     abilityActivationSFX: {fileID: 0}
     startingAbilityData:
       type: 3
       cooldownWaves: 0
       duration: 0
       effectValue: 0
-      isPassive: 0
-      extraRefreshPerWave: 0
+      isPassive: 1
+      extraRefreshPerWave: 1

@@ -9,6 +9,7 @@ public class EnemyClash : MonoBehaviour
     private float seekRadius;
     private float clashSpeed;
     private float clashCooldown;
+    private float clashEndDistance = 0.2f; // 冲撞结束距离阈值
 
     private float lastClashTime;
     private bool isClashing;
@@ -84,15 +85,20 @@ public class EnemyClash : MonoBehaviour
 
         if (!isClashing) return;
 
-        // 冲撞移动（直线运动）
-        Vector2 direction = (clashTarget - (Vector2)transform.position).normalized;
-        rb.velocity = direction * clashSpeed;
+        // 计算到目标点的距离
+        float distance = Vector2.Distance(transform.position, clashTarget);
 
-        // 检查是否到达目标点
-        if (Vector2.Distance(transform.position, clashTarget) < 0.1f)
+        // 在目标点附近结束冲撞
+        if (distance < clashEndDistance)
         {
+            rb.velocity = Vector2.zero;
             EndClash();
+            return;
         }
+
+        // 继续向目标点移动
+        Vector2 moveDirection = (clashTarget - (Vector2)transform.position).normalized;
+        rb.velocity = moveDirection * clashSpeed;
     }
 
     /// <summary>
