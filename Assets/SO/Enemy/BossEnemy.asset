@@ -22,24 +22,24 @@ MonoBehaviour:
   moveSpeed: 0
   maxHealth: 0
   collisionDamage: 0
-  collisionImmunityDuration: 0
-  attackRadius: 0
-  detectionInterval: 0
+  collisionImmunityDuration: 0.5
+  attackRadius: 2.2
+  detectionInterval: 0.2
   shootingConfig:
     bulletPrefab: {fileID: 5579274564280302287, guid: 15bd73bb293a4094eb48fb632039c624, type: 3}
     bulletDamage: 0
-    bulletSpeed: 0
-    bulletSize: 0
+    bulletSpeed: 3
+    bulletSize: 0.25
     shootRate: 0
     shootRadius: 0
     projectileCount: 0
-    bulletLifeTime: 0
+    bulletLifeTime: 7
   clashConfig:
     seekRadius: 0
     clashSpeed: 0
     clashCooldown: 0
   rewardConfig:
-    hasHealthReward: 0
-    healthUp: 0
+    hasHealthReward: 1
+    healthUp: 20
     hasRefreshReward: 1
     extraRefreshChance: 2

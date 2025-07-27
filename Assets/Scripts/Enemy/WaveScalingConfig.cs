@@ -5,6 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class WaveScalingConfig
 {
+    [Header("增长模式")]
+    public GrowthMode growthMode = GrowthMode.Linear;
+
     [Header("生成间隔配置")]
     [Tooltip("初始生成间隔(秒)")]
     public float initialSpawnInterval = 2f;
@@ -15,12 +18,13 @@ public class WaveScalingConfig
     [Tooltip("最小生成间隔(秒)")]
     public float minSpawnInterval = 0.2f;
 
-    [Header("基础增长")]
-    [Tooltip("每波血量增长百分比(0.1=10%)")]
+    [Header("百分比增长配置")]
     public float healthPerWave = 0.1f;
-
-    [Tooltip("每波伤害增长百分比")]
     public float damagePerWave = 0.05f;
+
+    [Header("线性增长配置")]
+    public float healthLinearPerWave = 5f;    // 每波血量固定增加值
+    public float damageLinearPerWave = 1f;    // 每波伤害固定增加值
 
     [Header("Boss弹道增长")]
     [Tooltip("每次Boss出现增加的弹道数")]
@@ -40,4 +44,14 @@ public class EnemyTypeScalingOverride
     public EnemyType enemyType;
     public float healthPerWave = 0.1f;   // 类型特有血量增长系数
     public float damagePerWave = 0.05f;   // 类型特有伤害增长系数
+
+    public float healthLinearPerWave = 5f;
+    public float damageLinearPerWave = 1f;
+}
+
+[System.Serializable]
+public enum GrowthMode
+{
+    Percentage, // 百分比增长
+    Linear     // 线性固定数值增长
 }

@@ -104,31 +104,48 @@ public class EnemyManager : SingletonMono<EnemyManager>
                 _bonusStatsTable[type] = new EnemyBonusStats();
             }
 
-            // 获取特定类型成长系数
+            // 获取成长系数
             float healthMultiplier = scalingConfig.healthPerWave;
             float damageMultiplier = scalingConfig.damagePerWave;
+            float healthLinear = scalingConfig.healthLinearPerWave;
+            float damageLinear = scalingConfig.damageLinearPerWave;
 
             if (_typeOverrides.TryGetValue(type, out var overrideConfig))
             {
                 healthMultiplier = overrideConfig.healthPerWave;
                 damageMultiplier = overrideConfig.damagePerWave;
+                healthLinear = overrideConfig.healthLinearPerWave;
+                damageLinear = overrideConfig.damageLinearPerWave;
             }
 
-            //更新公式：xxbonus +=（EnemySo基础值+xxbonus）* 系数
-            //或        xxbonus = （EnemySo基础值+xxbonus）* (1+系数) - 基础值
-            var baseStats = GetBaseStatsForType(type); // 需要实现这个方法获取基础值
+            var baseStats = GetBaseStatsForType(type); // 获取基础值
             var currentBonus = _bonusStatsTable[type];
 
-            _bonusStatsTable[type] = new EnemyBonusStats
+            if(scalingConfig.growthMode == GrowthMode.Percentage)
             {
-                maxHealthBonus = (baseStats.maxHealth + currentBonus.maxHealthBonus) * (1 + healthMultiplier) - baseStats.maxHealth,
-                bulletDamageBonus = (baseStats.bulletDamage + currentBonus.bulletDamageBonus) * (1 + damageMultiplier) - baseStats.bulletDamage,
-                collisionDamageBonus = (baseStats.collisionDamage + currentBonus.collisionDamageBonus) * (1 + damageMultiplier) - baseStats.collisionDamage,
-                projectileCountBonus = caculateBossProjectileCountBonus(type, wave)
-            };
+                //百分比增长
+                //更新公式：xxbonus +=（EnemySo基础值+xxbonus）* 系数
+                //或        xxbonus = （EnemySo基础值+xxbonus）* (1+系数) - 基础值
+                _bonusStatsTable[type] = new EnemyBonusStats
+                {
+                    maxHealthBonus = (baseStats.maxHealth + currentBonus.maxHealthBonus) * (1 + healthMultiplier) - baseStats.maxHealth,
+                    bulletDamageBonus = (baseStats.bulletDamage + currentBonus.bulletDamageBonus) * (1 + damageMultiplier) - baseStats.bulletDamage,
+                    collisionDamageBonus = (baseStats.collisionDamage + currentBonus.collisionDamageBonus) * (1 + damageMultiplier) - baseStats.collisionDamage,
+                    projectileCountBonus = caculateBossProjectileCountBonus(type, wave)
+                };
+            }
+            else
+            {
+                // 线性固定值增长
+                _bonusStatsTable[type] = new EnemyBonusStats
+                {
+                    maxHealthBonus = currentBonus.maxHealthBonus + healthLinear,
+                    bulletDamageBonus = currentBonus.bulletDamageBonus + damageLinear,
+                    collisionDamageBonus = currentBonus.collisionDamageBonus + damageLinear,
+                    projectileCountBonus = caculateBossProjectileCountBonus(type, wave)
+                };
+            }
         }
-
-
         //内部初始化：data.xx + core.xxbonus
         //下面不需要操作，在内部组件初始化可以完成
     }

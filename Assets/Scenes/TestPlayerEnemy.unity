@@ -86719,7 +86719,7 @@ MonoBehaviour:
   maxHealth: 121
   collisionDamage: 1
   collisionImmunityDuration: 0.5
-  attackRadius: 1.3
+  attackRadius: 2.2
   detectionInterval: 0.2
   currentHealth: 0
   _isDead: 0
@@ -86774,7 +86774,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1390421824}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c3486fab31bd354b997145dc7346480, type: 3}
   m_Name: 
@@ -86786,7 +86786,7 @@ MonoBehaviour:
   bulletSize: 0.25
   shootRate: 0.5
   shootRadius: 12
-  projectileCount: 1
+  projectileCount: 12
   bulletLifeTime: 7
   nextShootTime: 0
   playerTransform: {fileID: 1433520310}
@@ -86805,11 +86805,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1562419529230246534, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1562419529230246534, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1562419529230246534, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
       propertyPath: m_LocalPosition.x
@@ -86867,6 +86867,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4225181432506997977, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7be23ba9a1fcb5a4cab8150475d9e7ac, type: 3}
     m_RemovedComponents:
     - {fileID: -4982132133625340833, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
     - {fileID: 6165298772871698724, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
