@@ -25,7 +25,9 @@ public class DataManager : SingletonMono<DataManager>
 
     protected override void Init()
     {
+        Debug.Log("开始加载记录");
         LoadData();
+        Debug.Log("开始加载所有SO");
         LoadAllSOsAsync();
     }
 

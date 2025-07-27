@@ -23,7 +23,7 @@ MonoBehaviour:
       manualUIForms: []
       additionalPreloadForms:
       - {fileID: 2865224232912442227, guid: b70905167d75a9f4684a495fb45d2502, type: 3}
-    - groupID: 
+    - groupID: Main
       manualUIForms:
       - {fileID: 1221308002913311472, guid: 423084c5112c7f34287a4f78907c9054, type: 3}
       - {fileID: 2531743421118524986, guid: 2265e381585f97b47829e2cf13b8113d, type: 3}

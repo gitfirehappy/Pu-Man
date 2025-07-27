@@ -93,7 +93,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         isSpawning = false;
         if (spawnRoutine != null)
             StopCoroutine(spawnRoutine);
-        Debug.Log("[EnemySpawner] 敌人生成已停止");
+        //Debug.Log("[EnemySpawner] 敌人生成已停止");
     }
 
     private IEnumerator SpawnLoop()

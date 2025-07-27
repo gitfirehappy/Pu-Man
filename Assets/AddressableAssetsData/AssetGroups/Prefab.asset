@@ -16,7 +16,37 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: ec37f1e1feee4654fa5a22d57cdcb6a4
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 879304ab1c83a494aa346de773154c5b
+    m_Address: Assets/Prefab/Bullet
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BulletPrefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8123b3ab470145e43ab54a61800c6eda
+    m_Address: Assets/Prefab/Enemy
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - EnemyPrefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0e5ed225f6deb7a4b863ae8519e20e80
+    m_Address: Assets/Prefab/Manager
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ManagerPrefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a640fc58d486c2489681136cfebaff6
+    m_Address: Assets/Prefab/Player
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - PlayerPrefab
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53c947a259890af46b71737615c6bbeb
+    m_Address: Assets/Prefab/UIPanel
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - UIPanelPrefab
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4c73a92acb4556f4a89840446eb3feaa, type: 2}
   m_SchemaSet:

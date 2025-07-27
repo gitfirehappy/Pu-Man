@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
@@ -7,8 +8,16 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
     private GameState currentState;
     private GameState stateBeforePause; // 记录暂停前的状态
 
-    protected override void Init()
+    protected override async void Init()
     {
+        Debug.Log("测试");
+
+        // 等待所有SO数据加载完成
+        while (!DataManager.Instance.IsPlayerDataLoaded || !DataManager.Instance.IsAnimationDataLoaded || !DataManager.Instance.IsBuffDataLoaded)
+        {
+            await Task.Yield();
+        }
+
         RegisterEvents();
         ChangeState(GameState.Menu);
     }

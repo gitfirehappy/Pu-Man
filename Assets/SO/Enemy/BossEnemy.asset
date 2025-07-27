@@ -19,25 +19,25 @@ MonoBehaviour:
   unlockWave: 0
   isBoss: 1
   isLargeEnemy: 0
-  moveSpeed: 0
-  maxHealth: 0
-  collisionDamage: 0
+  moveSpeed: 2
+  maxHealth: 5
+  collisionDamage: 1
   collisionImmunityDuration: 0.5
   attackRadius: 2.2
   detectionInterval: 0.2
   shootingConfig:
     bulletPrefab: {fileID: 5579274564280302287, guid: 15bd73bb293a4094eb48fb632039c624, type: 3}
-    bulletDamage: 0
+    bulletDamage: 1
     bulletSpeed: 3
     bulletSize: 0.25
-    shootRate: 0
-    shootRadius: 0
+    shootRate: 0.5
+    shootRadius: 12
     projectileCount: 0
     bulletLifeTime: 7
   clashConfig:
-    seekRadius: 0
-    clashSpeed: 0
-    clashCooldown: 0
+    seekRadius: 8
+    clashSpeed: 12
+    clashCooldown: 10
   rewardConfig:
     hasHealthReward: 1
     healthUp: 20

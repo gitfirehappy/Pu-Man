@@ -86752,7 +86752,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1390421824}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b31ab12b75c5ad7448f9758925c67d81, type: 3}
   m_Name: 
@@ -86760,9 +86760,9 @@ MonoBehaviour:
   rb: {fileID: 1390421829}
   movement: {fileID: 1390421825}
   playerTransform: {fileID: 1433520310}
-  seekRadius: 7
+  seekRadius: 8
   clashSpeed: 12
-  clashCooldown: 5
+  clashCooldown: 10
   clashEndDistance: 0.2
   isClashing: 0
   clashTarget: {x: 0, y: 0}
@@ -86774,7 +86774,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1390421824}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c3486fab31bd354b997145dc7346480, type: 3}
   m_Name: 

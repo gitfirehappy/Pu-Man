@@ -28,8 +28,12 @@ public class UIManager : Singleton<UIManager>
     /// <summary>动态面板分组字典</summary>
     public Dictionary<string, List<UIFormBase>> dynamicFormGroups = new Dictionary<string, List<UIFormBase>>();
 
-    /// <summary> Canvas分组映射</summary>
+    /// <summary> Canvas分组映射（Key = groupID, Value = Canvas） </summary>
     private Dictionary<string, Canvas> canvasGroups = new Dictionary<string, Canvas>();
+
+    /// <summary> UI表单与Canvas的映射（Key = 类型名, Value = Canvas） </summary>
+    private Dictionary<string, Canvas> formToCanvasMap = new Dictionary<string, Canvas>();
+
 
     #endregion
 
@@ -40,7 +44,11 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void Initialize(UIResourceConfigSO config)
     {
-        // 注册Canvas分组
+        // 清空所有映射
+        canvasGroups.Clear();
+        formToCanvasMap.Clear();
+
+        // 注册Canvas分组和表单映射
         foreach (var registrationGroup in config.uiRegistrationGroups)
         {
             if (string.IsNullOrEmpty(registrationGroup.parentCanvasName))
@@ -64,9 +72,37 @@ public class UIManager : Singleton<UIManager>
                 // 注册Canvas组（允许多个分组ID对应同一个Canvas）
                 RegisterCanvasGroup(uiGroup.groupID, targetCanvas);
 
+                // 为所有静态UI表单建立Canvas映射
+                MapFormsToCanvas(uiGroup.manualUIForms, targetCanvas);
+                MapFormsToCanvas(uiGroup.additionalPreloadForms, targetCanvas);
+
                 // 预加载资源
                 PreLoadForms(uiGroup.manualUIForms);
                 PreLoadForms(uiGroup.additionalPreloadForms);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 为UI表单建立Canvas映射
+    /// </summary>
+    private void MapFormsToCanvas(GameObject[] prefabs, Canvas canvas)
+    {
+        foreach (var prefab in prefabs)
+        {
+            if (prefab == null) continue;
+
+            var formBase = prefab.GetComponent<UIFormBase>();
+            if (formBase == null)
+            {
+                Debug.LogError($"Prefab {prefab.name} does not have UIFormBase component!");
+                continue;
+            }
+
+            string className = formBase.GetType().Name;
+            if (!formToCanvasMap.ContainsKey(className))
+            {
+                formToCanvasMap.Add(className, canvas);
             }
         }
     }
@@ -83,6 +119,7 @@ public class UIManager : Singleton<UIManager>
         if (!canvasGroups.ContainsKey(groupID))
         {
             canvasGroups.Add(groupID, canvas);
+            Debug.Log($"Registered canvas group: {groupID} -> {canvas.name}");
         }
     }
 
@@ -99,21 +136,26 @@ public class UIManager : Singleton<UIManager>
     }
 
     /// <summary>
+    /// 获取UI表单对应的Canvas
+    /// </summary>
+    public Canvas GetCanvasForForm(string className)
+    {
+        if (formToCanvasMap.TryGetValue(className, out Canvas canvas))
+        {
+            return canvas;
+        }
+        return null;
+    }
+
+    /// <summary>
     /// 通过名称查找场景中的Canvas
     /// </summary>
     /// <param name="canvasName"></param>
     /// <returns></returns>
     private Canvas FindCanvasByName(string canvasName)
     {
-        Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>(true);
-        foreach (Canvas canvas in allCanvases)
-        {
-            if (canvas.name.Equals(canvasName, System.StringComparison.OrdinalIgnoreCase))
-            {
-                return canvas;
-            }
-        }
-        return null;
+        GameObject canvasObj = GameObject.Find(canvasName);
+        return canvasObj?.GetComponent<Canvas>();
     }
 
     #endregion
@@ -235,11 +277,11 @@ public class UIManager : Singleton<UIManager>
 
     #region 显示与隐藏
 
-    public void ShowUIForm(string className, string canvasGroupID = null)
+    public void ShowUIForm(string className)
     {
         if (!forms.ContainsKey(className))
         {
-            CreateForm(className, canvasGroupID);
+            CreateForm(className);
             if (!forms.ContainsKey(className)) return;
         }
 
@@ -252,7 +294,7 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void ShowUIForm<T>(string canvasGroupID = null) where T : UIFormBase => ShowUIForm(typeof(T).Name, canvasGroupID);
+    public void ShowUIForm<T>() where T : UIFormBase => ShowUIForm(typeof(T).Name);
 
     public void HideUIForm(string className)
     {
@@ -286,23 +328,19 @@ public class UIManager : Singleton<UIManager>
 
     public bool HasActiveForm() => showForms.Count > 0;
 
-    private void CreateForm(string className, string canvasGroupID = null)
+    private void CreateForm(string className)
     {
         if (formPrefabs.TryGetValue(className, out GameObject prefab))
         {
-            Transform parent = null;
+            // 获取UI表单对应的Canvas
+            Canvas parentCanvas = GetCanvasForForm(className);
 
-            // 查找指定的Canvas组
-            if (!string.IsNullOrEmpty(canvasGroupID) && canvasGroups.TryGetValue(canvasGroupID, out Canvas canvas))
+            if (parentCanvas == null)
             {
-                parent = canvas.transform;
-            }
-            else
-            {
-                Debug.LogWarning($"Canvas group {canvasGroupID} not found. Creating form at root level.");
+                Debug.LogWarning($"No canvas mapped for form {className}. Creating at root level.");
             }
 
-            var formObj = GameObject.Instantiate(prefab, parent);
+            var formObj = GameObject.Instantiate(prefab, parentCanvas?.transform);
             formObj.name = className;
         }
         else
@@ -353,7 +391,7 @@ public class UIManager : Singleton<UIManager>
 
     public UIFormBase TryShowForm(string className, string canvasGroupID = null)
     {
-        ShowUIForm(className, canvasGroupID);
+        ShowUIForm(className);
         return GetForm(className);
     }
 

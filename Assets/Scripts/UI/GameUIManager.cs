@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class GameUIManager : SingletonMono<GameUIManager>
 {
@@ -10,8 +11,14 @@ public class GameUIManager : SingletonMono<GameUIManager>
     [Header("当前游戏状态")]
     [SerializeField]private GameState currentState;
 
-    protected override void Init()
+    protected override async void Init()
     {
+        // 等待所有SO数据加载完成
+        while (!DataManager.Instance.IsPlayerDataLoaded || !DataManager.Instance.IsAnimationDataLoaded || !DataManager.Instance.IsBuffDataLoaded)
+        {
+            await Task.Yield();
+        }
+
         // 初始化UI管理器
         UIManager.Instance.Initialize(uiResourceConfig);
 

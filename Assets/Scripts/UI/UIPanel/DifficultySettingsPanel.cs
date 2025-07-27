@@ -18,6 +18,10 @@ public class DifficultySettingsPanel : UIFormBase
     [SerializeField] private Slider damageGrowthSlider;    // 伤害增长滑条
     [SerializeField] private TextMeshProUGUI damageValueText;
 
+    [Header("增长模式设置")]
+    [SerializeField] private Toggle percentageToggle;
+    [SerializeField] private Toggle linearToggle;
+
     [Header("按钮")]
     [SerializeField] private Button closeButton;
 
@@ -27,6 +31,18 @@ public class DifficultySettingsPanel : UIFormBase
 
         // 初始化滑块值
         var config = EnemyManager.Instance.ScalingConfig;
+
+        // 初始化增长模式切换
+        percentageToggle.isOn = config.growthMode == GrowthMode.Percentage;
+        linearToggle.isOn = config.growthMode == GrowthMode.Linear;
+
+        percentageToggle.onValueChanged.AddListener(isOn => {
+            if (isOn) OnGrowthModeChanged(GrowthMode.Percentage);
+        });
+
+        linearToggle.onValueChanged.AddListener(isOn => {
+            if (isOn) OnGrowthModeChanged(GrowthMode.Linear);
+        });
 
         // 初始生成间隔设置 (1-5秒)
         initialSpawnIntervalSlider.minValue = 1f;
@@ -42,21 +58,40 @@ public class DifficultySettingsPanel : UIFormBase
         intervalReductionSlider.onValueChanged.AddListener(OnReductionChanged);
         UpdateReductionText(config.intervalReductionPerWave);
 
-        // 初始化血量增长滑条 (0% - 50%)
-        healthGrowthSlider.minValue = 0f;
-        healthGrowthSlider.maxValue = 0.5f;
-        healthGrowthSlider.value = config.healthPerWave;
-        healthGrowthSlider.onValueChanged.AddListener(OnHealthGrowthChanged);
-        UpdateHealthText(config.healthPerWave);
-
-        // 初始化伤害增长滑条 (0% - 30%)
-        damageGrowthSlider.minValue = 0f;
-        damageGrowthSlider.maxValue = 0.3f;
-        damageGrowthSlider.value = config.damagePerWave;
-        damageGrowthSlider.onValueChanged.AddListener(OnDamageGrowthChanged);
-        UpdateDamageText(config.damagePerWave);
+        // 初始化属性UI
+        UpdateUIForCurrentMode();
 
         closeButton.onClick.AddListener(ClosePanel);
+    }
+
+    private void UpdateUIForCurrentMode()
+    {
+        var config = EnemyManager.Instance.ScalingConfig;
+        bool isPercentage = config.growthMode == GrowthMode.Percentage;
+
+        // 设置血量UI
+        healthGrowthSlider.minValue = isPercentage ? 0f : 0f;
+        healthGrowthSlider.maxValue = isPercentage ? 0.5f : 50f;
+        healthGrowthSlider.value = isPercentage ? config.healthPerWave : config.healthLinearPerWave;
+        healthGrowthSlider.onValueChanged.RemoveAllListeners();
+        healthGrowthSlider.onValueChanged.AddListener(OnHealthGrowthChanged);
+        UpdateHealthText();
+
+        // 设置伤害UI
+        damageGrowthSlider.minValue = isPercentage ? 0f : 0f;
+        damageGrowthSlider.maxValue = isPercentage ? 0.3f : 30f;
+        damageGrowthSlider.value = isPercentage ? config.damagePerWave : config.damageLinearPerWave;
+        damageGrowthSlider.onValueChanged.RemoveAllListeners();
+        damageGrowthSlider.onValueChanged.AddListener(OnDamageGrowthChanged);
+        UpdateDamageText();
+    }
+
+    private void OnGrowthModeChanged(GrowthMode newMode)
+    {
+        var config = EnemyManager.Instance.ScalingConfig;
+        config.growthMode = newMode;
+        UpdateUIForCurrentMode();
+        Debug.Log($"增长模式切换为: {newMode}");
     }
 
     /// <summary>
@@ -75,20 +110,22 @@ public class DifficultySettingsPanel : UIFormBase
         reductionValueText.text = $"-{value:F2}秒/波";
     }
 
-    /// <summary>
-    /// 更新血量增长文本
-    /// </summary>
-    private void UpdateHealthText(float value)
+    private void UpdateHealthText()
     {
-        healthValueText.text = $"+{value * 100:F0}%/波";
+        var config = EnemyManager.Instance.ScalingConfig;
+        if (config.growthMode == GrowthMode.Percentage)
+            healthValueText.text = $"+{config.healthPerWave * 100:F0}%/波";
+        else
+            healthValueText.text = $"+{config.healthLinearPerWave:F0}点/波";
     }
 
-    /// <summary>
-    /// 更新伤害增长文本
-    /// </summary>
-    private void UpdateDamageText(float value)
+    private void UpdateDamageText()
     {
-        damageValueText.text = $"+{value * 100:F0}%/波";
+        var config = EnemyManager.Instance.ScalingConfig;
+        if (config.growthMode == GrowthMode.Percentage)
+            damageValueText.text = $"+{config.damagePerWave * 100:F0}%/波";
+        else
+            damageValueText.text = $"+{config.damageLinearPerWave:F0}点/波";
     }
 
     private void OnInitialIntervalChanged(float value)
@@ -105,24 +142,26 @@ public class DifficultySettingsPanel : UIFormBase
         Debug.Log($"每波减少间隔调整为: {value:F2}秒");
     }
 
-    /// <summary>
-    /// 每波血量增长调整
-    /// </summary>
-    /// <param name="value"></param>
     private void OnHealthGrowthChanged(float value)
     {
-        EnemyManager.Instance.ScalingConfig.healthPerWave = value;
-        Debug.Log($"血量增长率调整为: {value * 100}%");
+        var config = EnemyManager.Instance.ScalingConfig;
+        if (config.growthMode == GrowthMode.Percentage)
+            config.healthPerWave = value;
+        else
+            config.healthLinearPerWave = value;
+
+        UpdateHealthText();
     }
 
-    /// <summary>
-    /// 每波伤害增长调整
-    /// </summary>
-    /// <param name="value"></param>
     private void OnDamageGrowthChanged(float value)
     {
-        EnemyManager.Instance.ScalingConfig.damagePerWave = value;
-        Debug.Log($"伤害增长率调整为: {value * 100}%");
+        var config = EnemyManager.Instance.ScalingConfig;
+        if (config.growthMode == GrowthMode.Percentage)
+            config.damagePerWave = value;
+        else
+            config.damageLinearPerWave = value;
+
+        UpdateDamageText();
     }
 
     private void ClosePanel()
