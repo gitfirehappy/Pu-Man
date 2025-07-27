@@ -158,19 +158,19 @@ public class BuffManager : SingletonMono<BuffManager>
     private void AddAllNormalBuff(PlayerCore player, BuffSO buffData)
     {
         float smallBoost = buffData.allNormalBuffModifier;
-        player.Health.AddMaxHealth(player.Health.MaxHealth * smallBoost);
-        player.Health.AddArmor(player.Health.Armor * smallBoost);
-        player.Health.AddHealthRegen(player.Health.HealthRegen * smallBoost);
-        player.Health.AddDodgeChance(player.Health.DodgeChance * smallBoost);
-        player.Health.AddCollitionDamage(player.Health.CollisionDamage * smallBoost);
+        player.Health.AddMaxHealth(1 * smallBoost);
+        player.Health.AddArmor(1 * smallBoost);
+        player.Health.AddHealthRegen(1 * smallBoost);
+        player.Health.AddDodgeChance(0.1f * smallBoost);
+        player.Health.AddCollitionDamage(1 * smallBoost);
 
-        player.Shooting.AddDamage(player.Shooting.Damage * smallBoost);
-        player.Shooting.AddFireRate(player.Shooting.FireRate * smallBoost);
-        player.Shooting.AddKnockback(player.Shooting.Knockback * smallBoost);
-        player.Shooting.AddProjectileCount(player.Shooting.ProjectileCount);
-        player.Shooting.AddProjectileSize(player.Shooting.ProjectileSize * smallBoost);
+        player.Shooting.AddDamage(1 * smallBoost);
+        player.Shooting.AddFireRate(1 * smallBoost);
+        player.Shooting.AddKnockback(1 * smallBoost);
+        player.Shooting.AddProjectileCount((int)(1 * smallBoost));
+        player.Shooting.AddProjectileSize(0.1f * smallBoost);
 
-        player.Movement.AddSpeed(player.Movement.RunSpeed * smallBoost);
+        player.Movement.AddSpeed(1 * smallBoost);
     }
 
     /// <summary>
@@ -180,10 +180,9 @@ public class BuffManager : SingletonMono<BuffManager>
     /// <param name="buffData"></param>
     private void ApplyBerserkMode(PlayerCore player, BuffSO buffData)
     {
-        //TODO：计算转化量
-        player.Shooting.AddDamage(player.Shooting.Damage);
-        player.Shooting.AddFireRate(player.Shooting.FireRate);
-        player.Health.AddArmor(-player.Health.Armor * 0.9f);
+        player.Shooting.AddDamage(buffData.amorToDamageModifier);
+        player.Shooting.AddFireRate(buffData.amorToDamageModifier);
+        player.Health.AddArmor(-buffData.amorToDamageModifier);
     }
 
     /// <summary>

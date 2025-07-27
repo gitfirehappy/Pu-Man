@@ -101,7 +101,12 @@ public class BattleUIPanel : UIFormBase
     /// </summary>
     private void UpdateSkillCooldownUI()
     {
-        if (_player == null || _player.Abilities == null) return;
+        if (_player == null) return;
+        if (_player.Abilities == null)
+        {
+            skillCooldownText.text = "无技能";
+            return;
+        }
 
         int currentWave = _waveCounter.CurrentWave;
         int nextAvailable = _player.Abilities.nextAvailableWave;
@@ -170,8 +175,6 @@ public class BattleUIPanel : UIFormBase
         bossUIGroup.SetActive(true);
         bossHealthText.text = "BOSS INCOMING...";
         bossHealthFill.fillAmount = 1f;
-
-        //TODO:关掉/调到最低背景音乐
     }
 
     /// <summary>
@@ -185,8 +188,6 @@ public class BattleUIPanel : UIFormBase
         // 更新UI显示真实血量
         UpdateBossHealthUI();
 
-        // 可以在这里播放Boss登场特效
-        //TODO:播放boss战专属背景音乐
         Debug.Log($"Boss {boss.name} 已绑定到UI");
     }
 

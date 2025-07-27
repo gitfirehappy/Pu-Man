@@ -87,10 +87,10 @@ public class Bullet : MonoBehaviour
             enemy.TakeDamage(damageAmount, DamageSource.Player);
 
             // 击退效果
-            if (_knockbackForce > 0 && enemyCollider.TryGetComponent<Rigidbody2D>(out var rb))
+            if (_knockbackForce > 0 && enemyCollider.TryGetComponent<EnemyMovement>(out var enemyMovement))
             {
                 Vector2 knockbackDirection = (enemyCollider.transform.position - transform.position).normalized;
-                rb.AddForce(knockbackDirection * _knockbackForce, ForceMode2D.Impulse);
+                enemyMovement.ApplyKnockback(knockbackDirection,_knockbackForce);
             }
         }
     }

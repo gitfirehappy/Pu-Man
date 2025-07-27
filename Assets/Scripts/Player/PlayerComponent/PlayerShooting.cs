@@ -218,15 +218,15 @@ public class PlayerShooting : MonoBehaviour
 
     #region 增益效果相关方法
     public void AddDamage(float amount) => baseDamage += amount;
-    public void AddFireRate(float amount) => baseFireRate += amount;
-    public void AddKnockback(float amount) => baseKnockback += amount;
+    public void AddFireRate(float amount) => Mathf.Min(baseFireRate += amount,15f);
+    public void AddKnockback(float amount) => Mathf.Min(baseKnockback += amount,10f);
     public void AddProjectileCount(int amount) => baseProjectileCount = Mathf.Min(baseProjectileCount + amount, 5);
-    public void AddProjectileSize(float amount) => baseProjectileSize += amount;
+    public void AddProjectileSize(float amount) => Mathf.Min(baseProjectileSize += amount,1f);
     public void SetAoeDamage() => baseIsAoeDamage = true;
 
     //临时增益方法
 
-    public void AddCurrentFireRate(float amount) => currentFireRate += amount;
+    public void AddCurrentFireRate(float amount) => Mathf.Min(currentFireRate += amount,15f);
 
     #endregion
 
