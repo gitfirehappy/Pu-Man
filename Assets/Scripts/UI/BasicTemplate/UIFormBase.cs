@@ -197,13 +197,6 @@ public class UIFormBase : MonoBehaviour, IUIForm
         dynamicGroupID = groupID;
         if (config != null) _config = config;
 
-        // 设置父Canvas
-        Canvas targetCanvas = FindCanvasForGroup(groupID);
-        if (targetCanvas != null)
-        {
-            transform.SetParent(targetCanvas.transform, false);
-        }
-
         // 如果是动态面板，确保注册到UIManager
         if (!IsInited)
         {

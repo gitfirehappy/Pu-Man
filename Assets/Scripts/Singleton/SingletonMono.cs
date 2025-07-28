@@ -45,22 +45,22 @@ public class SingletonMono<T> : MonoBehaviour where T : MonoBehaviour
 
     protected virtual void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this as T;
-
-            // 只在运行时设置 DontDestroyOnLoad
-            if (Application.isPlaying && _dontDestroyOnLoad)
-            {
-                DontDestroyOnLoad(gameObject);
-            }
-
-            Init(); // 子类可实现 Init()
-        }
-        else if (_instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        _instance = this as T;
+
+        // 只在运行时设置 DontDestroyOnLoad
+        if (Application.isPlaying && _dontDestroyOnLoad)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+
+        Init(); // 子类可实现 Init()
+
     }
 
     protected virtual void OnApplicationQuit()
