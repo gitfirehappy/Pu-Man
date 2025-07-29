@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -65,13 +66,14 @@ public class PausePanel : UIFormBase
 
     private void OnResume()
     {
-        EventBus.TriggerGameResumed();
+        // 直接通过PauseManager恢复游戏
+        PauseManager.Instance.TogglePause();
     }
 
     private void OverGame()
     {
         // 自杀结束游戏
-        EventBus.TriggerGameResumed();
+        PauseManager.Instance.TogglePause();
         PlayerManager.Instance.Player.Health.TakeDamage(float.MaxValue);
     }
 

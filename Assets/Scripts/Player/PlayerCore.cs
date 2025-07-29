@@ -69,11 +69,8 @@ public class PlayerCore : MonoBehaviour
         // 注册内部组件事件
         health.OnDeath += HandlePlayerDeath;
 
-        EventBus.OnPlayerEnabled += EnableAllComponents;
-        EventBus.OnPlayerDisabled += DisableAllComponents;
-
-        // 注册到PlayerManager（通过事件）
-        EventBus.TriggerPlayerSpawned(this);
+        EventQueueManager.AddStateEvent(GameState.Battle, EnableAllComponents, 0);
+        EventQueueManager.AddStateEvent(GameState.SelectBuff, DisableAllComponents, 2);
     }
 
     private void OnDestroy()
@@ -81,16 +78,10 @@ public class PlayerCore : MonoBehaviour
         // 注销事件
         if (health != null) health.OnDeath -= HandlePlayerDeath;
 
-        EventBus.OnPlayerEnabled -= EnableAllComponents;
-        EventBus.OnPlayerDisabled -= DisableAllComponents;
-
         // 清理输入系统
         playerInput.Dispose();
 
-        if (PlayerManager.Instance.Player == this)
-        {
-            PlayerManager.Instance.ClearPlayer();
-        }
+        PlayerManager.Instance?.ClearPlayer(this);
     }
 
     /// <summary>
@@ -105,7 +96,7 @@ public class PlayerCore : MonoBehaviour
         );
         
         //通知总线游戏结束
-        EventBus.TriggerPlayerDeath();
+        EventBus.TriggerChangeState(GameState.GameOver);
 
         // 销毁自身
         Destroy(gameObject);

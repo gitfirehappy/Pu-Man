@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 public class GameUIManager : SingletonMono<GameUIManager>
 {
@@ -25,8 +26,11 @@ public class GameUIManager : SingletonMono<GameUIManager>
         // 注册控制器
         RegisterControllers();
 
-        // 3. 监听状态变化
-        EventBus.OnGameStateChanged += OnGameStateChanged;
+        // 为每个状态添加UI切换事件
+        foreach (GameState state in Enum.GetValues(typeof(GameState)))
+        {
+            EventQueueManager.AddStateEvent(state, () => OnGameStateChanged(state), 10);
+        }
     }
 
     /// <summary>
@@ -75,11 +79,6 @@ public class GameUIManager : SingletonMono<GameUIManager>
         {
             newController.OnEnterState();
         }
-    }
-
-    private void OnDestroy()
-    {
-        EventBus.OnGameStateChanged -= OnGameStateChanged;
     }
 
     /// <summary>

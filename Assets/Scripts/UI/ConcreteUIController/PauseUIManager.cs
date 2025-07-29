@@ -6,36 +6,8 @@ public class PauseUIManager : MonoBehaviour
 
     private void Awake()
     {
-        EventBus.OnPauseUIRequested += ShowPauseUI;
-        EventBus.OnResumeUIRequested += HidePauseUI;
-    }
-
-    private void OnDestroy()
-    {
-        EventBus.OnPauseUIRequested -= ShowPauseUI;
-        EventBus.OnResumeUIRequested -= HidePauseUI;
-    }
-
-    private void Update()
-    {
-        // 检测ESC按键
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-        }
-    }
-
-    private void TogglePause()
-    {
-        if (isPaused)
-        {
-            EventBus.TriggerGameResumed();
-        }
-        else
-        {
-            EventBus.TriggerGamePaused();
-        }
-        isPaused = !isPaused;
+        EventQueueManager.AddPauseEvent(ShowPauseUI, 10);
+        EventQueueManager.AddResumeEvent(HidePauseUI, 10);
     }
 
     public void ShowPauseUI()

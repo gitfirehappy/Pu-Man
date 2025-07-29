@@ -35,26 +35,21 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
             playerTransform = player.transform;
         });
 
-        EventBus.OnBattleStart += StartSpawning;
-        EventBus.OnPlayerDeath += StopSpawning;
-        EventBus.OnTimeOut += HandleWaveTimeout;
+        // 战斗状态启动敌人生成
+        EventQueueManager.AddStateEvent(GameState.Battle, StartSpawning, 5);
+
+        //选buff和游戏结束停止生成并清理
+        EventQueueManager.AddStateEvent(GameState.SelectBuff, StopSpawnAndClearEnemy, 0);
+        EventQueueManager.AddStateEvent(GameState.GameOver, StopSpawnAndClearEnemy, 0);
 
         EventBus.OnBossWaveStarted += OnBossWaveStarted;
     }
 
-    private void OnDestroy()
-    {
-        EventBus.OnBattleStart -= StartSpawning;
-        EventBus.OnPlayerDeath -= StopSpawning;
-        EventBus.OnTimeOut -= HandleWaveTimeout;
-
-        EventBus.OnBossWaveStarted -= OnBossWaveStarted;
-    }
 
     /// <summary>
-    /// 倒计时为0
+    /// 暂停生成和清理所有敌人
     /// </summary>
-    private void HandleWaveTimeout()
+    private void StopSpawnAndClearEnemy()
     {
         StopSpawning();//停止生成
         StartCoroutine(CleanupAllEnemies());//清理所有敌人
@@ -93,7 +88,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         isSpawning = false;
         if (spawnRoutine != null)
             StopCoroutine(spawnRoutine);
-        //Debug.Log("[EnemySpawner] 敌人生成已停止");
+        Debug.Log("[EnemySpawner] 敌人生成已停止");
     }
 
     private IEnumerator SpawnLoop()

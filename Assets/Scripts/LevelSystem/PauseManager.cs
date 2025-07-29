@@ -10,8 +10,33 @@ public class PauseManager : SingletonMono<PauseManager>
 
     protected override void Init()
     {
-        EventBus.OnGamePaused += OnGamePaused;
-        EventBus.OnGameResumed += OnGameResumed;
+        // 注册暂停和恢复事件
+        EventQueueManager.AddPauseEvent(OnGamePaused, 0);
+        EventQueueManager.AddResumeEvent(OnGameResumed, 0);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
+
+    public void TogglePause()
+    {
+        // 仅允许在战斗状态暂停/恢复
+        if (LevelStatusPolicer.Instance.CurrentState != GameState.Battle)
+            return;
+
+        if (_isPaused)
+        {
+            EventBus.TriggerResumed();
+        }
+        else
+        {
+            EventBus.TriggerPause();
+        }
     }
 
     private void OnGamePaused()
@@ -26,9 +51,4 @@ public class PauseManager : SingletonMono<PauseManager>
         Time.timeScale = 1f;
     }
 
-    private void OnDestroy()
-    {
-        EventBus.OnGamePaused -= OnGamePaused;
-        EventBus.OnGameResumed -= OnGameResumed;
-    }
 }

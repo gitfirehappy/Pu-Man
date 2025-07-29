@@ -93,6 +93,16 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
 
         // 5. 设置SO数据并初始化
         playerCore.SetPlayerData(characterData);
+
+        // 6. 设置PlayerManager
+        if (PlayerManager.Instance != null)
+        {
+            PlayerManager.Instance.RegisterPlayer(playerCore);
+        }
+        else
+        {
+            Debug.LogWarning("PlayerManager实例未初始化");
+        }
     }
 }
 

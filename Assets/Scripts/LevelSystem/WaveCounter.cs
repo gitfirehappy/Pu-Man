@@ -35,14 +35,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     protected override void Init()
     {
         ResetCounter();
-        EventBus.OnBattleStart += StartNewWaveCycle;
-        EventBus.OnBuffSelected += StartNewWaveCycle;
-    }
-
-    private void OnDestroy()
-    {
-        EventBus.OnBattleStart -= StartNewWaveCycle;
-        EventBus.OnBuffSelected -= StartNewWaveCycle;
+        EventQueueManager.AddStateEvent(GameState.Battle, StartNewWaveCycle, 2);
     }
 
     /// <summary>
@@ -84,12 +77,11 @@ public class WaveCounter : SingletonMono<WaveCounter>
                 }
             }
         }
-        EventBus.TriggerWaveChanged(_currentWave);
 
         //boss事件
         if (_currentWave % bossInterval == 0)
         {
-            EventBus.TriggerBossWaveStarted();
+            //生成Boss
         }
 
         //重置玩家状态

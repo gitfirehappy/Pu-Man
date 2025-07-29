@@ -26,7 +26,10 @@ public class EnemyManager : SingletonMono<EnemyManager>
         InitializeScalingOverrides();
         _currentSpawnInterval = scalingConfig.initialSpawnInterval;
 
-        EventBus.OnWaveChanged += ApplyWaveScaling;
+        EventQueueManager.AddStateEvent(GameState.Battle, () =>
+        {
+            ApplyWaveScaling(WaveCounter.Instance.CurrentWave);
+        }, 4);
 
         EnemyEvent.OnSpawned += OnEnemySpawned;
         EnemyEvent.OnDeath += OnEnemyDeath;

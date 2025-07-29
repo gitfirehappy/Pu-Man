@@ -11,19 +11,7 @@ public class PlayerManager : SingletonMono<PlayerManager>
         //Player = FindObjectOfType<PlayerCore>();
     }
 
-    private void OnEnable()
-    {
-        EventBus.OnPlayerSpawned += RegisterPlayer;
-
-    }
-
-    private void OnDisable()
-    {
-        EventBus.OnPlayerSpawned -= RegisterPlayer;
-
-    }
-
-    private void RegisterPlayer(PlayerCore player)
+    public void RegisterPlayer(PlayerCore player)
     {
         if (Player != null && Player != player)
         {
@@ -51,9 +39,12 @@ public class PlayerManager : SingletonMono<PlayerManager>
         }
     }
 
-    public void ClearPlayer()
+    public void ClearPlayer(PlayerCore target)
     {
-        Player = null;
+        if (Player == target)
+        {
+            Player = null;
+        }
     }
 
 }
