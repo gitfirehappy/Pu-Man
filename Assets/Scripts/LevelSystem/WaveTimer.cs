@@ -31,7 +31,7 @@ public class WaveTimer : SingletonMono<WaveTimer>
     private void CompleteWave()
     {
         _currentTime = 0;
-        EventBus.TriggerTimeOut();
+        EventBus.TriggerChangeState(GameState.SelectBuff);
     }
 
 

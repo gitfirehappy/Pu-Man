@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -48,13 +49,16 @@ public class AudioManager : SingletonMono<AudioManager>
         bgmSource.outputAudioMixerGroup = musicGroup;
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-        EventBus.OnGameStateChanged += OnGameStateChanged;
+
+        foreach (GameState state in Enum.GetValues(typeof(GameState)))
+        {
+            EventQueueManager.AddStateEvent(state, OnGameStateChanged, 15);
+        }
     }
 
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        EventBus.OnGameStateChanged -= OnGameStateChanged;
     }
 
     // 创建新的SFX音源
@@ -83,9 +87,9 @@ public class AudioManager : SingletonMono<AudioManager>
         UpdateBGM();
     }
 
-    private void OnGameStateChanged(GameState newState)
+    private void OnGameStateChanged()
     {
-        currentState = newState;
+        currentState = LevelStatusPolicer.Instance.CurrentState;
         UpdateBGM();
     }
 

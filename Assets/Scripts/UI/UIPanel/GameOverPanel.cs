@@ -19,7 +19,7 @@ public class GameOverPanel : UIFormBase
 
     private void OnBackToMenu()
     {
-        EventBus.TriggerGameStateChanged(GameState.Menu);
+        EventBus.TriggerChangeState(GameState.Menu);
     }
 
     private void UpdateWaveCount()

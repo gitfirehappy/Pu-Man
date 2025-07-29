@@ -2,7 +2,6 @@
 
 public class PauseUIManager : MonoBehaviour
 {
-    private bool isPaused = false;
 
     private void Awake()
     {

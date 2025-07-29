@@ -110,7 +110,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
         // 如果是Boss，额外触发全局事件
         if (EnemyData.isBoss)
         {
-            EventBus.TriggerBossWaveEnded();
+            EnemyEvent.TriggerBossState(EnemyEvent.BossState.WaveEnded);
             AudioManager.Instance.ClearConditionTag();
         }
 
@@ -141,7 +141,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
         EnemyEvent.TriggerSpawned(this); // 触发生成事件
         if (EnemyData.isBoss)
         {
-            EventBus.TriggerBossSpawned(this);
+            EnemyEvent.TriggerBossState(EnemyEvent.BossState.Spawned, this);
         }
     }
 

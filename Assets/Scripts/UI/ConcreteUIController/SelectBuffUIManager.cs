@@ -36,7 +36,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         if (WaveCounter.Instance != null && WaveCounter.Instance.IsInEndlessMode)
         {
             // 无尽模式直接返回战斗状态
-            EventBus.TriggerGameStateChanged(GameState.Battle);
+            EventBus.TriggerChangeState(GameState.Battle);
             return;
         }
 
@@ -193,7 +193,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
             // 添加边界情况处理
             if (remainingChoices <= 0)
             {
-                EventBus.TriggerGameStateChanged(GameState.Battle);
+                EventBus.TriggerChangeState(GameState.Battle);
             }
             return;
         }
@@ -215,7 +215,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         else
         {
             // 选择次数用完，返回游戏
-            EventBus.TriggerGameStateChanged(GameState.Battle);
+            EventBus.TriggerChangeState(GameState.Battle);
         }
     }
 

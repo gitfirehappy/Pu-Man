@@ -97,7 +97,7 @@ public class SelectCharacterPanel : UIFormBase
         // 通知Manager生成玩家
         characterSelectUIManager.SpawnPlayer(selectedCharacter);
 
-        EventBus.TriggerGameStateChanged(GameState.Battle);
+        EventBus.TriggerChangeState(GameState.Battle);
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class SelectCharacterPanel : UIFormBase
     /// </summary>
     private void OnBackToMenu()
     {
-        EventBus.TriggerGameStateChanged(GameState.Menu);
+        EventBus.TriggerChangeState(GameState.Menu);
     }
 
 }

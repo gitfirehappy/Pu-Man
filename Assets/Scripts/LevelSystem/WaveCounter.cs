@@ -73,7 +73,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
                 }
                 else
                 {
-                    EventBus.TriggerAllWavesCompleted();
+                    EventBus.TriggerChangeState(GameState.GameOver);
                 }
             }
         }
@@ -81,7 +81,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
         //boss事件
         if (_currentWave % bossInterval == 0)
         {
-            //生成Boss
+            EnemyEvent.TriggerBossState(EnemyEvent.BossState.WaveStarted);
         }
 
         //重置玩家状态
@@ -98,6 +98,5 @@ public class WaveCounter : SingletonMono<WaveCounter>
     {
         _isInEndlessMode = true;
         _currentTimeLimit = endlessModeTime; // 无尽模式固定45秒
-        EventBus.TriggerEndlessModeActivated();
     }
 }

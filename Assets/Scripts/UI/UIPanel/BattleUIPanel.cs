@@ -51,21 +51,19 @@ public class BattleUIPanel : UIFormBase
         bossUIGroup.SetActive(false);// 初始隐藏Boss UI
 
         // 注册事件
-        EventBus.OnWaveChanged += OnWaveChanged;
+        EventQueueManager.AddStateEvent(GameState.Battle, () => 
+        {
+            OnWaveChanged(WaveCounter.Instance.CurrentWave);
+        }, 11);
 
-        EventBus.OnBossWaveStarted += OnBossWaveStarted;
-        EventBus.OnBossSpawned += OnBossSpawned;
-        EventBus.OnBossWaveEnded += OnBossWaveEnded;
+        EnemyEvent.OnBossStateChanged += HandleBossStateChange;
     }
 
     private void OnDestroy()
     {
         // 清理事件注册
-        EventBus.OnWaveChanged -= OnWaveChanged;
 
-        EventBus.OnBossWaveStarted -= OnBossWaveStarted;
-        EventBus.OnBossSpawned -= OnBossSpawned;
-        EventBus.OnBossWaveEnded -= OnBossWaveEnded;
+        EnemyEvent.OnBossStateChanged -= HandleBossStateChange;
 
         if (_bossUICoroutine != null)
             StopCoroutine(_bossUICoroutine);
@@ -76,7 +74,6 @@ public class BattleUIPanel : UIFormBase
         // 实时更新UI
         UpdateTimerUI();
         UpdateHealthUI();
-        UpdateSkillCooldownUI();
 
         // 实时更新Boss血量
         if (bossUIGroup.activeSelf && _currentBoss != null)
@@ -165,6 +162,22 @@ public class BattleUIPanel : UIFormBase
     }
 
     #region BossUI
+
+    private void HandleBossStateChange(EnemyEvent.BossState state, EnemyCore boss)
+    {
+        switch (state)
+        {
+            case EnemyEvent.BossState.WaveStarted:
+                OnBossWaveStarted();
+                break;
+            case EnemyEvent.BossState.Spawned:
+                OnBossSpawned(boss);
+                break;
+            case EnemyEvent.BossState.WaveEnded:
+                OnBossWaveEnded();
+                break;
+        }
+    }
 
     /// <summary>
     /// 事件1：Boss波次开始时触发（此时Boss还未生成）

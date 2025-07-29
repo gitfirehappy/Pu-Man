@@ -26,7 +26,7 @@ public class MainMenuPanel : UIFormBase
     /// </summary>
     private void OnStartClick()
     {
-        EventBus.TriggerGameStateChanged(GameState.Prepare);//切换游戏状态
+        EventBus.TriggerChangeState(GameState.Prepare);//切换游戏状态
     }
 
     /// <summary>

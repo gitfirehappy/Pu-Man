@@ -50,12 +50,10 @@ public class PlayerAbilities : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.OnWaveChanged += OnWaveChanged;
-    }
-
-    private void OnDisable()
-    {
-        EventBus.OnWaveChanged -= OnWaveChanged;
+        EventQueueManager.AddStateEvent(GameState.Battle, () => 
+        { 
+            OnWaveChanged(WaveCounter.Instance.CurrentWave); 
+        }, 8);
     }
 
     /// <summary>

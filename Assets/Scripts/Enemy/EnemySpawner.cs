@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static EnemyEvent;
 
 public class EnemySpawner : SingletonMono<EnemySpawner>
 {
@@ -42,7 +43,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         EventQueueManager.AddStateEvent(GameState.SelectBuff, StopSpawnAndClearEnemy, 0);
         EventQueueManager.AddStateEvent(GameState.GameOver, StopSpawnAndClearEnemy, 0);
 
-        EventBus.OnBossWaveStarted += OnBossWaveStarted;
+        EnemyEvent.OnBossStateChanged += OnBossStateChanged;
     }
 
 
@@ -114,9 +115,12 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     /// <summary>
     /// Boss波事件回调
     /// </summary>
-    private void OnBossWaveStarted()
+    private void OnBossStateChanged(EnemyEvent.BossState state, EnemyCore boss)
     {
-        StartCoroutine(SpawnBossWithDelay());
+        if (state == EnemyEvent.BossState.WaveStarted)
+        {
+            StartCoroutine(SpawnBossWithDelay());
+        }
     }
 
     private IEnumerator SpawnBossWithDelay()

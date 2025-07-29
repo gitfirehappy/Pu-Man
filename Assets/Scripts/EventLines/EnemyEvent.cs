@@ -12,6 +12,9 @@ public static class EnemyEvent
 
     public static event Action<EnemyCore, DamageSource> OnDeath; // Enemy实例
 
+    public static event Action<BossState, EnemyCore> OnBossStateChanged;
+    public enum BossState { WaveStarted, Spawned, WaveEnded }
+
     #endregion 核心事件
 
     #region 触发方法
@@ -27,6 +30,10 @@ public static class EnemyEvent
         if (!ValidateEnemy(enemy)) return;
         SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy, source));
     }
+
+
+    public static void TriggerBossState(BossState state, EnemyCore boss = null)
+        => OnBossStateChanged?.Invoke(state, boss);
 
     #endregion 触发方法
 
