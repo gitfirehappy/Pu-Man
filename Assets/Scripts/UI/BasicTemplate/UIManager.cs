@@ -400,6 +400,31 @@ public class UIManager : Singleton<UIManager>
     #region 动态生成面板扩展
 
     /// <summary>
+    /// 动态面板显示方法
+    /// </summary>
+    /// <param name="form"></param>
+    public void ShowDynamicForm(UIFormBase form)
+    {
+        if (form != null && !showForms.Contains(form))
+        {
+            form.Open(this);
+            showForms.Add(form);
+            // 注意：动态面板不加入堆栈，由分组单独管理
+        }
+    }
+
+    // 添加动态面板隐藏方法
+    public void HideDynamicForm(UIFormBase form)
+    {
+        if (form != null && showForms.Contains(form))
+        {
+            showForms.Remove(form);
+            form.Close();
+            // 动态面板不需要堆栈操作
+        }
+    }
+
+    /// <summary>
     /// 动态面板创建方法
     /// </summary>
     public T CreateDynamicForm<T>(
@@ -463,23 +488,15 @@ public class UIManager : Singleton<UIManager>
     /// 清除动态面板组的方法
     /// </summary>
     /// <param name="groupID"></param>
-    /// <param name="immediate"></param>
-    public void ClearDynamicFormsInGroup(string groupID, bool immediate = false)
+    public void ClearDynamicFormsInGroup(string groupID)
     {
         if (!dynamicFormGroups.ContainsKey(groupID)) return;
 
         foreach (var form in dynamicFormGroups[groupID].ToArray())
         {
-            if (form == null) continue;
-
-            if (immediate)
+            if (form != null)
             {
-                UnRegisterForm(form);
-                UnityEngine.Object.Destroy(form.gameObject);
-            }
-            else
-            {
-                form.Close();
+                HideDynamicForm(form);
             }
         }
 

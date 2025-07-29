@@ -48,7 +48,7 @@ public class SelectCharacterPanel : UIFormBase
         }
 
         // 清除现有卡片
-        UIManager.Instance.ClearDynamicFormsInGroup("CharacterCards");
+        UIManager.Instance.ClearDynamicFormsInGroup(UIGroupID.CHARACTER_CARDS);
 
         // 确保不超过定位点数量
         int cardCount = Mathf.Min(characters.Count, cardPositions.Length);
@@ -65,6 +65,8 @@ public class SelectCharacterPanel : UIFormBase
             if (card != null)
             {
                 card.Setup(characters[i], OnCharacterSelected);
+
+                UIManager.Instance.ShowDynamicForm(card);
             }
             else
             {

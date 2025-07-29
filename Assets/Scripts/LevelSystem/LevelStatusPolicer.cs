@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
 {
-    private GameState currentState;
+    private GameStateMachine _stateMachine;
     private GameState stateBeforePause; // 记录暂停前的状态
 
     protected override async void Init()
     {
-        Debug.Log("测试");
+        // 初始化状态机
+        _stateMachine = new GameStateMachine(GameState.Menu);
 
         // 等待所有SO数据加载完成
         while (!DataManager.Instance.IsPlayerDataLoaded || !DataManager.Instance.IsAnimationDataLoaded || !DataManager.Instance.IsBuffDataLoaded)
@@ -57,7 +58,7 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
 
     private void OnGamePaused()
     {
-        stateBeforePause = currentState;
+        stateBeforePause = _stateMachine.CurrentState;
         EventBus.TriggerPlayerDisabled();
         EventBus_Paused();
         Debug.Log($"游戏暂停，之前状态: {stateBeforePause}");
@@ -80,19 +81,13 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
     /// <param name="newState"></param>
     private void ChangeState(GameState newState)
     {
-        if (currentState == newState) return;
-
-        GameState previousState = currentState;
-        currentState = newState;
-
-        Debug.Log($"状态切换: {previousState} -> {newState}");
-
-        // 通知UI管理器状态变化
-        EventBus.TriggerGameStateChanged(newState);
-
-        UpdatePlayerState();
-
-        TriggerStateEvents();
+        if (_stateMachine.TryChangeState(newState))
+        {
+            Debug.Log($"状态切换: {_stateMachine.CurrentState} -> {newState}");
+            EventBus.TriggerGameStateChanged(newState);
+            UpdatePlayerState();
+            TriggerStateEvents();
+        }
     }
 
     /// <summary>
@@ -107,7 +102,7 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
             return;
         }
 
-        switch (currentState)
+        switch (_stateMachine.CurrentState)
         {
             case GameState.Battle:
                 EventBus.TriggerPlayerEnabled();
@@ -125,7 +120,7 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
     /// </summary>
     private void TriggerStateEvents()
     {
-        switch (currentState)
+        switch (_stateMachine.CurrentState)
         {
             case GameState.Menu:
                 EventBus_Menu();

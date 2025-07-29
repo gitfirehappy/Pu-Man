@@ -24,6 +24,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     [Range(0f, 1f)][SerializeField] private float legendaryWeight = 0.02f;
 
     private SelectBuffPanel selectBuffPanel;
+    private BuffCardSpawner buffCardSpawner;
     private BuffSO currentlySelectedBuff;
 
     private List<BuffSO> currentBuffOptions = new List<BuffSO>();
@@ -63,6 +64,8 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     public void OnExitState()
     {
         UIManager.Instance.HideUIForm<SelectBuffPanel>();
+
+        buffCardSpawner.ClearCards();//清理动态卡片
     }
 
     /// <summary>

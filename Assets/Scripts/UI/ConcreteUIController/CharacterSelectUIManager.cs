@@ -56,6 +56,8 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
     {
         UIManager.Instance.HideUIForm<SelectCharacterPanel>();
 
+        // 清除动态生成的角色卡片
+        UIManager.Instance.ClearDynamicFormsInGroup(UIGroupID.CHARACTER_CARDS);
     }
 
     /// <summary>
