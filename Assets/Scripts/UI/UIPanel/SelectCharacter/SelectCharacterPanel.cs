@@ -28,7 +28,7 @@ public class SelectCharacterPanel : UIFormBase
     {
         gameObject.AddComponent<ButtonSoundInitializer>();
 
-        characterSelectUIManager = GetComponentInParent<CharacterSelectUIManager>();
+        characterSelectUIManager = GameUIManager.Instance.GetSubUIManager<CharacterSelectUIManager>();
 
         startGameButton.onClick.AddListener(OnStartGame);
         backButton.onClick.AddListener(OnBackToMenu);
@@ -96,6 +96,7 @@ public class SelectCharacterPanel : UIFormBase
 
         // 通知Manager生成玩家
         characterSelectUIManager.SpawnPlayer(selectedCharacter);
+        Debug.Log("玩家已生成");
 
         EventBus.TriggerChangeState(GameState.Battle);
     }

@@ -10,17 +10,17 @@ using UnityEditor;
 
 public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 {
-    #region 🛠️ 公共配置参数
+    #region 公共配置参数
 
     [Header("Pool Config")]
     [SerializeField] private bool _addToDontDestroyOnLoad = false;
     [SerializeField] private int _defaultPoolCapacity = 10;
     [SerializeField] private int _maxPoolSize = 100;
-    [SerializeField] private bool _showDebugInfo = true; // ✅ 控制是否显示调试信息
+    [SerializeField] private bool _showDebugInfo = true; // 控制是否显示调试信息
 
     #endregion
 
-    #region 🧱 池对象管理
+    #region 池对象管理
 
     private GameObject _emptyHolder;
 
@@ -47,7 +47,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 
     #endregion
 
-    #region 🔁 生命周期：初始化
+    #region 生命周期：初始化
     protected override void Init()
     {
         _objectPools = new Dictionary<GameObject, ObjectPool<GameObject>>();
@@ -56,7 +56,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 📦 初始化空节点结构
+    #region 初始化空节点结构
     private void SetupEmpties()
     {
         _emptyHolder = new GameObject("Object Pools");
@@ -85,7 +85,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🧰 创建对象池
+    #region 创建对象池
 
     private static void CreatePool(GameObject prefab, Vector3 pos, Quaternion rot, PoolType poolType)
     {
@@ -116,7 +116,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🧱 创建对象本体
+    #region 创建对象本体
 
     private static GameObject CreateObject(GameObject prefab, Vector3 pos, Quaternion rot, PoolType poolType)
     {
@@ -139,7 +139,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🔄 对象生命周期钩子
+    #region 对象生命周期钩子
 
     private static void OnGetObject(GameObject obj) 
     {
@@ -165,7 +165,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🧭 池对象父节点绑定
+    #region 池对象父节点绑定
     private static GameObject SetParentObject(PoolType poolType)
     {
         return poolType switch
@@ -181,7 +181,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🚀 生成对象（重载）
+    #region 生成对象（重载）
 
     private static T SpawnObject<T>(GameObject prefab, Vector3 pos, Quaternion rot, PoolType poolType) where T : UnityEngine.Object
     {
@@ -229,7 +229,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🔁 外部接口重载
+    #region 外部接口重载
 
     public static T SpawnObject<T>(T prefab, Vector3 pos, Quaternion rot, PoolType type = PoolType.GameObjects) where T : Component
     {
@@ -252,7 +252,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     }
     #endregion
 
-    #region 🧹 回收对象
+    #region 回收对象
     public static void ReturnObjectToPool(GameObject obj, PoolType poolType = PoolType.GameObjects)
     {
         if (_cloneToPrefabMap.TryGetValue(obj, out var prefab))
@@ -287,7 +287,7 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 
     #endregion
 
-    #region 🧪 实时调试信息
+    #region 实时调试信息
 #if UNITY_EDITOR
     private void OnGUI()
     {

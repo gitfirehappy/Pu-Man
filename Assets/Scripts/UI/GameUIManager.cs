@@ -31,6 +31,8 @@ public class GameUIManager : SingletonMono<GameUIManager>
         {
             EventQueueManager.AddStateEvent(state, () => OnGameStateChanged(state), 10);
         }
+
+        Debug.Log("GameUIManager初始化完成");
     }
 
     /// <summary>
@@ -64,8 +66,6 @@ public class GameUIManager : SingletonMono<GameUIManager>
     /// <param name="newState"></param>
     private void OnGameStateChanged(GameState newState)
     {
-        if (currentState == newState) return;
-
         // 通知旧状态控制器退出
         if (uiControllers.TryGetValue(currentState, out var oldController))
         {

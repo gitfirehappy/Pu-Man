@@ -70,6 +70,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
             if (enemy != null && !enemy.IsDead)
             {
                 enemy.TakeDamage(enemy.MaxHealth, DamageSource.SystemCleanup);
+                yield return null;
             }
         }
 
@@ -236,14 +237,24 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     /// <param name="position"></param>
     private void SpawnSingleEnemy(GameObject enemyPrefab, Vector2 position)
     {
-        var enemy = ObjectPoolManager.SpawnObject(
+        var pool = ObjectPoolManager.GetPoolForPrefab(enemyPrefab);
+
+        var enemyObj = ObjectPoolManager.SpawnObject(
             enemyPrefab,
             position,
             Quaternion.identity,
             ObjectPoolManager.PoolType.Enemy
         ).GetComponent<EnemyCore>();
 
-        enemy?.InitializeComponents();
+        var enemyCore = enemyObj.GetComponent<EnemyCore>();
+        if (enemyCore != null)
+        {
+            enemyCore.SetPool(pool);
+        }
+        else
+        {
+            Debug.LogError($"无法获取EnemyCore组件: {enemyPrefab.name}");
+        }
     }
 
     #region 采样条件判断

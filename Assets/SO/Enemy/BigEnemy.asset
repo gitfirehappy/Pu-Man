@@ -18,7 +18,7 @@ MonoBehaviour:
   spawnWeight: 1
   unlockWave: 4
   isBoss: 0
-  isLargeEnemy: 0
+  isLargeEnemy: 1
   moveSpeed: 2
   maxHealth: 15
   collisionDamage: 3

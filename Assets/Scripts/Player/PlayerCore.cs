@@ -18,17 +18,9 @@ public class PlayerCore : MonoBehaviour
 
     private void Awake()
     {
-        if (playerData == null)
-        {
-            Debug.LogError("PlayerSO not assigned!");
-            return;
-        }
-
         // 初始化输入系统
         playerInput = new PlayerInput();
 
-        InitializeComponents();
-        RegisterEventHandlers();
     }
 
     /// <summary>
@@ -36,6 +28,12 @@ public class PlayerCore : MonoBehaviour
     /// </summary>
     private void InitializeComponents()
     {
+        if (playerData == null)
+        {
+            Debug.LogError("PlayerSO not assigned!");
+            return;
+        }
+
         // 确保所有必须组件存在并获取引用
         health = GetOrAddComponent<PlayerHealth>();
         shooting = GetOrAddComponent<PlayerShooting>();
@@ -49,6 +47,8 @@ public class PlayerCore : MonoBehaviour
         movement.Initialize(playerData);
         abilities.Initialize(playerData);
         animatorController.Init();
+
+        RegisterEventHandlers();
     }
 
     private T GetOrAddComponent<T>() where T : Component
@@ -145,19 +145,10 @@ public class PlayerCore : MonoBehaviour
         animatorController?.ResetToBaseStats();
     }
 
-    /// <summary>
-    /// 重新全部按SO初始化
-    /// </summary>
-    public void ReInitialize()
-    {
-        // 重新初始化
-        InitializeComponents();
-    }
-
     public void SetPlayerData(PlayerSO data)
     {
         playerData = data;
-        ReInitialize();  // 这会调用InitializeComponents()重新初始化所有组件
+        InitializeComponents();
     }
 
     public PlayerType GetPlayerType() => playerData.playerType;

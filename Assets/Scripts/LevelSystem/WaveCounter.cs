@@ -36,6 +36,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     {
         ResetCounter();
         EventQueueManager.AddStateEvent(GameState.Battle, StartNewWaveCycle, 2);
+        Debug.Log("WaveCounter初始化完成");
     }
 
     /// <summary>
@@ -51,7 +52,6 @@ public class WaveCounter : SingletonMono<WaveCounter>
     private void StartNewWaveCycle()
     {
         NextWave();
-        WaveTimer.Instance.StartTimer(_currentTimeLimit);
     }
 
     public void NextWave()

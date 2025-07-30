@@ -16,9 +16,9 @@ MonoBehaviour:
   enemyPrefab: {fileID: 4221185578653224041, guid: bfffc57f51d895340948819472e1a021, type: 3}
   description: 
   spawnWeight: 1
-  unlockWave: 0
+  unlockWave: 8
   isBoss: 0
-  isLargeEnemy: 0
+  isLargeEnemy: 1
   moveSpeed: 0
   maxHealth: 0
   collisionDamage: 0

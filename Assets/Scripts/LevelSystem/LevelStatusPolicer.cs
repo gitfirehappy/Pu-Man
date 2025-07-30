@@ -22,15 +22,18 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
         }
 
         RegisterEvents();
+
+        EventBus.TriggerChangeState(GameState.Menu);
     }
 
     private void RegisterEvents()
     {
         EventBus.OnChangeState += (newState) =>
         {
+            GameState oldState = _stateMachine.CurrentState;
             if (_stateMachine.TryChangeState(newState))
             {
-                Debug.Log($"状态切换: {_stateMachine.CurrentState} -> {newState}");
+                Debug.Log($"状态切换: {oldState} -> {newState}");
                 EventQueueManager.ExecuteStateEvents(newState);
             }
         };

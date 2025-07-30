@@ -34,6 +34,9 @@ public class BattleUIPanel : UIFormBase
     {
         // 获取关键组件
 
+        _waveTimer = WaveTimer.Instance;
+        _waveCounter = WaveCounter.Instance;
+
         // 使用异步方式获取Player
         PlayerManager.Instance.GetPlayerAsync(player =>
         {
@@ -41,9 +44,6 @@ public class BattleUIPanel : UIFormBase
             UpdateHealthUI();
             UpdateSkillCooldownUI();
         });
-
-        _waveTimer = WaveTimer.Instance;
-        _waveCounter = WaveCounter.Instance;
 
         UpdateTimerUI();
         UpdateWaveUI();
@@ -98,7 +98,12 @@ public class BattleUIPanel : UIFormBase
     /// </summary>
     private void UpdateSkillCooldownUI()
     {
-        if (_player == null) return;
+        if (_player == null || _waveCounter == null)
+        {
+            skillCooldownText.text = "-";
+            return;
+        }
+
         if (_player.Abilities == null)
         {
             skillCooldownText.text = "无技能";

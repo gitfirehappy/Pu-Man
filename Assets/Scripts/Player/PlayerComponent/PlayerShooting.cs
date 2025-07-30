@@ -43,15 +43,6 @@ public class PlayerShooting : MonoBehaviour
     {
         playerCore = GetComponent<PlayerCore>();
 
-        if (playerCore != null && playerCore.playerInput != null)
-        {
-            fireAction = playerCore.playerInput.Player.Fire;
-        }
-        else
-        {
-            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
-        }
-
         if (firePoint == null)
         {
             firePoint = transform;
@@ -78,6 +69,15 @@ public class PlayerShooting : MonoBehaviour
     /// <param name="playerData"></param>
     public void Initialize(PlayerSO playerData)
     {
+        if (playerCore != null && playerCore.playerInput != null)
+        {
+            fireAction = playerCore.playerInput.Player.Fire;
+        }
+        else
+        {
+            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
+        }
+
         isRotating = true;
 
         // 存储基础值

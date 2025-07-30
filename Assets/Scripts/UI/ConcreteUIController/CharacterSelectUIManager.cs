@@ -19,6 +19,8 @@ public class CharacterSelectUIManager : MonoBehaviour, IUIController
         {
             // 显示选择面板
             UIManager.Instance.ShowUIForm<SelectCharacterPanel>();
+            UIManager.Instance.ShowUIForm<CharacterInfoPanel>();
+
             selectCharacterPanel = UIManager.Instance.GetForm<SelectCharacterPanel>();
 
             if (selectCharacterPanel == null)

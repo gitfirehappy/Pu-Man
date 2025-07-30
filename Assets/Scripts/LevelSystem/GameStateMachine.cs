@@ -37,6 +37,8 @@ public class GameStateMachine
         AddTransition(GameState.Battle, GameState.GameOver);
         AddTransition(GameState.SelectBuff, GameState.Battle);
         AddTransition(GameState.GameOver, GameState.Menu);
+
+        AddTransition(GameState.Menu, GameState.Menu);//初始调用一次
     }
 
     private void AddTransition(GameState from, GameState to)

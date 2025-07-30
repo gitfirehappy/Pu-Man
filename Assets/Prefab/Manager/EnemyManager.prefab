@@ -47,8 +47,8 @@ MonoBehaviour:
   _dontDestroyOnLoad: 1
   scalingConfig:
     growthMode: 1
-    initialSpawnInterval: 1
-    intervalReductionPerWave: 0.1
+    initialSpawnInterval: 2
+    intervalReductionPerWave: 0
     minSpawnInterval: 0.1
     healthPerWave: 0.1
     damagePerWave: 0.05

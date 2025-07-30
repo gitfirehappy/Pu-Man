@@ -10,12 +10,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector2 inputDirection;
     private Rigidbody2D rb;
-    private PlayerInput inputControl;
+    private PlayerCore playerCore;
+    private PlayerInput playerInput;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        inputControl = new PlayerInput(); // 自动生成的输入类
+        playerCore = GetComponent<PlayerCore>();
     }
 
     private void Update()
@@ -26,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        inputDirection = inputControl.Player.Move.ReadValue<Vector2>();
+        inputDirection = playerInput.Player.Move.ReadValue<Vector2>();
     }
 
     private void FixedUpdate()
@@ -40,6 +41,15 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="playerData"></param>
     public void Initialize(PlayerSO playerData)
     {
+        if (playerCore != null && playerCore.playerInput != null)
+        {
+            playerInput = playerCore.playerInput;
+        }
+        else
+        {
+            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
+        }
+
         baserunSpeed = playerData.movementConfig.runSpeed;
 
         ResetToBaseStats();

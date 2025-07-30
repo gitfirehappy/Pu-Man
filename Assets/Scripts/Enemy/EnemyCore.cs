@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.Pool;
+using static EnemyEvent;
 using static ObjectPoolManager;
 
 [DisallowMultipleComponent]
@@ -38,6 +39,8 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     public void InitializeComponents()
     {
+        var existingPool = _managedPool;
+
         // 确保基础组件存在
         _health = GetOrAddComponent<EnemyHealth>();
         _movement = GetOrAddComponent<EnemyMovement>();
@@ -78,6 +81,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _clash?.Initialize(enemyData);
         _reward?.Initialize(enemyData);
         animatorController?.Initialize();
+
+        RegisterEventHandlers();
+
+        _managedPool = existingPool;
+
     }
 
     private T GetOrAddComponent<T>() where T : Component
@@ -95,7 +103,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     private void RegisterEventHandlers()
     {
-        _health.OnDeath += HandleDeath;
+        if (_health != null)
+        {
+            _health.OnDeath -= HandleDeath; // 先取消旧注册
+            _health.OnDeath += HandleDeath; // 再重新注册
+        }
     }
 
     /// <summary>
@@ -136,12 +148,19 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     public void OnGet()
     {
-        // 重新初始化
-        InitializeComponents();
-        EnemyEvent.TriggerSpawned(this); // 触发生成事件
+        _movement?.ResetToBaseStats();
+        _shooting?.ResetToBaseStats();
+        _clash?.ResetToBaseStats();
+        _reward?.ResetToBaseStats();
+        _health?.ResetToBaseStats();
+        animatorController?.ResetToBaseStats();
+
+        // 重新注册事件
+        RegisterEventHandlers();
+        EnemyEvent.TriggerSpawned(this);
         if (EnemyData.isBoss)
         {
-            EnemyEvent.TriggerBossState(EnemyEvent.BossState.Spawned, this);
+            EnemyEvent.TriggerBossState(BossState.Spawned, this);
         }
     }
 

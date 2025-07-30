@@ -60,7 +60,7 @@ public static class EventQueueManager
     {
         if (stateEventQueues.TryGetValue(state, out var queue))
         {
-            foreach (var eventItem in queue)
+            foreach (var eventItem in queue.ToList())
             {
                 eventItem.Action.Invoke();
             }
@@ -72,7 +72,7 @@ public static class EventQueueManager
     /// </summary>
     public static void ExecutePauseEvents()
     {
-        foreach (var eventItem in pauseEventQueue)
+        foreach (var eventItem in pauseEventQueue.ToList())
         {
             eventItem.Action.Invoke();
         }
@@ -83,7 +83,9 @@ public static class EventQueueManager
     /// </summary>
     public static void ExecuteResumeEvents()
     {
-        foreach (var eventItem in resumeEventQueue)
+        foreach (var eventItem in resumeEventQueue.ToList())
+        {
             eventItem.Action.Invoke();
+        }
     }
 }

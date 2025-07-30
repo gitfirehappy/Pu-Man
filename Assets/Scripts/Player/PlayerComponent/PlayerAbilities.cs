@@ -25,14 +25,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         playerCore = GetComponent<PlayerCore>();
         waveCounter = WaveCounter.Instance;
-        if (playerCore != null && playerCore.playerInput != null)
-        {
-            playerCore.playerInput.Player.Ability.started += ActivateAbility;
-        }
-        else
-        {
-            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
-        }
+
     }
 
     public void DisableAbilities()
@@ -48,19 +41,20 @@ public class PlayerAbilities : MonoBehaviour
     {
     }
 
-    private void OnEnable()
-    {
-        EventQueueManager.AddStateEvent(GameState.Battle, () => 
-        { 
-            OnWaveChanged(WaveCounter.Instance.CurrentWave); 
-        }, 8);
-    }
-
     /// <summary>
     /// 玩家技能系统初始化
     /// </summary>
     public void Initialize(PlayerSO playerData)
     {
+        if (playerCore != null && playerCore.playerInput != null)
+        {
+            playerCore.playerInput.Player.Ability.started += ActivateAbility;
+        }
+        else
+        {
+            Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
+        }
+
         // 初始化反色效果
         var mainCam = Camera.main;
         if (mainCam != null && invertEffect == null)
@@ -73,12 +67,16 @@ public class PlayerAbilities : MonoBehaviour
             }
         }
 
-
         nextAvailableWave = 0;
 
         abilityActivationSFX = playerData.abilitiesConfig.abilityActivationSFX;
 
         baseAbilityData = playerData.abilitiesConfig.startingAbilityData;
+
+        EventQueueManager.AddStateEvent(GameState.Battle, () =>
+        {
+            OnWaveChanged(WaveCounter.Instance.CurrentWave);
+        }, 8);
 
         ResetToBaseStats(); // 初始化时调用重置方法
     }
