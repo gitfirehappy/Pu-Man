@@ -60,6 +60,8 @@ public static class EventQueueManager
     {
         if (stateEventQueues.TryGetValue(state, out var queue))
         {
+            Debug.Log($"Executing state events for: {state}");
+            LogQueueContents(queue);
             foreach (var eventItem in queue.ToList())
             {
                 eventItem.Action.Invoke();
@@ -72,6 +74,8 @@ public static class EventQueueManager
     /// </summary>
     public static void ExecutePauseEvents()
     {
+        Debug.Log("Executing pause events");
+        LogQueueContents(pauseEventQueue);
         foreach (var eventItem in pauseEventQueue.ToList())
         {
             eventItem.Action.Invoke();
@@ -83,9 +87,28 @@ public static class EventQueueManager
     /// </summary>
     public static void ExecuteResumeEvents()
     {
+        Debug.Log("Executing resume events");
+        LogQueueContents(resumeEventQueue);
         foreach (var eventItem in resumeEventQueue.ToList())
         {
             eventItem.Action.Invoke();
         }
+    }
+
+    /// <summary>
+    /// 队列内容输出方法
+    /// </summary>
+    /// <param name="queue"></param>
+    private static void LogQueueContents(List<EventItem> queue)
+    {
+        if (queue.Count == 0)
+        {
+            Debug.Log("  [Empty]");
+            return;
+        }
+
+        var ordered = queue.OrderBy(item => item.Priority).ToList();
+        var methods = ordered.Select(item => item.MethodName);
+        Debug.Log($"  Methods: {string.Join(" / ", methods)}");
     }
 }

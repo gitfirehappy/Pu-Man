@@ -20,12 +20,13 @@ public class PlayerAbilities : MonoBehaviour
     private PlayerCore playerCore;
     private WaveCounter waveCounter;
     private InvertEffect invertEffect;
+    private BattleUIPanel battleUIPanel;
 
     private void Awake()
     {
         playerCore = GetComponent<PlayerCore>();
         waveCounter = WaveCounter.Instance;
-
+        battleUIPanel = UIManager.Instance.GetForm<BattleUIPanel>();
     }
 
     public void DisableAbilities()
@@ -141,6 +142,9 @@ public class PlayerAbilities : MonoBehaviour
                 ChainKill();
                 break;
         }
+
+        // 立即更新技能冷却UI
+        battleUIPanel.UpdateSkillCooldownUI();
     }
 
     /// <summary>

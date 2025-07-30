@@ -114,6 +114,18 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
         );
         _objectPools.Add(prefab, pool);
     }
+
+    public static void PrecreatePools(List<GameObject> prefabs, PoolType poolType)
+    {
+        foreach (var prefab in prefabs)
+        {
+            if (!_objectPools.ContainsKey(prefab))
+            {
+                CreatePool(prefab, Vector3.zero, Quaternion.identity, poolType);
+                Debug.Log($"预创建对象池: {prefab.name}");
+            }
+        }
+    }
     #endregion
 
     #region 创建对象本体
@@ -282,7 +294,11 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
         {
             return pool;
         }
-        return null;
+
+        // 如果池不存在，立即创建
+        Debug.LogWarning($"对象池未预创建，动态创建: {prefab.name}");
+        CreatePool(prefab, Vector3.zero, Quaternion.identity, PoolType.Enemy);
+        return _objectPools[prefab];
     }
 
     #endregion

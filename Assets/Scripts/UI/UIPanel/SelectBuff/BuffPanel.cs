@@ -24,10 +24,32 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
     [SerializeField] private Color epicColor;
     [SerializeField] private Color legendaryColor;
 
+    private CanvasGroup canvasGroup;
+    private bool isSelected;
+    private const float SelectedAlpha = 0.5f; // 选中时的透明度
+    private const float NormalAlpha = 1f; // 正常时的透明度
+
     private BuffSO currentBuff;
     private System.Action<BuffSO> onClickCallback;
 
     public BuffSO CurrentBuff => currentBuff;
+
+    protected override void Init()
+    {
+        // 添加CanvasGroup组件控制透明度
+        canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+        canvasGroup.alpha = NormalAlpha;
+
+        // 初始设置glowborder为常开
+        if (glowBorder != null)
+        {
+            glowBorder.gameObject.SetActive(true);
+        }
+    }
 
     public void Setup(BuffSO buff, System.Action<BuffSO> onSelectedCallback)
     {
@@ -43,30 +65,41 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
         buffRarityText.text = GetRarityName(buff.rarity);
         buffRarityText.color = GetRarityColor(buff.rarity);
 
-        // 设置初始高亮状态
-        SetHighlight(false);
+        // 设置glowBorder颜色
+        if (glowBorder != null)
+        {
+            glowBorder.color = GetRarityColor(buff.rarity) * 1.2f; // 稍微提亮
+        }
+
+        // 设置初始粒子状态
+        SetParticle(false);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         onClickCallback?.Invoke(currentBuff);
+        SetSelected(true); // 设置当前Buff为选中状态
+
+        // 设置同组内其他卡片的透明度
+        UIManager.Instance.SetGroupPanelsAlpha(DynamicGroupID, this, NormalAlpha, SelectedAlpha);
     }
 
-    public void SetHighlight(bool isSelected)
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
+        canvasGroup.alpha = isSelected ? SelectedAlpha : NormalAlpha;
+    }
+
+    public void SetParticle(bool isSelected)
     {
         if (isSelected)
         {
             // 激活粒子效果
             rarityParticles.Play();
-
-            // 设置边框颜色为稀有度对应颜色
-            glowBorder.color = GetRarityColor(currentBuff.rarity) * 1.2f; // 稍微提亮
-            glowBorder.gameObject.SetActive(true);
         }
         else
         {
             rarityParticles.Stop();
-            glowBorder.gameObject.SetActive(false);
         }
     }
 

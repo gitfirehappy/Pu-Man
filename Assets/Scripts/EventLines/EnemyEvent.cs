@@ -28,7 +28,10 @@ public static class EnemyEvent
     public static void TriggerDeath(EnemyCore enemy, DamageSource source)
     {
         if (!ValidateEnemy(enemy)) return;
-        SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy, source));
+        if (enemy.gameObject.activeInHierarchy)
+        {
+            SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy, source));
+        }
     }
 
 
@@ -41,7 +44,8 @@ public static class EnemyEvent
 
     private static bool ValidateEnemy(EnemyCore enemy)
     {
-        if (enemy == null || enemy.Equals(null))
+        if (enemy == null || enemy.Equals(null) ||
+            enemy.gameObject == null || !enemy.gameObject.activeSelf)
         {
             Debug.LogWarning("无效的敌人实例，事件未触发");
             return false;

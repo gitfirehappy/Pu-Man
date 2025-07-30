@@ -96,7 +96,7 @@ public class BattleUIPanel : UIFormBase
     /// <summary>
     /// 更新玩家技能冷却
     /// </summary>
-    private void UpdateSkillCooldownUI()
+    public void UpdateSkillCooldownUI()
     {
         if (_player == null || _waveCounter == null)
         {

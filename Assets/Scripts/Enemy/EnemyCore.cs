@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 using static EnemyEvent;
 using static ObjectPoolManager;
+using static Unity.VisualScripting.Member;
 
 [DisallowMultipleComponent]
 public class EnemyCore : MonoBehaviour, IPoolable
@@ -31,7 +33,6 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
 
         InitializeComponents();
-        RegisterEventHandlers();
     }
 
     /// <summary>
@@ -39,7 +40,6 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     public void InitializeComponents()
     {
-        var existingPool = _managedPool;
 
         // 确保基础组件存在
         _health = GetOrAddComponent<EnemyHealth>();
@@ -84,8 +84,6 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
         RegisterEventHandlers();
 
-        _managedPool = existingPool;
-
     }
 
     private T GetOrAddComponent<T>() where T : Component
@@ -113,11 +111,15 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// <summary>
     /// 处理死亡事件
     /// </summary>
-    private void HandleDeath()
+    private void HandleDeath(DamageSource source)
     {
-        // 只触发敌人内部事件
+        if (IsDead) return;
+
+        // 触发内部事件
         OnEnemyDeath?.Invoke();
-        EnemyEvent.TriggerDeath(this, DamageSource.Player);
+
+        // 触发全局事件
+        EnemyEvent.TriggerDeath(this, source);
 
         // 如果是Boss，额外触发全局事件
         if (EnemyData.isBoss)
@@ -126,6 +128,13 @@ public class EnemyCore : MonoBehaviour, IPoolable
             AudioManager.Instance.ClearConditionTag();
         }
 
+        // 延迟回收确保事件完成
+        StartCoroutine(DelayedReturn());
+    }
+
+    private IEnumerator DelayedReturn()
+    {
+        yield return null; // 等待一帧确保事件处理完成
         ReturnToPool();
     }
 
@@ -155,14 +164,23 @@ public class EnemyCore : MonoBehaviour, IPoolable
         _health?.ResetToBaseStats();
         animatorController?.ResetToBaseStats();
 
+        StartCoroutine(DelayedSpawnEvent());
+    }
+
+    private IEnumerator DelayedSpawnEvent()
+    {
+        yield return null; // 等待一帧确保SetPool被调用
+
         // 重新注册事件
         RegisterEventHandlers();
         EnemyEvent.TriggerSpawned(this);
+
         if (EnemyData.isBoss)
         {
             EnemyEvent.TriggerBossState(BossState.Spawned, this);
         }
     }
+
 
     public void SetPool(IObjectPool<GameObject> pool)
     {
@@ -182,7 +200,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
             Debug.Log($"成功回收敌人到对象池: {gameObject.name}", this);
             _managedPool.Release(gameObject);
         }
-        else
+        else if (gameObject.activeInHierarchy)
         {
             Debug.LogError($"无法回收敌人: 未设置对象池引用. 敌人: {gameObject.name}", this);
             Destroy(gameObject);

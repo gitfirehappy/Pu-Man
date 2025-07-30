@@ -31,6 +31,9 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 
     protected override void Init()
     {
+        // 预创建所有敌人对象池
+        ObjectPoolManager.PrecreatePools(enemyPrefabs, ObjectPoolManager.PoolType.Enemy);
+
         PlayerManager.Instance.GetPlayerAsync(player =>
         {
             playerTransform = player.transform;
@@ -250,6 +253,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         if (enemyCore != null)
         {
             enemyCore.SetPool(pool);
+            enemyCore.InitializeComponents();
         }
         else
         {

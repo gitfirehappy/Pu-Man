@@ -53,6 +53,9 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         UIManager.Instance.ShowUIForm<SelectBuffPanel>();
         selectBuffPanel = UIManager.Instance.GetForm<SelectBuffPanel>();
 
+        // 获取 buffCardSpawner 的引用
+        buffCardSpawner = selectBuffPanel.GetComponent<BuffCardSpawner>();
+
         // 计算总Buff选择次数 = 默认 + 额外
         remainingChoices = defaultBuffCanChoose + extraBuffChoices;
         extraBuffChoices = 0; // 使用后重置
@@ -65,7 +68,10 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     {
         UIManager.Instance.HideUIForm<SelectBuffPanel>();
 
-        buffCardSpawner.ClearCards();//清理动态卡片
+        if (buffCardSpawner != null)
+        {
+            buffCardSpawner.ClearCards();//清理动态卡片
+        }
     }
 
     /// <summary>
@@ -166,12 +172,12 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         if (currentlySelectedBuff != null)
         {
             // 通过缓存或查找方式获取之前的BuffPanel
-            GetBuffPanelFor(currentlySelectedBuff)?.SetHighlight(false);
+            GetBuffPanelFor(currentlySelectedBuff)?.SetParticle(false);
         }
 
         // 设置新选中
         currentlySelectedBuff = buff;
-        GetBuffPanelFor(buff)?.SetHighlight(true);
+        GetBuffPanelFor(buff)?.SetParticle(true);
     }
 
     private BuffPanel GetBuffPanelFor(BuffSO buff)

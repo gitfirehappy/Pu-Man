@@ -503,6 +503,35 @@ public class UIManager : Singleton<UIManager>
         dynamicFormGroups[groupID].Clear();
     }
 
+    /// <summary>
+    /// 设置指定组内所有面板的透明度
+    /// </summary>
+    /// <param name="groupID">组 ID</param>
+    /// <param name="excludePanel">排除的面板</param>
+    /// <param name="normalAlpha">正常透明度</param>
+    /// <param name="selectedAlpha">选中透明度</param>
+    public void SetGroupPanelsAlpha(string groupID, UIFormBase excludePanel, float normalAlpha, float selectedAlpha)
+    {
+        if (dynamicFormGroups.TryGetValue(groupID, out var forms))
+        {
+            foreach (var form in forms)
+            {
+                var canvasGroup = form.GetComponent<CanvasGroup>();
+                if (canvasGroup != null)
+                {
+                    if (form == excludePanel)
+                    {
+                        canvasGroup.alpha = selectedAlpha;
+                    }
+                    else
+                    {
+                        canvasGroup.alpha = normalAlpha;
+                    }
+                }
+            }
+        }
+    }
+
     #endregion
 }
 

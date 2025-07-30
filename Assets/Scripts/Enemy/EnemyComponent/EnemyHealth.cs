@@ -24,7 +24,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private Transform playerTransform;
     private SpriteRenderer spriteRenderer;
 
-    public event Action OnDeath;
+    public event Action<DamageSource> OnDeath;
 
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
@@ -168,11 +168,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (_collider != null) _collider.enabled = false;
         if (rb != null) rb.simulated = false;
 
+        // 立即禁用GameObject
+        gameObject.SetActive(false);
+
         Debug.Log("敌人死亡", this);
 
         // 通知死亡事件（EnemyCore会处理回收）
-        OnDeath?.Invoke();
-        EnemyEvent.TriggerDeath(enemyCore, source); // 传递死亡来源
+        OnDeath?.Invoke(source);
     }
 
     private void OnDrawGizmos()
