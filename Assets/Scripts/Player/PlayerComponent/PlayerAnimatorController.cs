@@ -144,6 +144,6 @@ public class PlayerAnimatorController : MonoBehaviour
         }
 
         // 重置其他参数为默认值
-        animator.Play("Idle", 0, 0f);
+        animator.Play(AnimationConstants.Base.PlayerIdle, 0, 0f);
     }
 }

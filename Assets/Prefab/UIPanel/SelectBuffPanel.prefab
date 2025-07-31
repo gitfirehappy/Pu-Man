@@ -387,8 +387,8 @@ MonoBehaviour:
   buffCardSpawner: {fileID: 9092038830065143332}
   applyBuffButton: {fileID: 5850313956236710036}
   refreshBuffButton: {fileID: 4117448693837288187}
-  refreshCountText: {fileID: 5893874397588716087}
-  remainingChoicesText: {fileID: 3663299240791661174}
+  refreshCountText: {fileID: 3663299240791661174}
+  remainingChoicesText: {fileID: 5893874397588716087}
 --- !u!114 &9092038830065143332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -473,8 +473,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u5269\u4F59\u5237\u65B0\u6B21\u65701"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 42062bcd7a5e7654a9dcc11076d9b750, type: 2}
-  m_sharedMaterial: {fileID: -1300601513319678809, guid: 42062bcd7a5e7654a9dcc11076d9b750, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8bc01f9e39bc027459df911c59e875ff, type: 2}
+  m_sharedMaterial: {fileID: 3224365065096393368, guid: 8bc01f9e39bc027459df911c59e875ff, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1076,8 +1076,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u5269\u4F59\u9009\u62E9\u6B21\u65701"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 42062bcd7a5e7654a9dcc11076d9b750, type: 2}
-  m_sharedMaterial: {fileID: -1300601513319678809, guid: 42062bcd7a5e7654a9dcc11076d9b750, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8bc01f9e39bc027459df911c59e875ff, type: 2}
+  m_sharedMaterial: {fileID: 3224365065096393368, guid: 8bc01f9e39bc027459df911c59e875ff, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

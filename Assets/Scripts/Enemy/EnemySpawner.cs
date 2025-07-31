@@ -110,6 +110,17 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         }
 
         yield return null; // 等待一帧确保所有敌人都被处理
+
+        // 强制同步列表（作为最后防线）
+        if (EnemyManager.Instance != null)
+        {
+            var remaining = EnemyManager.Instance.GetActiveEnemies()
+                .FindAll(e => e != null && !e.IsDead);
+            if (remaining.Count > 0)
+            {
+                Debug.LogWarning($"仍有 {remaining.Count} 个敌人未被正确清理，强制移除");
+            }
+        }
     }
 
     private void StartSpawning()
@@ -304,7 +315,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     {
         Vector2 mapSize = new Vector2(mapWidth, mapHeight);
 
-        return PoissonDiskSampler.GeneratePoints(
+        var points = PoissonDiskSampler.GeneratePoints(
             radius: groupSpawnRadius * 2f, // 确保不同组不会重叠
             regionSize: mapSize,
             isValid: (pos) =>
@@ -317,6 +328,17 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
                 return insideMap && safeFromPlayer;
             }
         );
+
+        // 添加采样结果日志
+        if (points.Count == 0)
+        {
+            string reason = playerTransform == null ?
+                "玩家位置未初始化" :
+                $"地图范围({mapWidth}x{mapHeight})内无满足条件的生成点(最小距离:{minSpawnDistance})";
+            Debug.LogWarning($"[EnemySpawner] 敌人组生成位置采样失败: {reason}");
+        }
+
+        return points;
     }
 
     /// <summary>
@@ -374,10 +396,16 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
             }
         );
 
-        if (candidates.Count > 0)
-            return candidates[0] - regionSize / 2f;
+        if (candidates.Count == 0)
+        {
+            string reason = playerTransform == null ?
+                "玩家位置未初始化" :
+                $"Boss生成范围({bossSafeRadius}半径)内无合适位置";
+            Debug.LogWarning($"[EnemySpawner] Boss生成位置采样失败: {reason}");
+            return null;
+        }
 
-        return null;
+        return candidates[0] - regionSize / 2f;
     }
 
     #endregion

@@ -162,19 +162,18 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     private void Die(DamageSource source)
     {
         if (_isDead || this == null) return;
+
+        // 通知死亡事件（EnemyCore会处理回收）
+        OnDeath?.Invoke(source);
+
         _isDead = true;
 
         // 立即禁用所有相关组件
         if (_collider != null) _collider.enabled = false;
         if (rb != null) rb.simulated = false;
-
-        // 立即禁用GameObject
         gameObject.SetActive(false);
 
         Debug.Log("敌人死亡", this);
-
-        // 通知死亡事件（EnemyCore会处理回收）
-        OnDeath?.Invoke(source);
     }
 
     private void OnDrawGizmos()

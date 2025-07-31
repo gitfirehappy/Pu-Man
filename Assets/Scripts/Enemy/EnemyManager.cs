@@ -38,10 +38,16 @@ public class EnemyManager : SingletonMono<EnemyManager>
     private List<Vector2> enemyPositions = new List<Vector2>();
     private List<Vector2> enemyVelocities = new List<Vector2>();
 
+    [Header("调试信息")]
+    [SerializeField] private int debugActiveEnemyCount; // 仅用于显示
+
     public WaveScalingConfig ScalingConfig => scalingConfig;
 
     private void Update()
     {
+        // 实时更新调试用的敌人数量（仅在编辑器中生效）
+        debugActiveEnemyCount = activeEnemies.Count;
+
         if (Time.time - lastBoidUpdateTime > boidUpdateInterval)
         {
             UpdateEnemyPositionAndVelocityLists();
@@ -116,6 +122,7 @@ public class EnemyManager : SingletonMono<EnemyManager>
     private void OnEnemyDeath(EnemyCore enemy, DamageSource source)
     {
         activeEnemies.Remove(enemy);
+        Debug.Log($"敌人死亡，当前剩余数量: {activeEnemies.Count}");
     }
 
     /// <summary>

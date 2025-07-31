@@ -4,11 +4,12 @@ TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
   fontSize: 16
-  forceTextureCase: 3
+  forceTextureCase: -2
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
   fontNames:
+  - Chill Bitmap
   - Chill Bitmap
   fallbackFontReferences: []
   customCharacters: 
