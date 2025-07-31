@@ -26,7 +26,7 @@ public class PlayerAbilities : MonoBehaviour
     {
         playerCore = GetComponent<PlayerCore>();
         waveCounter = WaveCounter.Instance;
-        battleUIPanel = UIManager.Instance.GetForm<BattleUIPanel>();
+       
     }
 
     public void DisableAbilities()
@@ -78,6 +78,8 @@ public class PlayerAbilities : MonoBehaviour
         {
             OnWaveChanged(WaveCounter.Instance.CurrentWave);
         }, 8);
+
+        EventQueueManager.AddStateEvent(GameState.Battle, GetBattleUIPanel, 12);
 
         ResetToBaseStats(); // 初始化时调用重置方法
     }
@@ -144,7 +146,7 @@ public class PlayerAbilities : MonoBehaviour
         }
 
         // 立即更新技能冷却UI
-        battleUIPanel.UpdateSkillCooldownUI();
+        battleUIPanel?.UpdateSkillCooldownUI();
     }
 
     /// <summary>
@@ -300,6 +302,15 @@ public class PlayerAbilities : MonoBehaviour
     public int GetCooldownWaves()
     {
         return currentAbilityData.cooldownWaves;
+    }
+
+    private void GetBattleUIPanel()
+    {
+        battleUIPanel = UIManager.Instance.GetForm<BattleUIPanel>();
+        if (battleUIPanel == null)
+        {
+            Debug.LogError("BattleUIPanel 未找到，请检查是否已注册到 UIManager！");
+        }
     }
 }
 

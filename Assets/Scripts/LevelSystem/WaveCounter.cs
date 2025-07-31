@@ -57,6 +57,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
     public void NextWave()
     {
         _currentWave++;
+        Debug.Log($"当前波次：{_currentWave}");
 
         // 更新波次时间上限
         if (!IsInEndlessMode)
