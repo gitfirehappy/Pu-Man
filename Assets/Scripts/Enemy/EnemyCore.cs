@@ -134,13 +134,18 @@ public class EnemyCore : MonoBehaviour, IPoolable
 
     private IEnumerator DelayedReturn()
     {
-        yield return null; // 等待一帧确保事件处理完成
+        // 等待两帧确保所有事件处理完成
+        yield return null;
+        yield return null;
+
+        if (this == null || gameObject == null) yield break;
+
         ReturnToPool();
     }
 
     // IPoolable接口实现
     /// <summary>
-    /// 重置敌人所有状态，从关闭到启用
+    /// 回收敌人调用
     /// </summary>
     public void OnRelease()
     {
@@ -153,7 +158,7 @@ public class EnemyCore : MonoBehaviour, IPoolable
     }
 
     /// <summary>
-    /// 从对象池取出对象时,从无到有的生成
+    /// 取出敌人调用
     /// </summary>
     public void OnGet()
     {
@@ -192,13 +197,16 @@ public class EnemyCore : MonoBehaviour, IPoolable
     /// </summary>
     public void ReturnToPool()
     {
-        // 添加状态检查
         if (this == null || gameObject == null) return;
 
         if (_managedPool != null)
         {
+            // 移除事件监听避免回调到已回收对象
+            if (_health != null)
+                _health.OnDeath -= HandleDeath;
+
             Debug.Log($"成功回收敌人到对象池: {gameObject.name}", this);
-            _managedPool.Release(gameObject);
+            ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Enemy);
         }
         else if (gameObject.activeInHierarchy)
         {

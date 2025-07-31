@@ -28,10 +28,9 @@ public static class EnemyEvent
     public static void TriggerDeath(EnemyCore enemy, DamageSource source)
     {
         if (!ValidateEnemy(enemy)) return;
-        if (enemy.gameObject.activeInHierarchy)
-        {
-            SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy, source));
-        }
+
+        // 即使对象已非激活状态也允许触发死亡事件
+        SafeTrigger(nameof(OnDeath), () => OnDeath?.Invoke(enemy, source));
     }
 
 
@@ -44,12 +43,25 @@ public static class EnemyEvent
 
     private static bool ValidateEnemy(EnemyCore enemy)
     {
-        if (enemy == null || enemy.Equals(null) ||
-            enemy.gameObject == null || !enemy.gameObject.activeSelf)
+        if (enemy == null)
         {
-            Debug.LogWarning("无效的敌人实例，事件未触发");
+            Debug.LogWarning("无效的敌人实例，事件未触发: 敌人为null");
             return false;
         }
+
+        if (enemy.Equals(null))
+        {
+            Debug.LogWarning("无效的敌人实例，事件未触发: 敌人已被销毁");
+            return false;
+        }
+
+        if (enemy.gameObject == null)
+        {
+            Debug.LogWarning("无效的敌人实例，事件未触发: 游戏对象为null");
+            return false;
+        }
+
+        // 允许非激活状态的对象触发事件（如死亡事件）
         return true;
     }
 

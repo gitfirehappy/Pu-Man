@@ -23,6 +23,8 @@ public class WaveTimer : SingletonMono<WaveTimer>
         EventQueueManager.AddPauseEvent(OnPaused, 1); // 注册暂停事件
         EventQueueManager.AddResumeEvent(OnResumed, 1); // 注册恢复事件
 
+        EventQueueManager.AddStateEvent(GameState.GameOver, StopTimer, 1);
+
         Debug.Log("WaveTimer初始化完成");
     }
 
@@ -48,6 +50,17 @@ public class WaveTimer : SingletonMono<WaveTimer>
             yield return null;
         }
         CompleteWave();
+    }
+
+    public void StopTimer()
+    {
+        if (_timerCoroutine != null)
+        {
+            StopCoroutine(_timerCoroutine);
+            _timerCoroutine = null;
+            _currentTime = 0;
+            Debug.Log("计时器已在游戏结束时停止");
+        }
     }
 
     private void CompleteWave()

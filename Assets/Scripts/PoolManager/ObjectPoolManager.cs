@@ -117,8 +117,20 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 
     public static void PrecreatePools(List<GameObject> prefabs, PoolType poolType)
     {
+        if (prefabs == null)
+        {
+            Debug.LogError("Prefabs list is null! Cannot precreate pools.");
+            return;
+        }
+
         foreach (var prefab in prefabs)
         {
+            if (prefab == null)
+            {
+                Debug.LogError("Found null prefab in list! Skipping...");
+                continue;
+            }
+
             if (!_objectPools.ContainsKey(prefab))
             {
                 CreatePool(prefab, Vector3.zero, Quaternion.identity, poolType);
@@ -197,6 +209,12 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
 
     private static T SpawnObject<T>(GameObject prefab, Vector3 pos, Quaternion rot, PoolType poolType) where T : UnityEngine.Object
     {
+        if (prefab == null)
+        {
+            Debug.LogError("Trying to spawn null prefab!");
+            return null;
+        }
+
         if (!_objectPools.ContainsKey(prefab))
             CreatePool(prefab, pos, rot, poolType);
 
@@ -205,8 +223,12 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
             _cloneToPrefabMap.Add(obj, prefab);
 
         obj.transform.SetPositionAndRotation(pos, rot);
-        obj.SetActive(true);
 
+        // 调用IPoolable的OnGet方法
+        var poolable = obj.GetComponent<IPoolable>();
+        poolable?.OnGet();
+
+        obj.SetActive(true);
         return ResolveObject<T>(prefab, obj);
     }
 
@@ -267,11 +289,21 @@ public class ObjectPoolManager : SingletonMono<ObjectPoolManager>
     #region 回收对象
     public static void ReturnObjectToPool(GameObject obj, PoolType poolType = PoolType.GameObjects)
     {
+        if (obj == null)
+        {
+            Debug.LogError("Trying to return null object to pool!");
+            return;
+        }
+
         if (_cloneToPrefabMap.TryGetValue(obj, out var prefab))
         {
             GameObject parentObject = SetParentObject(poolType);
             if (obj.transform.parent != parentObject.transform)
                 obj.transform.SetParent(parentObject.transform);
+
+            // 调用IPoolable的OnRelease方法
+            var poolable = obj.GetComponent<IPoolable>();
+            poolable?.OnRelease();
 
             if (_objectPools.TryGetValue(prefab, out var pool))
                 pool.Release(obj);

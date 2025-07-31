@@ -31,8 +31,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
 
     protected override void Init()
     {
-        // 预创建所有敌人对象池
-        ObjectPoolManager.PrecreatePools(enemyPrefabs, ObjectPoolManager.PoolType.Enemy);
+        EventQueueManager.AddStateEvent(GameState.Prepare, PrepareEnemyPools, 1);
 
         PlayerManager.Instance.GetPlayerAsync(player =>
         {
@@ -49,6 +48,39 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         EnemyEvent.OnBossStateChanged += OnBossStateChanged;
     }
 
+    /// <summary>
+    /// 准备敌人对象池（在选角色状态执行）
+    /// </summary>
+    private void PrepareEnemyPools()
+    {
+        // 验证预制体列表有效性
+        if (enemyPrefabs == null)
+        {
+            Debug.LogError("Enemy prefabs list is null! Initializing empty list.");
+            enemyPrefabs = new List<GameObject>();
+            return;
+        }
+
+        // 清理无效预制体
+        enemyPrefabs.RemoveAll(prefab => prefab == null);
+
+        if (enemyPrefabs.Count == 0)
+        {
+            Debug.LogWarning("No valid enemy prefabs available in EnemySpawner!");
+            return;
+        }
+
+        // 确保ObjectPoolManager已初始化
+        if (ObjectPoolManager.Instance == null)
+        {
+            Debug.LogError("ObjectPoolManager instance is null! Cannot precreate pools.");
+            return;
+        }
+
+        // 安全预创建对象池
+        ObjectPoolManager.PrecreatePools(enemyPrefabs, ObjectPoolManager.PoolType.Enemy);
+        Debug.Log($"Enemy pools prepared with {enemyPrefabs.Count} valid prefabs");
+    }
 
     /// <summary>
     /// 暂停生成和清理所有敌人
