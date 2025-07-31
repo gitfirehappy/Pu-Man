@@ -64,3 +64,10 @@ MonoBehaviour:
       damageLinearPerWave: 1
   spawnRateReductionFactor: 1
   _currentSpawnInterval: 0
+  boidNeighborRadius: 5
+  boidUpdateInterval: 0.2
+  separationMinDistance: 2
+  boidCohesionWeight: 1
+  boidSeparationWeight: 2
+  boidAlignmentWeight: 1
+  boidTargetWeight: 3

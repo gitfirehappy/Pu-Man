@@ -18,7 +18,54 @@ public class EnemyManager : SingletonMono<EnemyManager>
     [SerializeField] private float spawnRateReductionFactor = 1f;
     [SerializeField]private float _currentSpawnInterval;
 
+    [Header("鸟群算法配置")]
+    [Tooltip("鸟群邻居检测半径，用于判断哪些敌人属于同一群体")]
+    public float boidNeighborRadius = 5f;
+    [Tooltip("鸟群行为更新间隔时间（秒），控制算法计算频率以优化性能")]
+    public float boidUpdateInterval = 0.2f;
+    private float lastBoidUpdateTime;
+    [Tooltip("鸟群个体间最小分离距离，防止敌人过度拥挤")]
+    public float separationMinDistance = 1.5f;
+    [Tooltip("凝聚力权重，控制敌人向群体中心聚集的强度")]
+    public float boidCohesionWeight = 1f;
+    [Tooltip("分离力权重，控制敌人保持个体间距的强度")]
+    public float boidSeparationWeight = 2f;
+    [Tooltip("对齐力权重，控制敌人与群体运动方向保持一致的强度")]
+    public float boidAlignmentWeight = 1f;
+    [Tooltip("目标吸引力权重，控制敌人向目标移动的强度（优先级高于群体行为）")]
+    public float boidTargetWeight = 3f;
+
+    private List<Vector2> enemyPositions = new List<Vector2>();
+    private List<Vector2> enemyVelocities = new List<Vector2>();
+
     public WaveScalingConfig ScalingConfig => scalingConfig;
+
+    private void Update()
+    {
+        if (Time.time - lastBoidUpdateTime > boidUpdateInterval)
+        {
+            UpdateEnemyPositionAndVelocityLists();
+            BoidMath.UpdateSpatialGrid(enemyPositions, boidNeighborRadius);
+            lastBoidUpdateTime = Time.time;
+        }
+    }
+
+    // 同步敌人位置和速度列表
+    private void UpdateEnemyPositionAndVelocityLists()
+    {
+        enemyPositions.Clear();
+        enemyVelocities.Clear();
+
+        foreach (var enemy in activeEnemies)
+        {
+            if (enemy != null && !enemy.IsDead)
+            {
+                enemyPositions.Add(enemy.transform.position);
+                var rb = enemy.GetComponent<Rigidbody2D>();
+                enemyVelocities.Add(rb ? rb.velocity : Vector2.zero);
+            }
+        }
+    }
 
     protected override void Init()
     {
@@ -254,6 +301,17 @@ public class EnemyManager : SingletonMono<EnemyManager>
     {
         spawnRateReductionFactor *= reductionFactor;
         Debug.Log($"敌人生成频率降低至原来的{spawnRateReductionFactor * 100}%");
+    }
+
+    public List<Vector2> GetEnemyPositions() => new List<Vector2>(enemyPositions);
+    public List<Vector2> GetEnemyVelocities() => new List<Vector2>(enemyVelocities);
+    public int GetEnemyIndex(EnemyCore self)
+    {
+        return activeEnemies.IndexOf(self);
+    }
+    public float GetBoidNeighborRadius()
+    {
+        return boidNeighborRadius;
     }
 
     #endregion

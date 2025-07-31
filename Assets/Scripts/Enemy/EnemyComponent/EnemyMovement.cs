@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private EnemyClash enemyClash;
+    [SerializeField] private EnemyCore enemyCore;
 
-    [SerializeField][Header("移动速度")] private float moveSpeed;
+    [Header("移动参数")]
+    [SerializeField] private float moveSpeed;
 
     private Transform playerTransform;
     private float knockbackDuration = 0.2f;
@@ -35,6 +38,7 @@ public class EnemyMovement : MonoBehaviour
         {
             rb.velocity = Vector2.zero;
         }
+        knockbackEndTime = 0;
     }
 
     private void Update()
@@ -51,16 +55,66 @@ public class EnemyMovement : MonoBehaviour
             return;
         }
 
-        MoveTowardsPlayer();
+        MoveWithBoidBehavior();
     }
 
     /// <summary>
-    /// 向玩家移动
+    /// 结合鸟群行为向玩家移动
     /// </summary>
-    private void MoveTowardsPlayer()
+    private void MoveWithBoidBehavior()
     {
-        Vector2 direction = (playerTransform.position - transform.position).normalized;
-        rb.velocity = direction * moveSpeed;
+        // 基础目标方向（朝向玩家）
+        Vector2 targetDirection = (playerTransform.position - transform.position).normalized;
+
+        // 获取管理器和当前敌人索引
+        var enemyManager = EnemyManager.Instance;
+        int selfIndex = enemyManager.GetEnemyIndex(enemyCore);
+        if (selfIndex == -1)
+        {
+            rb.velocity = targetDirection * moveSpeed;
+            return;
+        }
+
+        // 获取全局数据
+        float neighborRadius = enemyManager.GetBoidNeighborRadius();
+        List<Vector2> allPositions = enemyManager.GetEnemyPositions();
+        List<Vector2> allVelocities = enemyManager.GetEnemyVelocities();
+
+        // 查找邻居索引
+        List<int> neighborIndices = BoidMath.FindNeighborIndices(
+            transform.position,
+            allPositions,
+            neighborRadius
+        );
+        neighborIndices.Remove(selfIndex); // 排除自己
+
+        // 提取邻居的位置和速度
+        List<Vector2> neighborPositions = new List<Vector2>();
+        List<Vector2> neighborVelocities = new List<Vector2>();
+        foreach (int idx in neighborIndices)
+        {
+            neighborPositions.Add(allPositions[idx]);
+            neighborVelocities.Add(allVelocities[idx]);
+        }
+
+        // 计算行为向量
+        Vector2 cohesion = BoidMath.CalculateCohesion(neighborPositions, transform.position);
+        Vector2 separation = BoidMath.CalculateSeparation(
+            neighborPositions,
+            transform.position,
+            enemyManager.separationMinDistance // 使用管理器中的参数
+        );
+        Vector2 alignment = BoidMath.CalculateAlignment(neighborVelocities, rb.velocity);
+
+        // 综合方向（使用管理器中的权重）
+        Vector2 finalDirection =
+            (cohesion * enemyManager.boidCohesionWeight) +
+            (separation * enemyManager.boidSeparationWeight) +
+            (alignment * enemyManager.boidAlignmentWeight) +
+            (targetDirection * enemyManager.boidTargetWeight);
+
+        // 应用移动
+        rb.velocity = finalDirection.normalized * moveSpeed;
     }
 
     /// <summary>

@@ -129,7 +129,7 @@ public class SettingsPanel : UIFormBase
         // 更新按钮颜色和文本
         endlessModeButton.image.color = isEndlessEnabled ? Color.green : Color.red;
         endlessModeStatusText.text = isEndlessEnabled ? "ON" : "OFF";
-        endlessModeStatusText.color = isEndlessEnabled ? Color.green : Color.red;
+        endlessModeStatusText.color = isEndlessEnabled ? Color.blue : Color.black;
 
         endlessModeHintText.text = isEndlessEnabled
             ? "无尽模式已开启: 完成所有波次后将进入无尽挑战"
