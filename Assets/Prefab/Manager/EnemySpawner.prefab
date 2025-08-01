@@ -46,12 +46,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
-  minSpawnDistance: 3
+  minSpawnDistance: 2
   groupSpawnRadius: 5
   maxEnemies: 100
   bossRadius: 30
   mapWidth: 40
   mapHeight: 40
+  enemyGroupSamples: 30
+  groupInnerSamples: 20
+  bossSamples: 50
   enemyPrefabs:
   - {fileID: 4221185578653224041, guid: dbaf12e2e2d32fd438de6c86cbea7921, type: 3}
   - {fileID: 4221185578653224041, guid: d37a599e842704c41ba3c6cca2777e49, type: 3}

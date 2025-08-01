@@ -34,7 +34,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
 
     protected override void Init()
     {
-        ResetCounter();
+        EventQueueManager.AddStateEvent(GameState.Menu, ResetCounter, 2);
         EventQueueManager.AddStateEvent(GameState.Battle, StartNewWaveCycle, 2);
         Debug.Log("WaveCounter初始化完成");
     }

@@ -16,13 +16,13 @@ MonoBehaviour:
   playerName: ClassicPlayer
   playerSprite: {fileID: 21300000, guid: 2100a039d9bbb7a4e9af7759c7f1d719, type: 3}
   playerPrefab: {fileID: 2408863001739500776, guid: f78be7a758c0a4e4c87f6876f2aeed06, type: 3}
-  description: "\u65E0\u654C"
+  description: "\u65E0\u654C\u4E00\u6BB5\u65F6\u95F4"
   healthConfig:
-    maxHealth: 1000
+    maxHealth: 10
     armor: 1
     healthRegen: 0
     dodgeChance: 0
-    collisionDamage: 100
+    collisionDamage: 3
     collisionImmunityDuration: 0.75
     cheatDeathInvincibleTime: 0
     hasCheatDeath: 0
@@ -40,7 +40,7 @@ MonoBehaviour:
   movementConfig:
     runSpeed: 4
   abilitiesConfig:
-    abilityActivationSFX: {fileID: 0}
+    abilityActivationSFX: {fileID: 8300000, guid: 924153c4a3f86f14392dc5b316fe1b91, type: 3}
     startingAbilityData:
       type: 1
       cooldownWaves: 5

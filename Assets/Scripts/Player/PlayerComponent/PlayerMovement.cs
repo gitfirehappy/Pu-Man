@@ -15,7 +15,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
         playerCore = GetComponent<PlayerCore>();
     }
 
@@ -50,6 +49,8 @@ public class PlayerMovement : MonoBehaviour
             Debug.LogError("PlayerCore 或 PlayerInput 未正确初始化！");
         }
 
+        rb = GetComponent<Rigidbody2D>();
+
         baserunSpeed = playerData.movementConfig.runSpeed;
 
         ResetToBaseStats();
@@ -65,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void DisableMovement()
     {
+        if (rb != null)
         rb.velocity = Vector2.zero; // 立即停止移动
     }
 

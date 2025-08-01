@@ -43,10 +43,7 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     {
         EventQueueManager.AddStateEvent(GameState.Prepare, PrepareEnemyPools, 1);
 
-        PlayerManager.Instance.GetPlayerAsync(player =>
-        {
-            playerTransform = player.transform;
-        });
+        EventQueueManager.AddStateEvent(GameState.Menu, RegisterPlayerPosition, 0);
 
         // 战斗状态启动敌人生成
         EventQueueManager.AddStateEvent(GameState.Battle, StartSpawning, 5);
@@ -56,6 +53,16 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         EventQueueManager.AddStateEvent(GameState.GameOver, StopSpawnAndClearEnemy, 0);
 
         EnemyEvent.OnBossStateChanged += OnBossStateChanged;
+    }
+
+    private void RegisterPlayerPosition()
+    {
+        playerTransform = null;
+        PlayerManager.Instance.GetPlayerAsync(player =>
+        {
+            playerTransform = player.transform;
+            Debug.Log("EnemySpawner已获取玩家位置引用");
+        });
     }
 
     /// <summary>

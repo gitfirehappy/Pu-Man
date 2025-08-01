@@ -15,8 +15,11 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
         // 初始化状态机
         _stateMachine = new GameStateMachine(GameState.Menu);
 
-        // 等待所有SO数据加载完成
-        while (!DataManager.Instance.IsPlayerDataLoaded || !DataManager.Instance.IsAnimationDataLoaded || !DataManager.Instance.IsBuffDataLoaded)
+        // 等待所有SO数据加载完成 且 GameUIManager初始化完成
+        while (!DataManager.Instance.IsPlayerDataLoaded
+               || !DataManager.Instance.IsAnimationDataLoaded
+               || !DataManager.Instance.IsBuffDataLoaded
+               || !GameUIManager.Instance.IsInitialized) // 等待UI管理器初始化
         {
             await Task.Yield();
         }

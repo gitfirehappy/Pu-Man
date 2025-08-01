@@ -37,13 +37,10 @@ public class BattleUIPanel : UIFormBase
         _waveTimer = WaveTimer.Instance;
         _waveCounter = WaveCounter.Instance;
 
-        // 使用异步方式获取Player
-        PlayerManager.Instance.GetPlayerAsync(player =>
-        {
-            _player = player;
-            UpdateHealthUI();
-            UpdateSkillCooldownUI();
-        });
+        _player = PlayerManager.Instance.Player;
+        UpdatePlayerPicture(); 
+        UpdateHealthUI();      
+        UpdateSkillCooldownUI();
 
         UpdateTimerUI();
         UpdateWaveUI();
@@ -54,7 +51,7 @@ public class BattleUIPanel : UIFormBase
         EventQueueManager.AddStateEvent(GameState.Battle, () => 
         {
             OnWaveChanged(WaveCounter.Instance.CurrentWave);
-        }, 11);
+        }, 12);
 
         EnemyEvent.OnBossStateChanged += HandleBossStateChange;
     }
@@ -80,6 +77,22 @@ public class BattleUIPanel : UIFormBase
         {
             UpdateBossHealthUI();
         }
+    }
+
+    /// <summary>
+    /// 更新玩家图片头像
+    /// </summary>
+    private void UpdatePlayerPicture()
+    {
+        if (_player == null || _player.PlayerData == null || playerPicture == null)
+        {
+            Debug.LogWarning("无法更新头像：Player或头像组件为空");
+            playerPicture.sprite = null; // 清空无效头像
+            return;
+        }
+
+        // 从PlayerData中获取头像并赋值
+        playerPicture.sprite = _player.PlayerData.playerSprite;
     }
 
     /// <summary>
@@ -168,8 +181,10 @@ public class BattleUIPanel : UIFormBase
     /// <param name="wave"></param>
     private void OnWaveChanged(int wave)
     {
+        _player = PlayerManager.Instance.Player;
         UpdateWaveUI();
         UpdateSkillCooldownUI();
+        UpdatePlayerPicture();
     }
 
     #region BossUI

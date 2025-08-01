@@ -12,6 +12,8 @@ public class GameUIManager : SingletonMono<GameUIManager>
     [Header("当前游戏状态")]
     [SerializeField]private GameState currentState;
 
+    public bool IsInitialized { get; private set; } = false;
+
     protected override async void Init()
     {
         // 等待所有SO数据加载完成
@@ -33,6 +35,7 @@ public class GameUIManager : SingletonMono<GameUIManager>
         }
 
         Debug.Log("GameUIManager初始化完成");
+        IsInitialized = true;
     }
 
     /// <summary>

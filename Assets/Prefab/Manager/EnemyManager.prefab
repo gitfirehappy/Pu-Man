@@ -48,7 +48,7 @@ MonoBehaviour:
   scalingConfig:
     growthMode: 1
     initialSpawnInterval: 2
-    intervalReductionPerWave: 0
+    intervalReductionPerWave: 0.05
     minSpawnInterval: 0.1
     healthPerWave: 0.1
     damagePerWave: 0.05
@@ -71,3 +71,4 @@ MonoBehaviour:
   boidSeparationWeight: 2
   boidAlignmentWeight: 1
   boidTargetWeight: 3
+  debugActiveEnemyCount: 0

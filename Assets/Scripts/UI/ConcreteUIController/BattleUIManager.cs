@@ -6,7 +6,18 @@ public class BattleUIManager : MonoBehaviour,IUIController
 {
     public void OnEnterState()
     {
-        UIManager.Instance.ShowUIForm<BattleUIPanel>();
+        // 确保先获取Player再显示UI，避免UI初始化时Player为空
+        PlayerManager.Instance.GetPlayerAsync(player =>
+        {
+            if (player != null && player.PlayerData != null)
+            {
+                UIManager.Instance.ShowUIForm<BattleUIPanel>();
+            }
+            else
+            {
+                Debug.LogError("获取Player失败，无法显示战斗UI");
+            }
+        });
     }
 
     public void OnExitState()

@@ -40,7 +40,7 @@ MonoBehaviour:
   movementConfig:
     runSpeed: 5
   abilitiesConfig:
-    abilityActivationSFX: {fileID: 0}
+    abilityActivationSFX: {fileID: 8300000, guid: 9dd685902f9ea1549b91550ea4db4083, type: 3}
     startingAbilityData:
       type: 2
       cooldownWaves: 3
