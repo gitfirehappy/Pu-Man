@@ -3,6 +3,9 @@
 public class PlayerManager : SingletonMono<PlayerManager>
 {
     public PlayerCore Player { get; private set; }
+
+    public PlayerType LastPlayerType { get; private set; }
+
     private System.Action<PlayerCore> onPlayerRegistered;
 
     protected override void Init()
@@ -19,6 +22,7 @@ public class PlayerManager : SingletonMono<PlayerManager>
             Destroy(Player.gameObject);
         }
         Player = player;
+        LastPlayerType = player.GetPlayerType();
         onPlayerRegistered?.Invoke(player);
         onPlayerRegistered = null; // 调用后清空
     }

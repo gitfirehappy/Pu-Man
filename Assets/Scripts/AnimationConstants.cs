@@ -20,6 +20,6 @@ public static class AnimationConstants
 
     public static class Enemy
     {
-        public const string Clashing = "IsClashing"; // 新增冲撞状态参数
+        public const string Clashing = "IsClashing"; // 冲撞状态参数
     }
 }

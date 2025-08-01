@@ -18,10 +18,10 @@ public class EnemyReward : MonoBehaviour
         _core.OnEnemyDeath += HandleEnemyDeath;
 
         // 获取玩家引用
-        var player = GameObject.FindGameObjectWithTag("Player");
+        var player = PlayerManager.Instance.Player;
         if (player != null)
         {
-            _playerCore = GetComponent<PlayerCore>();
+            _playerCore = player.GetComponent<PlayerCore>(); //从玩家对象获取
         }
     }
 
@@ -44,6 +44,7 @@ public class EnemyReward : MonoBehaviour
 
     private void HandleEnemyDeath()
     {
+        Debug.Log("触发奖励敌人死亡事件");
         ApplyReward();
     }
 
@@ -68,6 +69,7 @@ public class EnemyReward : MonoBehaviour
             if (buffUIManager != null)
             {
                 buffUIManager.AddRefreshCount(_rewardConfig.extraRefreshChance);
+                Debug.Log($"玩家获得 {_rewardConfig.extraRefreshChance} 次额外刷新机会", this);
             }
         }
     }

@@ -173,7 +173,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 325
+      scalar: 400
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -291,7 +291,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 30
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4801,7 +4801,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 400
   m_RenderMode: 0
   m_MeshDistribution: 0
   m_SortMode: 0
@@ -4823,7 +4823,7 @@ ParticleSystemRenderer:
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
   m_VertexStreams: 00010304
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -5076,11 +5076,11 @@ RectTransform:
   - {fileID: 1475061829458663719}
   - {fileID: 2908451236986791983}
   - {fileID: 6355040124078271091}
-  - {fileID: 2780191744804700790}
   - {fileID: 4597671910074028645}
   - {fileID: 7915811393494346657}
   - {fileID: 6003139041728579691}
   - {fileID: 5685661411377840320}
+  - {fileID: 2780191744804700790}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5162,10 +5162,10 @@ MonoBehaviour:
   buffRarityText: {fileID: 3719270827259971220}
   glowBorder: {fileID: 2280975166578884831}
   rarityParticles: {fileID: 1492338161329989046}
-  commonColor: {r: 1, g: 1, b: 1, a: 0}
-  rareColor: {r: 0, g: 0.4321165, b: 1, a: 0}
-  epicColor: {r: 0.60455465, g: 0, b: 1, a: 0}
-  legendaryColor: {r: 1, g: 0.83434176, b: 0, a: 0}
+  commonColor: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 1}
+  rareColor: {r: 0, g: 0.4321165, b: 1, a: 1}
+  epicColor: {r: 0.60455465, g: 0, b: 1, a: 1}
+  legendaryColor: {r: 1, g: 0.83434176, b: 0, a: 1}
 --- !u!1 &3342370836617677427
 GameObject:
   m_ObjectHideFlags: 0

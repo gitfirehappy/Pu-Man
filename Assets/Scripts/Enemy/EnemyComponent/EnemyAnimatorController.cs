@@ -19,7 +19,6 @@ public class EnemyAnimatorController : MonoBehaviour
     private void Awake()
     {
         enemyCore = GetComponent<EnemyCore>();
-        enemyClash = GetComponent<EnemyClash>(); // 获取冲撞组件
         if (animator == null)
         {
             animator = GetComponent<Animator>();
@@ -44,6 +43,8 @@ public class EnemyAnimatorController : MonoBehaviour
 
     public void Initialize()
     {
+        enemyClash = GetComponent<EnemyClash>(); // 获取冲撞组件
+
         // 直接从DataManager获取SO
         var enemyType = enemyCore.EnemyType;
         animationSO = DataManager.Instance.GetEnemyAnimationSO(enemyType);
@@ -74,6 +75,7 @@ public class EnemyAnimatorController : MonoBehaviour
         if (animationSO.clashAnimation != null)
         {
             overrideController[AnimationConstants.Base.EnemyClash] = animationSO.clashAnimation;
+            Debug.Log("设置了冲撞动画");
         }
     }
 

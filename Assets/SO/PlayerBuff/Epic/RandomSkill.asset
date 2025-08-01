@@ -15,7 +15,7 @@ MonoBehaviour:
   buffID: 18
   rarity: 2
   buffPicture: {fileID: 21300000, guid: 395d0b18a3818f74b8c66ca8840e8cbd, type: 3}
-  Description: "\u968F\u673A\u8F6C\u804C"
+  Description: "\u6709\u804C\u8F6C\u751F"
   isUnique: 0
   healthModifier: 0
   armorModifier: 0

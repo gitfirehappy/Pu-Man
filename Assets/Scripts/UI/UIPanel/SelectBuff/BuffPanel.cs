@@ -68,11 +68,16 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
         // 设置glowBorder颜色
         if (glowBorder != null)
         {
-            glowBorder.color = GetRarityColor(buff.rarity) * 1.2f; // 稍微提亮
+            glowBorder.color = GetRarityColor(buff.rarity);
         }
 
         // 设置初始粒子状态
-        SetParticle(false);
+        if (rarityParticles != null)
+        {
+            rarityParticles.Play();
+            var mainModule = rarityParticles.main;
+            mainModule.startColor = GetRarityColor(buff.rarity);
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -88,19 +93,6 @@ public class BuffPanel : UIFormBase, IPointerClickHandler
     {
         isSelected = selected;
         canvasGroup.alpha = isSelected ? SelectedAlpha : NormalAlpha;
-    }
-
-    public void SetParticle(bool isSelected)
-    {
-        if (isSelected)
-        {
-            // 激活粒子效果
-            rarityParticles.Play();
-        }
-        else
-        {
-            rarityParticles.Stop();
-        }
     }
 
     private Color GetRarityColor(Rarity rarity)

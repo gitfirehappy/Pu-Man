@@ -66,7 +66,24 @@ public class WaveTimer : SingletonMono<WaveTimer>
     private void CompleteWave()
     {
         _currentTime = 0;
-        EventBus.TriggerChangeState(GameState.SelectBuff);
+        var waveCounter = WaveCounter.Instance;
+        // 判断是否是最后一波且未启用无尽模式
+        if (waveCounter.CurrentWave >= waveCounter.TotalWaves && !waveCounter.EnableEndless && !waveCounter.IsInEndlessMode)
+        {
+            if (PlayerManager.Instance.Player != null)
+            {
+                Destroy(PlayerManager.Instance.Player.gameObject);
+                PlayerManager.Instance.ClearPlayer(PlayerManager.Instance.Player);
+            }
+
+            // 最后一波结束，触发游戏结束
+            EventBus.TriggerChangeState(GameState.GameOver);
+        }
+        else
+        {
+            // 非最后一波，继续选择buff
+            EventBus.TriggerChangeState(GameState.SelectBuff);
+        }
     }
 
 }

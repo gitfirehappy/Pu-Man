@@ -29,6 +29,7 @@ public class PlayerSOEditor : Editor
         var abilitiesConfig = serializedObject.FindProperty("abilitiesConfig");
 
         // 显示AbilityData结构体
+        EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("abilityActivationSFX"), true);
         EditorGUILayout.PropertyField(abilitiesConfig.FindPropertyRelative("startingAbilityData"), true);
 
         serializedObject.ApplyModifiedProperties();

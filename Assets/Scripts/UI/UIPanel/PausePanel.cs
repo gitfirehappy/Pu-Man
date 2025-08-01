@@ -43,25 +43,25 @@ public class PausePanel : UIFormBase
                                 string knockback, string projectileCount, string projectileSize,
                                 string speed)
     {
-        healthText.text = health;
-        armorText.text = armor;
-        regenText.text = regen;
-        dodgeText.text = dodge;
-        collisionText.text = collision;
-        bulletdamageText.text = bulletDamage;
-        fireRateText.text = fireRate;
-        knockbackText.text = knockback;
-        projectileCountText.text = projectileCount;
-        projectileSizeText.text = projectileSize;
-        speedText.text = speed;
+        healthText.text = "生命值: " + health;
+        armorText.text = "护甲值: " + armor;
+        regenText.text = "生命恢复: " + regen;
+        dodgeText.text = "闪避率: " + dodge;
+        collisionText.text = "碰撞伤害: " + collision;
+        bulletdamageText.text = "子弹伤害: " + bulletDamage;
+        fireRateText.text = "射速: " + fireRate;
+        knockbackText.text = "击退强度: " + knockback;
+        projectileCountText.text = "子弹数量: " + projectileCount;
+        projectileSizeText.text = "子弹大小: " + projectileSize;
+        speedText.text = "移动速度: " + speed;
     }
 
     public void UpdateBuffCounts(int common, int rare, int epic, int legendary)
     {
-        commonBuffCountText.text = common.ToString();
-        rareBuffCountText.text = rare.ToString();
-        epicBuffCountText.text = epic.ToString();
-        legendaryBuffCountText.text = legendary.ToString();
+        commonBuffCountText.text = "普通Buff: " + common.ToString();
+        rareBuffCountText.text = "稀有Buff: " + rare.ToString();
+        epicBuffCountText.text = "史诗Buff: " + epic.ToString();
+        legendaryBuffCountText.text = "传说Buff: " + legendary.ToString();
     }
 
     private void OnResume()

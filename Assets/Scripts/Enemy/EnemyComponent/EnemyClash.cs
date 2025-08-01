@@ -4,6 +4,7 @@ public class EnemyClash : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private EnemyMovement movement;
 
     private float seekRadius;
@@ -13,6 +14,7 @@ public class EnemyClash : MonoBehaviour
 
     private float lastClashTime;
     private bool isClashing;
+    private bool originalFlipX;
     private Vector2 clashTarget;
     private Transform playerTransform;
 
@@ -36,6 +38,7 @@ public class EnemyClash : MonoBehaviour
         playerTransform = PlayerManager.Instance.Player.transform;
         movement = GetComponent<EnemyMovement>();
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     /// <summary>
@@ -110,6 +113,13 @@ public class EnemyClash : MonoBehaviour
         clashTarget = playerTransform.position; // 锁定冲撞时的玩家位置
         lastClashTime = Time.time;
 
+        if (spriteRenderer != null)
+        {
+            originalFlipX = spriteRenderer.flipX; // 保存原始状态
+            // 玩家在左侧则翻转（素材默认朝右）
+            spriteRenderer.flipX = clashTarget.x < transform.position.x;
+        }
+
         // 禁用普通移动
         if (movement != null)
             movement.enabled = false;
@@ -122,6 +132,8 @@ public class EnemyClash : MonoBehaviour
     {
         isClashing = false;
         rb.velocity = Vector2.zero;
+
+        spriteRenderer.flipX = originalFlipX;
 
         // 重新启用普通移动
         if (movement != null)

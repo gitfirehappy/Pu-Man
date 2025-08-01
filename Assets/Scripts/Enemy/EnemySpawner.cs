@@ -17,6 +17,16 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
     [SerializeField] private float mapWidth = 50f;  // 地图宽度（X轴范围±值）
     [SerializeField] private float mapHeight = 50f; // 地图高度（Y轴范围±值）
 
+    [Header("Poisson采样性能配置")]
+    [Tooltip("敌人组生成的采样尝试次数（影响性能/分布质量）")]
+    [SerializeField] private int enemyGroupSamples = 30;
+
+    [Tooltip("组内敌人生成的采样尝试次数")]
+    [SerializeField] private int groupInnerSamples = 20;
+
+    [Tooltip("Boss生成的采样尝试次数")]
+    [SerializeField] private int bossSamples = 50;
+
     [Header("敌人预制体池")]
     [SerializeField] private List<GameObject> enemyPrefabs;
 
@@ -220,8 +230,8 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         EnemySO enemyData = enemyPrefab.GetComponent<EnemyCore>().EnemyData;
 
         int spawnCount = enemyData.isLargeEnemy ?
-            UnityEngine.Random.Range(1, 3) :  // 大型敌人1-2只
-            UnityEngine.Random.Range(3, 6);   // 普通敌人3-5只
+            UnityEngine.Random.Range(1, 4) :  // 大型敌人
+            UnityEngine.Random.Range(2, 7);   // 普通敌人
 
         // 获取一个合适的生成点（外部 Poisson）
         var candidateCenters = SampleEnemyGroupPositions(10);
@@ -326,16 +336,25 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
                 bool safeFromPlayer = playerTransform != null &&
                     Vector2.Distance(worldPos, playerTransform.position) > (minSpawnDistance + groupSpawnRadius);
                 return insideMap && safeFromPlayer;
-            }
+            },
+            numSamplesBeforeRejection: enemyGroupSamples
         );
 
         // 添加采样结果日志
         if (points.Count == 0)
         {
-            string reason = playerTransform == null ?
-                "玩家位置未初始化" :
-                $"地图范围({mapWidth}x{mapHeight})内无满足条件的生成点(最小距离:{minSpawnDistance})";
-            Debug.LogWarning($"[EnemySpawner] 敌人组生成位置采样失败: {reason}");
+            string reason = playerTransform == null ? "玩家位置未初始化" :
+            $"地图范围({mapWidth}x{mapHeight})内无满足条件的生成点(最小距离:{minSpawnDistance})";
+            Debug.LogWarning($"[EnemySpawner] 敌人组生成位置采样失败: {reason}，使用随机位置兜底");
+
+            // 生成一个随机安全位置并转换为采样坐标（相对地图左下角）
+            Vector2? randomSafePos = GenerateSafeRandomPosition(minSpawnDistance + groupSpawnRadius);
+            if (randomSafePos.HasValue)
+            {
+                // 转换为采样算法使用的相对坐标（原点在地图左下角）
+                Vector2 samplePos = randomSafePos.Value + mapSize / 2f;
+                points.Add(samplePos);
+            }
         }
 
         return points;
@@ -370,7 +389,8 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
                 // 保证在圆形范围内（用于组内视觉分布）
                 Vector2 center = new Vector2(regionDiameter / 2, regionDiameter / 2);
                 return (pos - center).sqrMagnitude < radius * radius;
-            }
+            },
+            numSamplesBeforeRejection: groupInnerSamples
         );
     }
 
@@ -393,19 +413,58 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
                 bool awayFromPlayer = playerTransform != null &&
                     Vector2.Distance(worldPos, playerTransform.position) > bossSafeRadius;
                 return insideMap && awayFromPlayer;
-            }
+            },
+            numSamplesBeforeRejection: bossSamples
         );
 
-        if (candidates.Count == 0)
+        if (candidates.Count > 0)
         {
-            string reason = playerTransform == null ?
-                "玩家位置未初始化" :
-                $"Boss生成范围({bossSafeRadius}半径)内无合适位置";
-            Debug.LogWarning($"[EnemySpawner] Boss生成位置采样失败: {reason}");
-            return null;
+            return candidates[0] - regionSize / 2f;
         }
 
-        return candidates[0] - regionSize / 2f;
+        // 采样失败时使用随机安全位置兜底
+        string reason = playerTransform == null ? "玩家位置未初始化" :
+            $"Boss生成范围({bossSafeRadius}半径)内无合适位置";
+        Debug.LogWarning($"[EnemySpawner] Boss生成位置采样失败: {reason}，使用随机位置兜底");
+
+        return GenerateSafeRandomPosition(bossSafeRadius);
+    }
+
+    /// <summary>
+    /// 在地图范围内随机生成一个位置
+    /// </summary>
+    private Vector2 GenerateRandomPositionInMap()
+    {
+        float x = UnityEngine.Random.Range(-mapWidth / 2, mapWidth / 2);
+        float y = UnityEngine.Random.Range(-mapHeight / 2, mapHeight / 2);
+        return new Vector2(x, y);
+    }
+
+    /// <summary>
+    /// 尝试生成一个远离玩家的随机安全位置
+    /// </summary>
+    private Vector2? GenerateSafeRandomPosition(float minDistanceFromPlayer)
+    {
+        if (playerTransform == null)
+        {
+            // 玩家位置未初始化时，直接返回地图内随机位置
+            return GenerateRandomPositionInMap();
+        }
+
+        // 最多尝试10次生成有效位置
+        for (int i = 0; i < 10; i++)
+        {
+            Vector2 randomPos = GenerateRandomPositionInMap();
+            float distanceToPlayer = Vector2.Distance(randomPos, playerTransform.position);
+            if (distanceToPlayer > minDistanceFromPlayer)
+            {
+                return randomPos;
+            }
+        }
+
+        // 多次尝试失败后，放宽条件返回任意地图内位置（避免完全无法生成）
+        Debug.LogWarning($"多次尝试后仍未找到安全位置，返回地图内随机位置");
+        return GenerateRandomPositionInMap();
     }
 
     #endregion

@@ -110,6 +110,12 @@ public class BattleUIPanel : UIFormBase
             return;
         }
 
+        if(_player.Abilities.CurrentAbilityData.isPassive == true)
+        {
+            skillCooldownText.text = "被动技能";
+            return;
+        }
+
         int currentWave = _waveCounter.CurrentWave;
         int nextAvailable = _player.Abilities.nextAvailableWave;
 
@@ -229,7 +235,7 @@ public class BattleUIPanel : UIFormBase
         if (_bossUICoroutine != null)
             StopCoroutine(_bossUICoroutine);
 
-        _bossUICoroutine = StartCoroutine(HideBossUIDelayed(2f));
+        _bossUICoroutine = StartCoroutine(HideBossUIDelayed(0.5f));
     }
 
     private IEnumerator HideBossUIDelayed(float delay)

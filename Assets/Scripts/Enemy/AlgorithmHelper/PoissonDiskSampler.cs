@@ -12,7 +12,7 @@ public static class PoissonDiskSampler
         float radius,
         Vector2 regionSize,
         Func<Vector2, bool> isValid,
-        int numSamplesBeforeRejection = 30)
+        int numSamplesBeforeRejection)
     {
         float cellSize = radius / Mathf.Sqrt(2);// 网格单元尺寸
         int[,] grid = new int[Mathf.CeilToInt(regionSize.x / cellSize), Mathf.CeilToInt(regionSize.y / cellSize)];

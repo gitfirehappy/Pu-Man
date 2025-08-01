@@ -18,7 +18,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 2408863001739500776, guid: 9c3ce89091de26844b27a979a1858218, type: 3}
   description: "\u989D\u5916\u5237\u65B0"
   healthConfig:
-    maxHealth: 12
+    maxHealth: 1000
     armor: 0
     healthRegen: 0
     dodgeChance: 0.2

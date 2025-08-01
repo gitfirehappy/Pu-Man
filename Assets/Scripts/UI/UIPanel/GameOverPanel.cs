@@ -27,8 +27,17 @@ public class GameOverPanel : UIFormBase
         if (throughWavesText != null)
         {
             // 获取当前波次(注意从几开始，可能需要调整)
-            int wavesPassed = WaveCounter.Instance.CurrentWave - 1;
+            var currentWave = WaveCounter.Instance.CurrentWave;
+            int wavesPassed = currentWave - 1;
+            if(WaveCounter.Instance.TotalWaves == currentWave && !WaveCounter.Instance.IsInEndlessMode)
+                wavesPassed++;
             throughWavesText.text = $"通过波次: {wavesPassed}";
+
+            // 保存记录
+            DataManager.Instance.UpdateRecord(
+                PlayerManager.Instance.LastPlayerType,
+                wavesPassed
+            );
         }
     }
 }

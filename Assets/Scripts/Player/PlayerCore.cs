@@ -88,13 +88,7 @@ public class PlayerCore : MonoBehaviour
     /// 处理死亡事件
     /// </summary>
     private void HandlePlayerDeath()
-    {
-        // 保存记录
-        DataManager.Instance.UpdateRecord(
-            playerData.playerType,
-            WaveCounter.Instance.CurrentWave - 1 // CurrentWave从1开始
-        );
-        
+    {   
         //通知总线游戏结束
         EventBus.TriggerChangeState(GameState.GameOver);
 
@@ -163,6 +157,8 @@ public class PlayerCore : MonoBehaviour
     {
         return BuffManager.Instance.GetAcquiredBuffs();
     }
+
+    public PlayerSO PlayerData => playerData;
 
     #endregion
 }

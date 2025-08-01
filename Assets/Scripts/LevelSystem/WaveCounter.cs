@@ -72,10 +72,6 @@ public class WaveCounter : SingletonMono<WaveCounter>
                     EnterEndlessMode();
                     return;
                 }
-                else
-                {
-                    EventBus.TriggerChangeState(GameState.GameOver);
-                }
             }
         }
 

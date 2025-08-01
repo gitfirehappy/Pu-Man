@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameOverUIManager : MonoBehaviour, IUIController
 {
+
     public void OnEnterState()
     {
         UIManager.Instance.ShowUIForm<GameOverPanel>();

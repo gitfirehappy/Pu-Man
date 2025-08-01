@@ -2,11 +2,7 @@
     "records": [
         {
             "playerType": 0,
-            "highestWave": 4
-        },
-        {
-            "playerType": 1,
-            "highestWave": 1
+            "highestWave": 10
         }
     ]
 }

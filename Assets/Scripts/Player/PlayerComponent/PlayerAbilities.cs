@@ -22,6 +22,8 @@ public class PlayerAbilities : MonoBehaviour
     private InvertEffect invertEffect;
     private BattleUIPanel battleUIPanel;
 
+    public AbilityData CurrentAbilityData => currentAbilityData;
+
     private void Awake()
     {
         playerCore = GetComponent<PlayerCore>();
@@ -237,8 +239,8 @@ public class PlayerAbilities : MonoBehaviour
         Vector2 origin = playerCore.transform.position;
 
         // 设置技能半径（可根据需要调整或从配置读取）
-        float radius = 5f;
-        float damage = 1f;
+        float radius = 50f;
+        float damage = 10f;
         int maxChains = 14;
 
         // 调用EnemyManager执行亵渎技能
@@ -274,9 +276,11 @@ public class PlayerAbilities : MonoBehaviour
             StopCoroutine(activeAbilityCoroutine);
             DeactivateAbility();
         }
-        currentAbilityData = newAbilityData;
+        baseAbilityData = newAbilityData;
         ResetAbilityCooldown();
         Debug.Log($"技能已切换为: {currentAbilityData.type}，冷却: {currentAbilityData.cooldownWaves}波");
+        // 更换技能后更新技能冷却UI
+        battleUIPanel?.UpdateSkillCooldownUI();
     }
 
     /// <summary>

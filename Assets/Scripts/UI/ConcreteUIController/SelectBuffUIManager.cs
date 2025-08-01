@@ -16,6 +16,8 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
 
     [SerializeField][Header("默认刷新次数")] private int defaultRefreshCount = 1;
     private int remainingRefreshCount;
+    // 积累的额外刷新次数（跨波次保留）
+    [SerializeField]private int accumulatedExtraRefresh = 0;
 
     [Header("稀有度权重 (总和自动调整为1)")]
     [Range(0f, 1f)][SerializeField] private float commonWeight = 0.7f;
@@ -40,7 +42,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
             return;
         }
 
-        remainingRefreshCount = defaultRefreshCount;
+        remainingRefreshCount = defaultRefreshCount + accumulatedExtraRefresh;
         InitializeWeights();//初始化权重
 
         // 等待Buff数据加载完成
@@ -72,6 +74,8 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         {
             buffCardSpawner.ClearCards();//清理动态卡片
         }
+
+        accumulatedExtraRefresh = Mathf.Max(0, remainingRefreshCount - defaultRefreshCount);
     }
 
     /// <summary>
@@ -168,25 +172,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// </summary>
     private void OnBuffSelected(BuffSO buff)
     {
-        // 取消之前选中的高亮
-        if (currentlySelectedBuff != null)
-        {
-            // 通过缓存或查找方式获取之前的BuffPanel
-            GetBuffPanelFor(currentlySelectedBuff)?.SetParticle(false);
-        }
-
-        // 设置新选中
         currentlySelectedBuff = buff;
-        GetBuffPanelFor(buff)?.SetParticle(true);
-    }
-
-    private BuffPanel GetBuffPanelFor(BuffSO buff)
-    {
-        if (selectBuffPanel == null || buff == null)
-            return null;
-
-        // 调用SelectBuffPanel的GetBuffPanel方法
-        return selectBuffPanel.GetBuffPanel(buff);
     }
 
     /// <summary>
@@ -248,11 +234,15 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
     /// <param name="count">增加的次数</param>
     public void AddRefreshCount(int count)
     {
-        remainingRefreshCount += count;
+        if (count <= 0) return;
+
+        accumulatedExtraRefresh += count;
+        Debug.Log($"已积累{count}次额外刷新机会，将在当前及后续波次生效");
 
         // 更新UI显示
         if (selectBuffPanel != null)
         {
+            remainingRefreshCount = defaultRefreshCount + accumulatedExtraRefresh;
             selectBuffPanel.UpdateRefreshCount(remainingRefreshCount);
         }
     }

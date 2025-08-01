@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dontDestroyOnLoad: 1
-  initialTime: 15
+  initialTime: 5
   timeIncreasePerWave: 5
   endlessModeTime: 45
   totalWaves: 10

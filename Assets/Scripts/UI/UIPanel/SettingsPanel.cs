@@ -55,21 +55,29 @@ public class SettingsPanel : UIFormBase
 
         // 添加数值变更监听
         slider.onValueChanged.AddListener((value) => {
-            UpdateVolumeText(value, valueText);
+            UpdateVolumeText(value, valueText, type);
         });
 
         // 初始化文本显示
-        UpdateVolumeText(slider.value, valueText);
+        UpdateVolumeText(slider.value, valueText, type);
     }
 
     /// <summary>
     /// 更新音量百分比文本
     /// </summary>
-    private void UpdateVolumeText(float value, TextMeshProUGUI textComponent)
+    private void UpdateVolumeText(float value, TextMeshProUGUI textComponent, VolumeType type)
     {
+        string prefix = type switch
+        {
+            VolumeType.Master => "主音量: ",
+            VolumeType.Music => "音乐: ",
+            VolumeType.SFX => "音效: ",
+            _ => ""
+        };
+
         // 转换为百分比整数 (0% - 100%)
         int percentage = Mathf.RoundToInt(value * 100);
-        textComponent.text = $"{percentage}%";
+        textComponent.text = $"{prefix}{percentage}%";
     }
 
     private void TryBindSlider(Slider slider, VolumeType type)
