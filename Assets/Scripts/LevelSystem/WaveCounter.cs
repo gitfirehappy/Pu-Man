@@ -6,19 +6,20 @@ using UnityEngine;
 public class WaveCounter : SingletonMono<WaveCounter>
 {
     [Header("时间设置")]
-    [SerializeField] private float initialTime = 15f;
-    [SerializeField] private float timeIncreasePerWave = 5f;
+    [Tooltip("初始时间")][SerializeField] private float initialTime = 15f;
+    [Tooltip("每波增长时间")][SerializeField] private float timeIncreasePerWave = 5f;
 
     [Header("通关后无尽波次时间")]
     [SerializeField] private float endlessModeTime = 45f;
 
     [Header("波次设置")]
-    [SerializeField] private int totalWaves = 10;
-    [SerializeField] private int bossInterval = 5; // 每N波出现Boss
+    [Tooltip("总波次")][SerializeField] private int totalWaves = 10;
+    [Tooltip("每x波出现Boss")][SerializeField] private int bossInterval = 5; // 每N波出现Boss
 
-    private bool _isInEndlessMode;
-    private int _currentWave;
-    private float _currentTimeLimit; // 当前波次时间上限
+    [Header("当前状态")]
+    [SerializeField] private bool _isInEndlessMode;
+    [SerializeField] private int _currentWave;
+    [SerializeField] private float _currentTimeLimit; // 当前波次时间上限
 
     #region 公共属性
     public bool EnableEndless { get; set; } = false; // 现在可以通过设置面板修改
@@ -54,7 +55,7 @@ public class WaveCounter : SingletonMono<WaveCounter>
         NextWave();
     }
 
-    public void NextWave()
+    private void NextWave()
     {
         _currentWave++;
         Debug.Log($"当前波次：{_currentWave}");

@@ -7,6 +7,16 @@ public class EnemyReward : MonoBehaviour
     private RewardConfig _rewardConfig;
     private EnemyCore _core;
 
+    private void OnDestroy()
+    {
+        // 注销事件
+        if (_core != null)
+        {
+            _core.OnEnemyDeath -= HandleEnemyDeath;
+        }
+    }
+
+    #region EnemyCore相关
     /// <summary>
     /// 敌人奖励系统初始化
     /// </summary>
@@ -25,15 +35,6 @@ public class EnemyReward : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        // 注销事件
-        if (_core != null)
-        {
-            _core.OnEnemyDeath -= HandleEnemyDeath;
-        }
-    }
-
     /// <summary>
     /// 重置奖励系统状态
     /// </summary>
@@ -41,6 +42,7 @@ public class EnemyReward : MonoBehaviour
     {
         // 目前没有需要重置的状态变量
     }
+    #endregion
 
     private void HandleEnemyDeath()
     {

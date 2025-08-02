@@ -66,7 +66,7 @@ public class EnemyBullet : MonoBehaviour
         }
     }
 
-    private void ReturnToPool()
+    public void ReturnToPool()
     {
         CancelInvoke(nameof(ReturnToPool));
         ObjectPoolManager.ReturnObjectToPool(gameObject, PoolType.EnemyBullet);

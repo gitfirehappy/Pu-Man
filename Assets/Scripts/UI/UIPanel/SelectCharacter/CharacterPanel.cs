@@ -9,8 +9,8 @@ using UnityEngine.UI;
 
 public class CharacterPanel : UIFormBase, IPointerClickHandler
 {
-    [Header("角色图片")]public Image characterPicture;
-    [Header("角色名称")]public TextMeshProUGUI characterName;
+    [Header("角色图片")] public Image characterPicture;
+    [Header("角色名称")] public TextMeshProUGUI characterName;
     [Header("最高波次")] public TextMeshProUGUI historicalBest;
 
     private CanvasGroup canvasGroup;
@@ -44,7 +44,6 @@ public class CharacterPanel : UIFormBase, IPointerClickHandler
         int highestWave = DataManager.Instance.GetHighestWave(data.playerType);
         historicalBest.text = $"最高记录: {highestWave}波";
     }
-
 
     public void OnPointerClick(PointerEventData eventData)
     {

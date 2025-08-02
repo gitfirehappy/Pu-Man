@@ -52,6 +52,8 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
         EventQueueManager.AddStateEvent(GameState.SelectBuff, StopSpawnAndClearEnemy, 0);
         EventQueueManager.AddStateEvent(GameState.GameOver, StopSpawnAndClearEnemy, 0);
 
+        EventQueueManager.AddStateEvent(GameState.SelectBuff, CleanupAllBullets, 1);
+
         EnemyEvent.OnBossStateChanged += OnBossStateChanged;
     }
 
@@ -138,6 +140,25 @@ public class EnemySpawner : SingletonMono<EnemySpawner>
                 Debug.LogWarning($"仍有 {remaining.Count} 个敌人未被正确清理，强制移除");
             }
         }
+    }
+
+    // 在EnemySpawner.cs中添加以下方法
+    /// <summary>
+    /// 清理场上所有敌人子弹
+    /// </summary>
+    private void CleanupAllBullets()
+    {
+        // 查找所有活跃的敌人子弹
+        var activeBullets = FindObjectsOfType<EnemyBullet>();
+        if (activeBullets.Length == 0) return;
+
+        foreach (var bullet in activeBullets)
+        {
+            // 调用子弹的回收方法
+            bullet.ReturnToPool();
+        }
+
+        Debug.Log($"清理了 {activeBullets.Length} 个敌人子弹");
     }
 
     private void StartSpawning()

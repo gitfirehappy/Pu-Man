@@ -11,15 +11,14 @@ public class SelectBuffPanel : UIFormBase
 {
     [SerializeField] private BuffCardSpawner buffCardSpawner;
 
-    [SerializeField][Header("确定Buff按钮")] private Button applyBuffButton;
-    [SerializeField][Header("刷新Buff按钮")] private Button refreshBuffButton;
-    [SerializeField][Header("剩余刷新次数")] private TextMeshProUGUI refreshCountText;
-    [SerializeField][Header("剩余选择次数")] private TextMeshProUGUI remainingChoicesText;
+    [Header("确定Buff按钮")] public Button applyBuffButton;
+    [Header("刷新Buff按钮")] public Button refreshBuffButton;
+    [Header("剩余刷新次数")] public TextMeshProUGUI refreshCountText;
+    [Header("剩余选择次数")] public TextMeshProUGUI remainingChoicesText;
 
     private BuffSO selectedBuff;
     private System.Action<BuffSO> onApplyCallback;
     private System.Action onRefreshCallback;
-
 
     protected override void Init()
     {
@@ -76,6 +75,10 @@ public class SelectBuffPanel : UIFormBase
         refreshBuffButton.interactable = count > 0;
     }
 
+    /// <summary>
+    /// 更新选择次数显示
+    /// </summary>
+    /// <param name="count"></param>
     public void SetRemainingChoices(int count)
     {
         remainingChoicesText.text = $"剩余选择: {count}";  

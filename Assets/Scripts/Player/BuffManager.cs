@@ -41,6 +41,11 @@ public class BuffManager : SingletonMono<BuffManager>
         ApplyBuffEffect(buffData, player);
     }
 
+    /// <summary>
+    /// 各buff效果
+    /// </summary>
+    /// <param name="buffData"></param>
+    /// <param name="player"></param>
     private void ApplyBuffEffect(BuffSO buffData, PlayerCore player)
     {
         switch (buffData.buffID)
@@ -154,7 +159,7 @@ public class BuffManager : SingletonMono<BuffManager>
         }
     }
 
-    #region case调用
+    #region 复杂buff实现（case调用）
 
     /// <summary>
     /// 提升全属性
@@ -205,12 +210,21 @@ public class BuffManager : SingletonMono<BuffManager>
 
     #endregion case调用
 
+    #region buff管理工具
 
+    /// <summary>
+    /// 清空所有已获得Buff记录
+    /// </summary>
     public void ClearBuffs()
     {
         _acquiredBuffs.Clear();
     }
 
+    /// <summary>
+    /// 获取指定稀有度的Buff数量
+    /// </summary>
+    /// <param name="rarity">稀有度类型</param>
+    /// <returns>Buff数量</returns>
     public int GetBuffCount(Rarity rarity)
     {
         int count = 0;
@@ -224,6 +238,11 @@ public class BuffManager : SingletonMono<BuffManager>
         return count;
     }
 
-    //提供给 UI 查询已获得的 Buff
+    /// <summary>
+    /// 提供给 UI 查询已获得的 Buff
+    /// </summary>
+    /// <returns>已获得的Buff字典副本</returns>
     public Dictionary<BuffID, BuffSO> GetAcquiredBuffs() => new Dictionary<BuffID, BuffSO>(_acquiredBuffs);
+    #endregion
+
 }

@@ -3,39 +3,40 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
-    private PlayerCore playerCore;
-
     [SerializeField]private bool _isShootingEnabled = true;
 
-    private float baseDamage;
-    private float baseFireRate;
-    private float baseKnockback;
-    private int baseProjectileCount;
-    private float baseProjectileSize;
-    private float baseProjectileSpeed;
-    private float baseProjectileLifeTime;
-    private bool baseIsAoeDamage;
+    [Header("基础属性")]
+    [Tooltip("子弹伤害")][SerializeField] private float baseDamage;
+    [Tooltip("射速")][SerializeField] private float baseFireRate;
+    [Tooltip("击退距离")][SerializeField]private float baseKnockback;
+    [Tooltip("弹道数量")][SerializeField]private int baseProjectileCount;
+    [Tooltip("子弹大小")][SerializeField]private float baseProjectileSize;
+    [Tooltip("飞行速度")][SerializeField]private float baseProjectileSpeed;
+    [Tooltip("生命周期")][SerializeField]private float baseProjectileLifeTime;
+    [Tooltip("范围伤害")][SerializeField]private bool baseIsAoeDamage;
 
 
     [Header("当前属性")]
-    [SerializeField][Header("子弹伤害")] private float currentDamage;
-    [SerializeField][Header("射速")] private float currentFireRate;
-    [SerializeField][Header("击退距离")] private float currentKnockback;
-    [SerializeField][Header("弹道数量")] private int currentProjectileCount;
-    [SerializeField][Header("子弹大小")] private float currentProjectileSize;
-    [SerializeField][Header("飞行速度")] private float currentProjectileSpeed;
-    [SerializeField][Header("生命周期")] private float currentProjectileLifeTime;
-    [SerializeField][Header("范围伤害")] private bool currentIsAoeDamage;
+    [Tooltip("子弹伤害")][SerializeField] private float currentDamage;
+    [Tooltip("射速")][SerializeField] private float currentFireRate;
+    [Tooltip("击退距离")][SerializeField] private float currentKnockback;
+    [Tooltip("弹道数量")][SerializeField] private int currentProjectileCount;
+    [Tooltip("子弹大小")][SerializeField] private float currentProjectileSize;
+    [Tooltip("飞行速度")][SerializeField] private float currentProjectileSpeed;
+    [Tooltip("生命周期")][SerializeField] private float currentProjectileLifeTime;
+    [Tooltip("范围伤害")][SerializeField] private bool currentIsAoeDamage;
 
     [Header("设置")]
-    [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform firePoint;
-    [SerializeField] private AudioClip shootingSFX;
+    [Tooltip("子弹预制体")][SerializeField] private GameObject bulletPrefab;
+    [Tooltip("开火点")][SerializeField] private Transform firePoint;
+    [Tooltip("射击音效")][SerializeField] private AudioClip shootingSFX;
 
     private float lastShootTime;//高频音效处理
-    private float nextFireTime;
+    private float nextFireTime;//射速管理
 
-    [SerializeField][Header("是否跟随鼠标")]private bool isRotating;
+    [Tooltip("是否跟随鼠标")][SerializeField] private bool isRotating;
+
+    private PlayerCore playerCore;
     private InputAction fireAction;
     public bool IsShooting { get; private set; }//射击状态
 
@@ -48,19 +49,42 @@ public class PlayerShooting : MonoBehaviour
             firePoint = transform;
         }
     }
+    private void Update()
+    {
+        if (PauseManager.Instance.IsPaused || !_isShootingEnabled) return;
+
+        if (!_isShootingEnabled) return;
+
+        if (isRotating)
+        {
+            RotateTowardsMouse();
+        }
+
+        if (fireAction.IsPressed() && Time.time >= nextFireTime)
+        {
+            Shoot();
+            nextFireTime = Time.time + 1f / currentFireRate;
+            IsShooting = true;
+        }
+        else
+        {
+            IsShooting = false;
+        }
+    }
+
+    #region PlayerCore相关
+    public void EnableShooting()
+    {
+        _isShootingEnabled = true;
+        isRotating = true;
+        nextFireTime = 0f;
+    }
 
     public void DisableShooting()
     {
         _isShootingEnabled = false;
         isRotating = false;
         nextFireTime = float.MaxValue; // 确保不会射击
-    }
-
-    public void EnableShooting()
-    {
-        _isShootingEnabled = true;
-        isRotating = true;
-        nextFireTime = 0f;
     }
 
     /// <summary>
@@ -114,31 +138,11 @@ public class PlayerShooting : MonoBehaviour
         currentIsAoeDamage = baseIsAoeDamage;
     }
 
-    private void Update()
-    {
-        if (PauseManager.Instance.IsPaused || !_isShootingEnabled) return;
-
-        if (!_isShootingEnabled) return;
-
-        if (isRotating)
-        {
-            RotateTowardsMouse();
-        }
-
-        if (fireAction.IsPressed() && Time.time >= nextFireTime)
-        {
-            Shoot();
-            nextFireTime = Time.time + 1f / currentFireRate;
-            IsShooting = true;
-        }
-        else
-        {
-            IsShooting = false;
-        }
-    }
-
+    #endregion
+    
+    #region 射击逻辑
     /// <summary>
-    /// 射击
+    /// 发射子弹逻辑
     /// </summary>
     private void Shoot()
     {
@@ -180,10 +184,8 @@ public class PlayerShooting : MonoBehaviour
         }
     }
 
-
-
     /// <summary>
-    /// 跟随鼠标旋转
+    /// 玩家跟随鼠标旋转
     /// </summary>
     private void RotateTowardsMouse()
     {
@@ -203,7 +205,7 @@ public class PlayerShooting : MonoBehaviour
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
-
+    #endregion
 
     #region 公共属性
     public float Damage => baseDamage;
@@ -229,7 +231,5 @@ public class PlayerShooting : MonoBehaviour
     public void AddCurrentFireRate(float amount) => Mathf.Min(currentFireRate += amount,15f);
 
     #endregion
-
-
 }
 

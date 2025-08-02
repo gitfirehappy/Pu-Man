@@ -4,30 +4,40 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
-    private EnemyCore enemyCore;
-
-    [Header("References")]
+    [Header("引用")]
     [SerializeField] private Rigidbody2D rb;
+    private Transform playerTransform;
+    private SpriteRenderer spriteRenderer;
+    private Collider2D _collider;
 
-    [SerializeField][Header("血量上限")] private float maxHealth;
-    [SerializeField][Header("当前血量")] private float currentHealth;
-    [SerializeField][Header("碰撞伤害")] private float collisionDamage;
-    [SerializeField][Header("受击无敌")] private float collisionImmunityDuration;
-    [SerializeField][Header("碰撞范围")] private float attackRadius;
-    [SerializeField][Header("检测间隔")] private float detectionInterval;
+    [Tooltip("血量上限")][SerializeField] private float maxHealth;
+    [Tooltip("当前血量")][SerializeField] private float currentHealth;
+    [Tooltip("碰撞伤害")][SerializeField] private float collisionDamage;
+    [Tooltip("受击无敌")][SerializeField] private float collisionImmunityDuration;
+    [Tooltip("碰撞范围")][SerializeField] private float attackRadius;
+    [Tooltip("检测间隔")][SerializeField] private float detectionInterval;
 
     [SerializeField] private bool _isDead = false;
-    private Collider2D _collider;
 
     private float lastCollisionDamageTime;
     private float lastDetectionTime;
-    private Transform playerTransform;
-    private SpriteRenderer spriteRenderer;
 
     public event Action<DamageSource> OnDeath;
 
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
+    private void Update()
+    {
+        if (PauseManager.Instance.IsPaused) return;
+
+        if (playerTransform == null || Time.time - lastDetectionTime < detectionInterval)
+            return;
+
+        DetectAndDamagePlayer();
+        lastDetectionTime = Time.time;
+    }
+
+    #region EnemyCore相关
     /// <summary>
     /// 敌人血量系统初始化
     /// </summary>
@@ -66,24 +76,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         currentHealth = maxHealth;
         lastCollisionDamageTime = -collisionImmunityDuration;
     }
-
+    #endregion
 
     private void FindPlayer()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player")?.transform;
+        playerTransform = PlayerManager.Instance.Player.transform;
     }
 
-    private void Update()
-    {
-        if (PauseManager.Instance.IsPaused) return;
-
-        if (playerTransform == null || Time.time - lastDetectionTime < detectionInterval)
-            return;
-
-        DetectAndDamagePlayer();
-        lastDetectionTime = Time.time;
-    }
-
+    #region 基础受伤死亡逻辑
     private void DetectAndDamagePlayer()
     {
         Collider2D playerCollider = Physics2D.OverlapCircle(
@@ -175,6 +175,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         Debug.Log("敌人死亡", this);
     }
+    #endregion
 
     private void OnDrawGizmos()
     {

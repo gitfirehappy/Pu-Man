@@ -2,21 +2,37 @@
 
 public class EnemyShooting : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private Transform firePoint;
-    private GameObject bulletPrefab;
+    [Tooltip("开火点")][SerializeField] private Transform firePoint;
+    [Tooltip("子弹预制体")][SerializeField] private GameObject bulletPrefab;
+    [Tooltip("玩家坐标")][SerializeField] private Transform playerTransform;
 
-    [SerializeField] private float bulletDamage;
-    [SerializeField] private float bulletSpeed;
-    [SerializeField] private float bulletSize;
-    [SerializeField] private float shootRate;
-    [SerializeField] private float shootRadius;
-    [SerializeField] private int projectileCount;
-    [SerializeField] private float bulletLifeTime;
+    [Header("射击参数")]
+    [Tooltip("子弹伤害")][SerializeField] private float bulletDamage;
+    [Tooltip("飞行速度")][SerializeField] private float bulletSpeed;
+    [Tooltip("大小")][SerializeField] private float bulletSize;
+    [Tooltip("射速")][SerializeField] private float shootRate;
+    [Tooltip("范围")][SerializeField] private float shootRadius;
+    [Tooltip("弹道")][SerializeField] private int projectileCount;
+    [Tooltip("生命周期")][SerializeField] private float bulletLifeTime;
 
     private float nextShootTime;
-    private Transform playerTransform;
 
+    private void Update()
+    {
+        if (PauseManager.Instance.IsPaused) return;
+
+        if (playerTransform == null || Time.time < nextShootTime)
+            return;
+
+        // 检查玩家是否在射击范围内
+        if (Vector2.Distance(transform.position, playerTransform.position) <= shootRadius)
+        {
+            Shoot();
+            nextShootTime = Time.time + 1f / shootRate;
+        }
+    }
+
+    #region EneCore相关
     /// <summary>
     /// 敌人射击系统初始化
     /// </summary>
@@ -57,21 +73,7 @@ public class EnemyShooting : MonoBehaviour
     {
         nextShootTime = 0f;
     }
-
-    private void Update()
-    {
-        if (PauseManager.Instance.IsPaused) return;
-
-        if (playerTransform == null || Time.time < nextShootTime)
-            return;
-
-        // 检查玩家是否在射击范围内
-        if (Vector2.Distance(transform.position, playerTransform.position) <= shootRadius)
-        {
-            Shoot();
-            nextShootTime = Time.time + 1f / shootRate;
-        }
-    }
+    #endregion
 
     /// <summary>
     /// 向玩家方向射击

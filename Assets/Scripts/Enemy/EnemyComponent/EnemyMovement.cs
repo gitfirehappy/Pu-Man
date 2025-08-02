@@ -3,20 +3,38 @@ using UnityEngine;
 
 public class EnemyMovement : MonoBehaviour
 {
-    [Header("References")]
+    [Header("引用")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private EnemyClash enemyClash;
     [SerializeField] private EnemyCore enemyCore;
+    [SerializeField] private Transform playerTransform;
 
     [Header("移动参数")]
-    [SerializeField] private float moveSpeed;
+    [Tooltip("移动速度")][SerializeField] private float moveSpeed;
 
-    private Transform playerTransform;
     private float knockbackDuration = 0.2f;
     private float knockbackEndTime;
     private Vector2 knockbackDirection;
     private float knockbackForce;
 
+    private void Update()
+    {
+        if (PauseManager.Instance.IsPaused) return;
+
+        if (playerTransform == null || (enemyClash != null && enemyClash.IsClashing))
+            return;
+
+        // 处理击退效果
+        if (Time.time < knockbackEndTime)
+        {
+            rb.velocity = knockbackDirection * knockbackForce;
+            return;
+        }
+
+        MoveWithBoidBehavior();
+    }
+
+    #region EnemCore相关
     /// <summary>
     /// 敌人移动系统初始化
     /// </summary>
@@ -40,23 +58,7 @@ public class EnemyMovement : MonoBehaviour
         }
         knockbackEndTime = 0;
     }
-
-    private void Update()
-    {
-        if (PauseManager.Instance.IsPaused) return;
-
-        if (playerTransform == null || (enemyClash != null && enemyClash.IsClashing))
-            return;
-
-        // 处理击退效果
-        if (Time.time < knockbackEndTime)
-        {
-            rb.velocity = knockbackDirection * knockbackForce;
-            return;
-        }
-
-        MoveWithBoidBehavior();
-    }
+    #endregion
 
     /// <summary>
     /// 结合鸟群行为向玩家移动
@@ -117,6 +119,7 @@ public class EnemyMovement : MonoBehaviour
         rb.velocity = finalDirection.normalized * moveSpeed;
     }
 
+    #region 外部调用接口
     /// <summary>
     /// 应用击退效果
     /// </summary>
@@ -132,4 +135,5 @@ public class EnemyMovement : MonoBehaviour
         // 3. 设置击退持续时间
         knockbackEndTime = Time.time + knockbackDuration;
     }
+    #endregion
 }

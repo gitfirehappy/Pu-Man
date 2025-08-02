@@ -2,7 +2,6 @@
 
 public class PauseUIManager : MonoBehaviour
 {
-
     private void Awake()
     {
         EventQueueManager.AddPauseEvent(ShowPauseUI, 10);
@@ -26,6 +25,7 @@ public class PauseUIManager : MonoBehaviour
         UIManager.Instance.HideUIForm<PausePanel>();
     }
 
+    #region 更新显示
     private void UpdatePlayerStats(PausePanel pausePanel)
     {
         var player = PlayerManager.Instance.Player;
@@ -62,4 +62,5 @@ public class PauseUIManager : MonoBehaviour
             buffManager.GetBuffCount(Rarity.Legendary)
         );
     }
+    #endregion
 }

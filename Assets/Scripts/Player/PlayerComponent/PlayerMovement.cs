@@ -4,9 +4,11 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    private float baserunSpeed;
+    [Header("当前属性")]
+    [Tooltip("当前移速")][SerializeField]private float currentRunSpeed;
 
-    [SerializeField][Header("当前移速")]private float currentRunSpeed;
+    [Header("基础属性")]
+    [Tooltip("基础移速")][SerializeField] private float baserunSpeed;
 
     private Vector2 inputDirection;
     private Rigidbody2D rb;
@@ -32,6 +34,18 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         Move();
+    }
+
+    #region PlayerCore相关
+    public void EnableMovement()
+    {
+
+    }
+
+    public void DisableMovement()
+    {
+        if (rb != null)
+            rb.velocity = Vector2.zero; // 立即停止移动
     }
 
     /// <summary>
@@ -63,17 +77,7 @@ public class PlayerMovement : MonoBehaviour
     {
         currentRunSpeed = baserunSpeed;
     }
-
-    public void DisableMovement()
-    {
-        if (rb != null)
-        rb.velocity = Vector2.zero; // 立即停止移动
-    }
-
-    public void EnableMovement()
-    {
-
-    }
+    #endregion
 
     /// <summary>
     /// 人物移动

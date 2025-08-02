@@ -41,6 +41,7 @@ public class EnemyAnimatorController : MonoBehaviour
         }
     }
 
+    #region EnemyCore相关
     public void Initialize()
     {
         enemyClash = GetComponent<EnemyClash>(); // 获取冲撞组件
@@ -88,4 +89,5 @@ public class EnemyAnimatorController : MonoBehaviour
             animator.Play(AnimationConstants.Base.EnemyIdle, 0, 0f);
         }
     }
+    #endregion
 }

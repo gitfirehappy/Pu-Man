@@ -8,19 +8,19 @@ public class PauseManager : SingletonMono<PauseManager>
 
     public bool IsPaused => _isPaused;
 
-    protected override void Init()
-    {
-        // 注册暂停和恢复事件
-        EventQueueManager.AddPauseEvent(OnGamePaused, 0);
-        EventQueueManager.AddResumeEvent(OnGameResumed, 0);
-    }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
         }
+    }
+
+    protected override void Init()
+    {
+        // 注册暂停和恢复事件
+        EventQueueManager.AddPauseEvent(OnGamePaused, 0);
+        EventQueueManager.AddResumeEvent(OnGameResumed, 0);
     }
 
     public void TogglePause()

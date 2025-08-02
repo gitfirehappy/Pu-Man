@@ -31,7 +31,10 @@ public class WaveTimer : SingletonMono<WaveTimer>
     private void OnPaused() => _isPaused = true;
     private void OnResumed() => _isPaused = false;
 
-
+    /// <summary>
+    /// 开始计时
+    /// </summary>
+    /// <param name="timeLimit"></param>
     public void StartTimer(float timeLimit)
     {
         _timeLimit = timeLimit;
@@ -52,6 +55,9 @@ public class WaveTimer : SingletonMono<WaveTimer>
         CompleteWave();
     }
 
+    /// <summary>
+    /// 停止计时
+    /// </summary>
     public void StopTimer()
     {
         if (_timerCoroutine != null)
@@ -63,6 +69,9 @@ public class WaveTimer : SingletonMono<WaveTimer>
         }
     }
 
+    /// <summary>
+    /// 完成波次逻辑
+    /// </summary>
     private void CompleteWave()
     {
         _currentTime = 0;

@@ -8,27 +8,27 @@ using UnityEngine.UI;
 public class PausePanel : UIFormBase
 {
     [Header("角色属性面板")]
-    [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private TextMeshProUGUI armorText;
-    [SerializeField] private TextMeshProUGUI regenText;
-    [SerializeField] private TextMeshProUGUI dodgeText;
-    [SerializeField] private TextMeshProUGUI collisionText;
-    [SerializeField] private TextMeshProUGUI bulletdamageText;
-    [SerializeField] private TextMeshProUGUI fireRateText;
-    [SerializeField] private TextMeshProUGUI knockbackText;
-    [SerializeField] private TextMeshProUGUI projectileCountText;
-    [SerializeField] private TextMeshProUGUI projectileSizeText;
-    [SerializeField] private TextMeshProUGUI speedText;
+    public TextMeshProUGUI healthText;
+    public TextMeshProUGUI armorText;
+    public TextMeshProUGUI regenText;
+    public TextMeshProUGUI dodgeText;
+    public TextMeshProUGUI collisionText;
+    public TextMeshProUGUI bulletdamageText;
+    public TextMeshProUGUI fireRateText;
+    public TextMeshProUGUI knockbackText;
+    public TextMeshProUGUI projectileCountText;
+    public TextMeshProUGUI projectileSizeText;
+    public TextMeshProUGUI speedText;
 
     [Header("Buff统计")]
-    [SerializeField] private TextMeshProUGUI commonBuffCountText;
-    [SerializeField] private TextMeshProUGUI rareBuffCountText;
-    [SerializeField] private TextMeshProUGUI epicBuffCountText;
-    [SerializeField] private TextMeshProUGUI legendaryBuffCountText;
+    public TextMeshProUGUI commonBuffCountText;
+    public TextMeshProUGUI rareBuffCountText;
+    public TextMeshProUGUI epicBuffCountText;
+    public TextMeshProUGUI legendaryBuffCountText;
 
     [Header("按钮")]
-    [SerializeField][Header("返回游戏按钮")] private Button resumeButton;
-    [SerializeField][Header("结束游戏按钮")] private Button overGameButton;
+    [Header("返回游戏按钮")] public Button resumeButton;
+    [Header("结束游戏按钮")] public Button overGameButton;
 
     protected override void Init()
     {
@@ -38,6 +38,7 @@ public class PausePanel : UIFormBase
         overGameButton.onClick.AddListener(OverGame);
     }
 
+    #region 更新文本
     public void UpdatePlayerStats(string health, string armor, string regen, string dodge,
                                 string collision, string bulletDamage, string fireRate,
                                 string knockback, string projectileCount, string projectileSize,
@@ -63,6 +64,7 @@ public class PausePanel : UIFormBase
         epicBuffCountText.text = "史诗Buff: " + epic.ToString();
         legendaryBuffCountText.text = "传说Buff: " + legendary.ToString();
     }
+    #endregion
 
     private void OnResume()
     {

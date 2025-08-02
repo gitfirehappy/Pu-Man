@@ -7,28 +7,52 @@ using UnityEngine.UI;
 public class BattleUIPanel : UIFormBase
 {
     [Header("玩家战斗UI")]
-    [SerializeField] private Image healthFill;
-    [SerializeField] private TextMeshProUGUI healthText;
-    [SerializeField] private Image playerPicture;
+    public Image healthFill;
+    public TextMeshProUGUI healthText;
+    public Image playerPicture;
 
     [Header("当前技能冷却")]
-    [SerializeField] private TextMeshProUGUI skillCooldownText;
-    [SerializeField] private Image skillCooldownFill;
+    public TextMeshProUGUI skillCooldownText;
+    public Image skillCooldownFill;
 
     //关卡倒计时，当前波次
-    [SerializeField][Header("倒计时")] private TextMeshProUGUI timerText;
-    [SerializeField][Header("当前波次")] private TextMeshProUGUI waveText;
+    [Header("倒计时")] public TextMeshProUGUI timerText;
+    [Header("当前波次")] public TextMeshProUGUI waveText;
 
     [Header("boss血量")]
-    [SerializeField] private GameObject bossUIGroup; // 整个Boss UI的父对象（空物体）
-    [SerializeField] private Image bossHealthFill;
-    [SerializeField] private TextMeshProUGUI bossHealthText;
+    public GameObject bossUIGroup; // 整个Boss UI的父对象（空物体）
+    public Image bossHealthFill;
+    public TextMeshProUGUI bossHealthText;
 
     private PlayerCore _player;
     private WaveTimer _waveTimer;
     private WaveCounter _waveCounter;
     private EnemyCore _currentBoss;
     private Coroutine _bossUICoroutine;
+
+    private void OnDestroy()
+    {
+        // 清理事件注册
+
+        EnemyEvent.OnBossStateChanged -= HandleBossStateChange;
+
+        if (_bossUICoroutine != null)
+            StopCoroutine(_bossUICoroutine);
+        _currentBoss = null;
+    }
+
+    private void Update()
+    {
+        // 实时更新UI
+        UpdateTimerUI();
+        UpdateHealthUI();
+
+        // 实时更新Boss血量
+        if (bossUIGroup.activeSelf && _currentBoss != null)
+        {
+            UpdateBossHealthUI();
+        }
+    }
 
     protected override void Init()
     {
@@ -58,31 +82,7 @@ public class BattleUIPanel : UIFormBase
         EnemyEvent.OnBossStateChanged += HandleBossStateChange;
     }
 
-    private void OnDestroy()
-    {
-        // 清理事件注册
-
-        EnemyEvent.OnBossStateChanged -= HandleBossStateChange;
-
-        if (_bossUICoroutine != null)
-            StopCoroutine(_bossUICoroutine);
-        _currentBoss = null;
-    }
-
-
-    private void Update()
-    {
-        // 实时更新UI
-        UpdateTimerUI();
-        UpdateHealthUI();
-
-        // 实时更新Boss血量
-        if (bossUIGroup.activeSelf && _currentBoss != null)
-        {
-            UpdateBossHealthUI();
-        }
-    }
-
+    #region 更新玩家UI
     /// <summary>
     /// 更新玩家图片头像
     /// </summary>
@@ -148,7 +148,9 @@ public class BattleUIPanel : UIFormBase
             skillCooldownText.text = $"{nextAvailable - currentWave}波";
         }
     }
+    #endregion
 
+    #region 更新关卡进度UI
     /// <summary>
     /// 更新时间UI
     /// </summary>
@@ -178,6 +180,7 @@ public class BattleUIPanel : UIFormBase
             waveText.text = $"波次: {_waveCounter.CurrentWave}/{_waveCounter.TotalWaves}";
         }
     }
+    #endregion
 
     /// <summary>
     /// 波次转换事件

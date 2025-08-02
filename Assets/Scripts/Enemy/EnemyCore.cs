@@ -9,8 +9,10 @@ using static Unity.VisualScripting.Member;
 [DisallowMultipleComponent]
 public class EnemyCore : MonoBehaviour, IPoolable
 {
+    [Header("敌人配置数据SO")]
     [SerializeField] private EnemySO enemyData;
-    [SerializeField] private IObjectPool<GameObject> _managedPool;
+
+    private IObjectPool<GameObject> _managedPool;
 
     public DamageSource LastDamageSource { get; private set; }//最后伤害来源
 
@@ -35,12 +37,12 @@ public class EnemyCore : MonoBehaviour, IPoolable
         InitializeComponents();
     }
 
+    #region 初始化
     /// <summary>
     /// 敌人组件初始化
     /// </summary>
     public void InitializeComponents()
     {
-
         // 确保基础组件存在
         _health = GetOrAddComponent<EnemyHealth>();
         _movement = GetOrAddComponent<EnemyMovement>();
@@ -95,7 +97,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
         return component;
     }
+    #endregion
 
+    #region 事件处理
     /// <summary>
     /// 注册敌人事件
     /// </summary>
@@ -143,7 +147,9 @@ public class EnemyCore : MonoBehaviour, IPoolable
         ReturnToPool();
     }
 
-    // IPoolable接口实现
+    #endregion
+
+    #region IPoolable接口实现
     /// <summary>
     /// 回收敌人调用
     /// </summary>
@@ -186,11 +192,11 @@ public class EnemyCore : MonoBehaviour, IPoolable
         }
     }
 
-
     public void SetPool(IObjectPool<GameObject> pool)
     {
         _managedPool = pool;
     }
+    #endregion
 
     /// <summary>
     /// 统一回收
@@ -231,7 +237,6 @@ public class EnemyCore : MonoBehaviour, IPoolable
     public float MaxHealth => _health.MaxHealth;
 
     public EnemySO EnemyData => enemyData;
-
 
     #endregion
 }

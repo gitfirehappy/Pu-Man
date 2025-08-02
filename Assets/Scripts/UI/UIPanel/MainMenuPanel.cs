@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class MainMenuPanel : UIFormBase
 {
-    [SerializeField][Header("开始游戏按钮")] private Button startButton;
-    [SerializeField][Header("游戏设置按钮")] private Button settingsButton;
-    [SerializeField][Header("退出游戏按钮")] private Button exitButton;
-    [SerializeField][Header("制作人员按钮")] private Button creditsButton;
+    [Header("开始游戏按钮")] public Button startButton;
+    [Header("游戏设置按钮")] public Button settingsButton;
+    [Header("退出游戏按钮")] public Button exitButton;
+    [Header("制作人员按钮")] public Button creditsButton;
 
     protected override void Init()
     {

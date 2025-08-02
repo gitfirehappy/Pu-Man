@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GameStateMachine
 {
-    // 状态节点类
+    /// <summary>状态节点类</summary>
     public class StateNode
     {
         public GameState State { get; }
@@ -15,8 +15,9 @@ public class GameStateMachine
         }
     }
 
-    // 状态图
+    /// <summary>状态图</summary>
     private readonly Dictionary<GameState, StateNode> _graph = new Dictionary<GameState, StateNode>();
+
     public GameState CurrentState { get; private set; }
 
     public GameStateMachine(GameState initialState)
@@ -58,6 +59,11 @@ public class GameStateMachine
         return currentNode.Transitions.Exists(node => node.State == newState);
     }
 
+    /// <summary>
+    /// 尝试进行状态切换
+    /// </summary>
+    /// <param name="newState"></param>
+    /// <returns></returns>
     public bool TryChangeState(GameState newState)
     {
         if (CanTransitionTo(newState))

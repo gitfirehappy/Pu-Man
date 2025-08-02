@@ -7,23 +7,23 @@ using UnityEngine.UI;
 public class DifficultySettingsPanel : UIFormBase
 {
     [Header("生成间隔设置")]
-    [SerializeField] private Slider initialSpawnIntervalSlider; // 初始生成间隔滑条
-    [SerializeField] private TextMeshProUGUI initialIntervalValueText;     // 初始间隔值显示文本
-    [SerializeField] private Slider intervalReductionSlider;    // 每波减少间隔滑条
-    [SerializeField] private TextMeshProUGUI reductionValueText;           // 减少值显示文本
+    public Slider initialSpawnIntervalSlider; // 初始生成间隔滑条
+    public TextMeshProUGUI initialIntervalValueText;     // 初始间隔值显示文本
+    public Slider intervalReductionSlider;    // 每波减少间隔滑条
+    public TextMeshProUGUI reductionValueText;           // 减少值显示文本
 
     [Header("属性增长设置")]
-    [SerializeField] private Slider healthGrowthSlider;   // 血量增长滑条
-    [SerializeField] private TextMeshProUGUI healthValueText;
-    [SerializeField] private Slider damageGrowthSlider;    // 伤害增长滑条
-    [SerializeField] private TextMeshProUGUI damageValueText;
+    public Slider healthGrowthSlider;   // 血量增长滑条
+    public TextMeshProUGUI healthValueText;
+    public Slider damageGrowthSlider;    // 伤害增长滑条
+    public TextMeshProUGUI damageValueText;
 
     [Header("增长模式设置")]
-    [SerializeField] private Toggle percentageToggle;
-    [SerializeField] private Toggle linearToggle;
+    public Toggle percentageToggle;
+    public Toggle linearToggle;
 
     [Header("按钮")]
-    [SerializeField] private Button closeButton;
+    public Button closeButton;
 
     protected override void Init()
     {
@@ -94,6 +94,7 @@ public class DifficultySettingsPanel : UIFormBase
         Debug.Log($"增长模式切换为: {newMode}");
     }
 
+    #region 更新文本
     /// <summary>
     /// 更新初始生成间隔文本
     /// </summary>
@@ -110,24 +111,32 @@ public class DifficultySettingsPanel : UIFormBase
         reductionValueText.text = $"-{value:F2}秒/波";
     }
 
+    /// <summary>
+    /// 更新血量增长文本
+    /// </summary>
     private void UpdateHealthText()
     {
         var config = EnemyManager.Instance.ScalingConfig;
         if (config.growthMode == GrowthMode.Percentage)
-            healthValueText.text = $"+{config.healthPerWave * 100:F0}%/波";
+            healthValueText.text = $"血量+{config.healthPerWave * 100:F0}%/波";
         else
-            healthValueText.text = $"+{config.healthLinearPerWave:F0}点/波";
+            healthValueText.text = $"血量+{config.healthLinearPerWave:F0}点/波";
     }
 
+    /// <summary>
+    /// 更新伤害增长文本
+    /// </summary>
     private void UpdateDamageText()
     {
         var config = EnemyManager.Instance.ScalingConfig;
         if (config.growthMode == GrowthMode.Percentage)
-            damageValueText.text = $"+{config.damagePerWave * 100:F0}%/波";
+            damageValueText.text = $"伤害+{config.damagePerWave * 100:F0}%/波";
         else
-            damageValueText.text = $"+{config.damageLinearPerWave:F0}点/波";
+            damageValueText.text = $"伤害+{config.damageLinearPerWave:F0}点/波";
     }
+    #endregion
 
+    #region 变量更新
     private void OnInitialIntervalChanged(float value)
     {
         EnemyManager.Instance.ScalingConfig.initialSpawnInterval = value;
@@ -163,6 +172,7 @@ public class DifficultySettingsPanel : UIFormBase
 
         UpdateDamageText();
     }
+    #endregion
 
     private void ClosePanel()
     {

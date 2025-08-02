@@ -8,12 +8,10 @@ public class PlayerManager : SingletonMono<PlayerManager>
 
     private System.Action<PlayerCore> onPlayerRegistered;
 
-    protected override void Init()
-    {
-        // 初始时尝试查找Player（可选）
-        //Player = FindObjectOfType<PlayerCore>();
-    }
-
+    /// <summary>
+    /// 将Player注册到PlayerManager
+    /// </summary>
+    /// <param name="player"></param>
     public void RegisterPlayer(PlayerCore player)
     {
         if (Player != null && Player != player)
@@ -43,6 +41,10 @@ public class PlayerManager : SingletonMono<PlayerManager>
         }
     }
 
+    /// <summary>
+    /// 清空PlayerManager对Player注册
+    /// </summary>
+    /// <param name="target"></param>
     public void ClearPlayer(PlayerCore target)
     {
         if (Player == target)
@@ -50,5 +52,4 @@ public class PlayerManager : SingletonMono<PlayerManager>
             Player = null;
         }
     }
-
 }

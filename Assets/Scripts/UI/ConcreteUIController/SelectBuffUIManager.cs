@@ -9,15 +9,14 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 public class SelectBuffUIManager : MonoBehaviour, IUIController
 {
     [Header("Buff配置")]
-    [SerializeField][Header("默认n个选项")] private int defaultBuffChoices = 3;
-    [SerializeField][Header("默认选择次数")] private int defaultBuffCanChoose = 1;
-    private int remainingChoices;//剩余选择次数
-    private int extraBuffChoices = 0; // 存储额外Buff选择次数
+    [Tooltip("默认n个选项")][SerializeField] private int defaultBuffChoices = 3;
+    [Tooltip("默认选择次数")][SerializeField] private int defaultBuffCanChoose = 1;
+    [Tooltip("剩余选择次数")][SerializeField] private int remainingChoices;
+    [Tooltip("存储额外Buff选择次数")][SerializeField] private int extraBuffChoices = 0;
 
-    [SerializeField][Header("默认刷新次数")] private int defaultRefreshCount = 1;
-    private int remainingRefreshCount;
-    // 积累的额外刷新次数（跨波次保留）
-    [SerializeField]private int accumulatedExtraRefresh = 0;
+    [Tooltip("默认刷新次数")][SerializeField] private int defaultRefreshCount = 1;
+    [Tooltip("剩余刷新次数")][SerializeField] private int remainingRefreshCount;
+    [Tooltip("积累的额外刷新次数")][SerializeField] private int accumulatedExtraRefresh = 0;
 
     [Header("稀有度权重 (总和自动调整为1)")]
     [Range(0f, 1f)][SerializeField] private float commonWeight = 0.7f;
@@ -228,6 +227,7 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         }
     }
 
+    #region 外部调用接口
     /// <summary>
     /// 增加刷新次数
     /// </summary>
@@ -256,4 +256,5 @@ public class SelectBuffUIManager : MonoBehaviour, IUIController
         extraBuffChoices += count;
         Debug.Log($"已增加{count}次额外Buff选择机会，将在下次选择时生效");
     }
+    #endregion
 }

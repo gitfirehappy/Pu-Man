@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    [Header("属性")]
-    [SerializeField][Header("当前血量")] private float currentHealth;
+    [Header("当前属性")]
+    [Tooltip("当前血量")][SerializeField] private float currentHealth;
+    [Tooltip("当前能否触发名刀")][SerializeField] private bool currentHasCheatDeath;
 
-    [SerializeField][Header("当前能否触发名刀")] private bool currentHasCheatDeath;
-
-    [SerializeField][Header("血量上限")] private float maxHealth;
-    [SerializeField][Header("护甲值")] private float armor;
-    [SerializeField][Header("生命恢复")] private float healthRegen;
-    [SerializeField][Header("闪避率")] private float dodgeChance;
-    [SerializeField][Header("碰撞伤害")] private float collisionDamage;
-    [SerializeField][Header("碰撞受击无敌时间")] private float collisionImmunityDuration;
-    [SerializeField][Header("是否有名刀")] private bool hasCheatDeath;
-    [SerializeField][Header("名刀无敌时间")] private float cheatDeathInvincibleTime;
+    [Header("基础属性")]
+    [Tooltip("血量上限")][SerializeField] private float maxHealth;
+    [Tooltip("护甲值")][SerializeField] private float armor;
+    [Tooltip("生命恢复")][SerializeField] private float healthRegen;
+    [Tooltip("闪避率")][SerializeField] private float dodgeChance;
+    [Tooltip("碰撞伤害")][SerializeField] private float collisionDamage;
+    [Tooltip("碰撞受击无敌时间")][SerializeField] private float collisionImmunityDuration;
+    [Tooltip("是否有名刀")][SerializeField] private bool hasCheatDeath;
+    [Tooltip("名刀无敌时间")][SerializeField] private float cheatDeathInvincibleTime;
 
     [Header("无敌效果")]
     public bool isInvincible; // 当前是否无敌
@@ -24,11 +24,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     //碰撞
     private float lastCollisionDamageTime;
-
     private bool isCollisionImmune => Time.time - lastCollisionDamageTime < collisionImmunityDuration;
 
-    private SpriteRenderer spriteRenderer;//图片
-    // 添加死亡事件
+    private SpriteRenderer spriteRenderer;//图片引用
+
+    // 死亡事件
     public event Action OnDeath;
 
     private void Awake()
@@ -39,6 +39,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Update()
     {
         RegenerateHealth();
+    }
+
+    #region PlayerCore相关
+    public void EnableHealth()
+    {
+    }
+
+    public void DisableHealth()
+    {
     }
 
     /// <summary>
@@ -59,14 +68,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         ResetToBaseStats();
     }
 
-    public void DisableHealth()
-    {
-    }
-
-    public void EnableHealth()
-    {
-    }
-
     /// <summary>
     /// 刷新状态
     /// </summary>
@@ -76,7 +77,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         currentHasCheatDeath = hasCheatDeath;
         RemoveInvincible();
     }
+    #endregion
 
+    #region 基本受伤与死亡逻辑
     /// <summary>
     /// 生命恢复
     /// </summary>
@@ -162,6 +165,18 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     }
 
     /// <summary>
+    /// 玩家死亡
+    /// </summary>
+    private void Die(DamageSource source)
+    {
+        Debug.Log("玩家死亡!");
+        OnDeath?.Invoke(); // 通知Core死亡事件
+    }
+
+    #endregion
+
+    #region 额外效果
+    /// <summary>
     /// 应用名刀
     /// </summary>
     public void ApplyCheatDeath()
@@ -203,15 +218,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         invincibleDuration = 0;
         StopCoroutine("InvincibleTimerRoutine");
     }
-
-    /// <summary>
-    /// 玩家死亡
-    /// </summary>
-    private void Die(DamageSource source)
-    {
-        Debug.Log("玩家死亡!");
-        OnDeath?.Invoke(); // 通知Core死亡事件
-    }
+    #endregion
 
     #region 公共属性
 

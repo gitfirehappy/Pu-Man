@@ -2,63 +2,24 @@
 
 public class EnemyClash : MonoBehaviour
 {
-    [Header("References")]
+    [Header("引用")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private EnemyMovement movement;
 
-    private float seekRadius;
-    private float clashSpeed;
-    private float clashCooldown;
-    private float clashEndDistance = 0.2f; // 冲撞结束距离阈值
+    [Tooltip("检测范围")][SerializeField] private float seekRadius;
+    [Tooltip("冲刺速度")][SerializeField] private float clashSpeed;
+    [Tooltip("冲刺冷却")][SerializeField] private float clashCooldown;
+    [Tooltip("冲撞结束距离阈值")][SerializeField] private float clashEndDistance = 0.2f;
 
     private float lastClashTime;
     private bool isClashing;
+
     private bool originalFlipX;
     private Vector2 clashTarget;
     private Transform playerTransform;
 
-    public bool IsClashing => isClashing; // 暴露冲撞状态
-
-    /// <summary>
-    /// 冲撞系统初始化
-    /// </summary>
-    public void Initialize(EnemySO data)
-    {
-        if (data.clashConfig == null)
-        {
-            Debug.LogError("Missing clash config for enemy!");
-            return;
-        }
-
-        seekRadius = data.clashConfig.seekRadius;
-        clashSpeed = data.clashConfig.clashSpeed;
-        clashCooldown = data.clashConfig.clashCooldown;
-
-        playerTransform = PlayerManager.Instance.Player.transform;
-        movement = GetComponent<EnemyMovement>();
-        rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-
-    /// <summary>
-    /// 重置冲撞系统状态
-    /// </summary>
-    public void ResetToBaseStats()
-    {
-        isClashing = false;
-        lastClashTime = 0f;
-
-        if (rb != null)
-        {
-            rb.velocity = Vector2.zero;
-        }
-
-        if (movement != null)
-        {
-            movement.enabled = true;
-        }
-    }
+    public bool IsClashing => isClashing; // 冲撞状态
 
     private void Update()
     {
@@ -103,6 +64,48 @@ public class EnemyClash : MonoBehaviour
         Vector2 moveDirection = (clashTarget - (Vector2)transform.position).normalized;
         rb.velocity = moveDirection * clashSpeed;
     }
+
+    #region EnemyCore相关
+    /// <summary>
+    /// 冲撞系统初始化
+    /// </summary>
+    public void Initialize(EnemySO data)
+    {
+        if (data.clashConfig == null)
+        {
+            Debug.LogError("Missing clash config for enemy!");
+            return;
+        }
+
+        seekRadius = data.clashConfig.seekRadius;
+        clashSpeed = data.clashConfig.clashSpeed;
+        clashCooldown = data.clashConfig.clashCooldown;
+
+        playerTransform = PlayerManager.Instance.Player.transform;
+        movement = GetComponent<EnemyMovement>();
+        rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    /// <summary>
+    /// 重置冲撞系统状态
+    /// </summary>
+    public void ResetToBaseStats()
+    {
+        isClashing = false;
+        lastClashTime = 0f;
+
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+        }
+
+        if (movement != null)
+        {
+            movement.enabled = true;
+        }
+    }
+    #endregion
 
     /// <summary>
     /// 开始冲撞

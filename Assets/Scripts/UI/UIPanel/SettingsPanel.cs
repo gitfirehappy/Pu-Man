@@ -6,23 +6,22 @@ using UnityEngine.UI;
 
 public class SettingsPanel : UIFormBase
 {
-
     [Header("音量控制")]
-    [SerializeField][Header("主音量滑块")] private Slider masterSlider;
-    [SerializeField][Header("音乐音量滑块")] private Slider musicSlider;
-    [SerializeField][Header("音效音量滑块")] private Slider sfxSlider;
+    [Header("主音量滑块")] public Slider masterSlider;
+    [Header("音乐音量滑块")] public Slider musicSlider;
+    [Header("音效音量滑块")] public Slider sfxSlider;
 
-    [SerializeField][Header("主音量数值")] private TextMeshProUGUI masterValueText;
-    [SerializeField][Header("音乐音量数值")] private TextMeshProUGUI musicValueText;
-    [SerializeField][Header("音效音量数值")] private TextMeshProUGUI sfxValueText;
+    [Header("主音量数值")] public TextMeshProUGUI masterValueText;
+    [Header("音乐音量数值")] public TextMeshProUGUI musicValueText;
+    [Header("音效音量数值")] public TextMeshProUGUI sfxValueText;
 
-    [SerializeField][Header("关闭界面按钮")] private Button closeButton;
-    [SerializeField][Header("重置记录按钮按钮")] private Button resetDataButton;
-    [SerializeField][Header("打开难度控制面板")] private Button difficultyButton;
+    [Header("关闭界面按钮")] public Button closeButton;
+    [Header("重置记录按钮按钮")] public Button resetDataButton;
+    [Header("打开难度控制面板")] public Button difficultyButton;
 
-    [SerializeField][Header("无尽模式按钮")] private Button endlessModeButton;
-    [SerializeField][Header("无尽模式状态文本")] private TextMeshProUGUI endlessModeStatusText;
-    [SerializeField][Header("无尽模式提示文本")] private TextMeshProUGUI endlessModeHintText;
+    [Header("无尽模式按钮")] public Button endlessModeButton;
+    [Header("无尽模式状态文本")] public TextMeshProUGUI endlessModeStatusText;
+    [Header("无尽模式提示文本")] public TextMeshProUGUI endlessModeHintText;
 
     protected override void Init()
     {

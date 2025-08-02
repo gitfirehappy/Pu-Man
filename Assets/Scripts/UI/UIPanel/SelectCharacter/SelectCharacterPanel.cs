@@ -9,17 +9,17 @@ using UnityEngine.UI;
 public class SelectCharacterPanel : UIFormBase
 {
     [Header("角色卡片模板")]
-    [SerializeField] private GameObject cardPrefab;
+    public GameObject cardPrefab;
 
     [Header("卡片生成位置容器")]
-    [SerializeField] private Transform[] cardPositions; // 在Inspector中拖入空物体
+    public Transform[] cardPositions; // 在Inspector中拖入空物体
 
     [Header("选中时展示的信息")]
-    [SerializeField] private CharacterInfoPanel characterInfoPanel;
+    public CharacterInfoPanel characterInfoPanel;
 
     [Header("按钮")]
-    [SerializeField] private Button startGameButton;
-    [SerializeField] private Button backButton;
+    public Button startGameButton;
+    public Button backButton;
 
     private PlayerSO selectedCharacter;
     private CharacterSelectUIManager characterSelectUIManager;

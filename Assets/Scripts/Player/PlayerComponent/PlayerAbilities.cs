@@ -9,13 +9,12 @@ public class PlayerAbilities : MonoBehaviour
     [SerializeField] private AbilityData baseAbilityData;
 
     [Header("当前技能状态")]
-    [SerializeField]private AbilityData currentAbilityData;
+    [SerializeField] private AbilityData currentAbilityData;
 
     public int nextAvailableWave; // 下次可用技能的波次
     public bool isAbilityActive;
 
-    [SerializeField] private AudioClip abilityActivationSFX;
-
+    private AudioClip abilityActivationSFX;
     private Coroutine activeAbilityCoroutine;
     private PlayerCore playerCore;
     private WaveCounter waveCounter;
@@ -28,7 +27,11 @@ public class PlayerAbilities : MonoBehaviour
     {
         playerCore = GetComponent<PlayerCore>();
         waveCounter = WaveCounter.Instance;
-       
+    }
+
+    #region PlayerCore相关
+    public void EnableAbilities()
+    {
     }
 
     public void DisableAbilities()
@@ -38,10 +41,6 @@ public class PlayerAbilities : MonoBehaviour
         {
             DeactivateAbility();
         }
-    }
-
-    public void EnableAbilities()
-    {
     }
 
     /// <summary>
@@ -105,6 +104,8 @@ public class PlayerAbilities : MonoBehaviour
         }
     }
 
+    #endregion
+
     /// <summary>
     /// 使用主动技能
     /// </summary>
@@ -151,6 +152,7 @@ public class PlayerAbilities : MonoBehaviour
         battleUIPanel?.UpdateSkillCooldownUI();
     }
 
+    #region 技能效果
     /// <summary>
     /// 无敌技能
     /// </summary>
@@ -209,26 +211,6 @@ public class PlayerAbilities : MonoBehaviour
     }
 
     /// <summary>
-    /// 重置冷却
-    /// </summary>
-    public void ResetAbilityCooldown()
-    {
-        if (waveCounter != null)
-        {
-            nextAvailableWave = waveCounter.CurrentWave;
-        }
-    }
-
-    /// <summary>
-    /// 减少技能冷却
-    /// </summary>
-    /// <param name="reduceWave"></param>
-    public void ReduceAbilityCooldown(int reduceWave)
-    {
-        nextAvailableWave -= reduceWave;
-    }
-
-    /// <summary>
     /// 亵渎技能
     /// </summary>
     public void ChainKill()
@@ -251,6 +233,29 @@ public class PlayerAbilities : MonoBehaviour
         isAbilityActive = false;
     }
 
+    #endregion
+
+    #region buff相关
+    /// <summary>
+    /// 重置冷却
+    /// </summary>
+    public void ResetAbilityCooldown()
+    {
+        if (waveCounter != null)
+        {
+            nextAvailableWave = waveCounter.CurrentWave;
+        }
+    }
+
+    /// <summary>
+    /// 减少技能冷却
+    /// </summary>
+    /// <param name="reduceWave"></param>
+    public void ReduceAbilityCooldown(int reduceWave)
+    {
+        nextAvailableWave -= reduceWave;
+    }
+
     /// <summary>
     /// 随机替换技能（仅在3个初始技能间随机）
     /// </summary>
@@ -265,7 +270,7 @@ public class PlayerAbilities : MonoBehaviour
 
         ChangeAbility(new AbilityData(newType));
     }
-    
+
     /// <summary>
     /// 更换技能
     /// </summary>
@@ -282,6 +287,8 @@ public class PlayerAbilities : MonoBehaviour
         // 更换技能后更新技能冷却UI
         battleUIPanel?.UpdateSkillCooldownUI();
     }
+
+    #endregion
 
     /// <summary>
     /// 中断技能
@@ -302,12 +309,19 @@ public class PlayerAbilities : MonoBehaviour
         }
         isAbilityActive = false;
     }
-
+   
+    /// <summary>
+    /// 获取技能冷却（外部调用）
+    /// </summary>
+    /// <returns></returns>
     public int GetCooldownWaves()
     {
         return currentAbilityData.cooldownWaves;
     }
 
+    /// <summary>
+    /// 获取战斗UI面板（内部调用）
+    /// </summary>
     private void GetBattleUIPanel()
     {
         battleUIPanel = UIManager.Instance.GetForm<BattleUIPanel>();
@@ -316,6 +330,7 @@ public class PlayerAbilities : MonoBehaviour
             Debug.LogError("BattleUIPanel 未找到，请检查是否已注册到 UIManager！");
         }
     }
+
 }
 
 /// <summary>
@@ -358,15 +373,18 @@ public struct AbilityData
                 cooldownWaves = 5;
                 duration = 10f;
                 break;
+
             case AbilityType.Berserk:
                 cooldownWaves = 3;
                 duration = 5f;
                 effectValue = 1.5f; // 攻速倍率
                 break;
+
             case AbilityType.Skilled:
                 isPassive = true;
                 extraRefreshPerWave = 1; // 默认每波+1次刷新
                 break;
+
             case AbilityType.ChainKill:
                 cooldownWaves = 2; // 默认冷却
                 effectValue = 1f;

@@ -10,8 +10,9 @@ using System.Linq;
 public class DataManager : SingletonMono<DataManager>
 {
     private const string SAVE_FILE_NAME = "PlayerWaveRecords.json"; // 存储在游戏同级目录
+    //JSON记录
     private Dictionary<PlayerType, int> records = new Dictionary<PlayerType, int>();
-
+    //SO
     private Dictionary<PlayerType, PlayerAnimationSO> _playerAnimationSODict = new Dictionary<PlayerType, PlayerAnimationSO>();
     private Dictionary<EnemyType, EnemyAnimationSO> _enemyAnimationSODict = new Dictionary<EnemyType, EnemyAnimationSO>();
     private Dictionary<PlayerType, PlayerSO> _playerSODict = new Dictionary<PlayerType, PlayerSO>();
@@ -204,7 +205,8 @@ public class DataManager : SingletonMono<DataManager>
             Debug.LogError($"保存存档失败: {e.Message}");
         }
     }
-
+   
+    #region 外部调用接口
     /// <summary>
     /// 更新记录
     /// </summary>
@@ -231,6 +233,8 @@ public class DataManager : SingletonMono<DataManager>
         SaveData(); // 保存空记录
         Debug.Log("已重置所有角色记录");
     }
+
+    #endregion
 
     #region 获取SO公共方法
     public PlayerSO GetPlayerSO(PlayerType playerType)

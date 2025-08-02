@@ -9,20 +9,20 @@ using UnityEngine.UI;
 
 public class BuffPanel : UIFormBase, IPointerClickHandler
 {
-    [SerializeField][Header("Buff图片")] private Image buffPicture;
-    [SerializeField][Header("Buff名称")] private TextMeshProUGUI buffName;
-    [SerializeField][Header("Buff描述")] private TextMeshProUGUI buffDiscription;
-    [SerializeField][Header("Buff稀有度")] private TextMeshProUGUI buffRarityText;
+    [Header("Buff图片")] public Image buffPicture;
+    [Header("Buff名称")] public TextMeshProUGUI buffName;
+    [Header("Buff描述")] public TextMeshProUGUI buffDiscription;
+    [Header("Buff稀有度")] public TextMeshProUGUI buffRarityText;
 
     [Header("高亮效果")]
-    [SerializeField] private Image glowBorder; // 动态颜色边框
-    [SerializeField] private ParticleSystem rarityParticles; // 稀有度粒子效果
+    public Image glowBorder; // 动态颜色边框
+    public ParticleSystem rarityParticles; // 稀有度粒子效果
 
     [Header("稀有度颜色")]
-    [SerializeField] private Color commonColor;
-    [SerializeField] private Color rareColor;
-    [SerializeField] private Color epicColor;
-    [SerializeField] private Color legendaryColor;
+    public Color commonColor;
+    public Color rareColor;
+    public Color epicColor;
+    public Color legendaryColor;
 
     private CanvasGroup canvasGroup;
     private bool isSelected;

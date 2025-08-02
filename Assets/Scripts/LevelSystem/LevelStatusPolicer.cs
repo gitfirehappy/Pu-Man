@@ -61,5 +61,4 @@ public class LevelStatusPolicer : SingletonMono<LevelStatusPolicer>
         };
     }
 
-
 }

@@ -18,18 +18,18 @@ MonoBehaviour:
   playerPrefab: {fileID: 2408863001739500776, guid: 9c3ce89091de26844b27a979a1858218, type: 3}
   description: "\u6BCF\u6CE2\u989D\u5916\u5237\u65B0"
   healthConfig:
-    maxHealth: 12
+    maxHealth: 14
     armor: 0
     healthRegen: 0
-    dodgeChance: 0.2
+    dodgeChance: 0.3
     collisionDamage: 2
     collisionImmunityDuration: 0.75
     cheatDeathInvincibleTime: 0
     hasCheatDeath: 0
   shootingConfig:
-    damage: 1
+    damage: 2
     fireRate: 1
-    knockback: 0
+    knockback: 1
     projectileCount: 1
     projectileSize: 0.25
     isAoeDamage: 0

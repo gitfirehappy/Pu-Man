@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class CreditsPanel : UIFormBase
 {
-    [SerializeField][Header("关闭按钮")] private Button closeButton;
+    [Header("关闭按钮")] public Button closeButton;
 
     protected override void Init()
     {

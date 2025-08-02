@@ -5,6 +5,7 @@ using System.Collections.Generic;
 [DisallowMultipleComponent]
 public class PlayerCore : MonoBehaviour
 {
+    [Header("玩家配置数据SO")]
     [SerializeField] private PlayerSO playerData;
 
     // 组件引用缓存
@@ -14,16 +15,32 @@ public class PlayerCore : MonoBehaviour
     private PlayerAbilities abilities;
     private PlayerAnimatorController animatorController;
     public PlayerInput playerInput; // 统一管理输入
-
     private Collider2D playerCollider;
 
+    #region 生命周期
     private void Awake()
     {
         // 初始化输入系统
         playerInput = new PlayerInput();
-
     }
 
+    private void OnDestroy()
+    {
+        // 注销事件
+        if (health != null) health.OnDeath -= HandlePlayerDeath;
+
+        // 销毁前停止所有技能
+        abilities?.DisableAbilities();
+
+
+        // 清理输入系统
+        playerInput.Dispose();
+
+        PlayerManager.Instance?.ClearPlayer(this);
+    }
+    #endregion
+
+    #region 初始化
     /// <summary>
     /// Player组件初始化
     /// </summary>
@@ -48,11 +65,16 @@ public class PlayerCore : MonoBehaviour
         shooting.Initialize(playerData);
         movement.Initialize(playerData);
         abilities.Initialize(playerData);
-        animatorController.Init();
+        animatorController.Initialize();
 
         RegisterEventHandlers();
     }
 
+    /// <summary>
+    /// 获取或添加组件（确保组件存在）
+    /// </summary>
+    /// <typeparam name="T">组件类型</typeparam>
+    /// <returns>获取到的组件</returns>
     private T GetOrAddComponent<T>() where T : Component
     {
         var component = GetComponent<T>();
@@ -62,9 +84,11 @@ public class PlayerCore : MonoBehaviour
         }
         return component;
     }
+    #endregion
 
+    #region 事件处理
     /// <summary>
-    /// 注册Player事件
+    /// 注册Player内部事件和外部事件
     /// </summary>
     private void RegisterEventHandlers()
     {
@@ -73,21 +97,6 @@ public class PlayerCore : MonoBehaviour
 
         EventQueueManager.AddStateEvent(GameState.Battle, EnableAllComponents, 0);
         EventQueueManager.AddStateEvent(GameState.SelectBuff, DisableAllComponents, 2);
-    }
-
-    private void OnDestroy()
-    {
-        // 注销事件
-        if (health != null) health.OnDeath -= HandlePlayerDeath;
-
-        // 销毁前停止所有技能
-        abilities?.DisableAbilities();
-
-
-        // 清理输入系统
-        playerInput.Dispose();
-
-        PlayerManager.Instance?.ClearPlayer(this);
     }
 
     /// <summary>
@@ -101,25 +110,9 @@ public class PlayerCore : MonoBehaviour
         // 销毁自身
         Destroy(gameObject);
     }
+    #endregion
 
-    /// <summary>
-    /// 禁用Player组件，总线广播，切换状态时调用
-    /// </summary>
-    private void DisableAllComponents()
-    {
-        // 禁用输入（核心统一管理）
-        playerInput.Disable();
-
-        if (playerCollider != null)
-            playerCollider.enabled = false;
-
-        // 调用各组件内部的禁用逻辑
-        health?.DisableHealth();
-        shooting?.DisableShooting();
-        movement?.DisableMovement();
-        abilities?.DisableAbilities();
-    }
-
+    #region 启用禁用组件
     /// <summary>
     /// 启用Player组件，总线广播，切换状态时调用
     /// </summary>
@@ -139,6 +132,26 @@ public class PlayerCore : MonoBehaviour
     }
 
     /// <summary>
+    /// 禁用Player组件，总线广播，切换状态时调用
+    /// </summary>
+    private void DisableAllComponents()
+    {
+        // 禁用输入（核心统一管理）
+        playerInput.Disable();
+
+        if (playerCollider != null)
+            playerCollider.enabled = false;
+
+        // 调用各组件内部的禁用逻辑
+        health?.DisableHealth();
+        shooting?.DisableShooting();
+        movement?.DisableMovement();
+        abilities?.DisableAbilities();
+    }
+    #endregion
+
+    #region 外部接口
+    /// <summary>
     /// 恢复状态,每波开始前调用
     /// </summary>
     public void ResetState()
@@ -151,26 +164,30 @@ public class PlayerCore : MonoBehaviour
         animatorController?.ResetToBaseStats();
     }
 
+    /// <summary>
+    /// 设置玩家配置数据并初始化
+    /// </summary>
+    /// <param name="data">玩家配置SO</param>
     public void SetPlayerData(PlayerSO data)
     {
         playerData = data;
         InitializeComponents();
     }
 
-    public PlayerType GetPlayerType() => playerData.playerType;
-
-    #region 提供给外部访问的接口
+    #region 组件访问器
     public PlayerHealth Health => health;
     public PlayerShooting Shooting => shooting;
     public PlayerMovement Movement => movement;
     public PlayerAbilities Abilities => abilities;
+    #endregion
 
     public Dictionary<BuffID, BuffSO> GetAcquiredBuffs()
     {
         return BuffManager.Instance.GetAcquiredBuffs();
     }
 
-    public PlayerSO PlayerData => playerData;
+    public PlayerType GetPlayerType() => playerData.playerType;
 
+    public PlayerSO PlayerData => playerData;
     #endregion
 }

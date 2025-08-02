@@ -29,22 +29,6 @@ public class PlayerAnimatorController : MonoBehaviour
         }
     }
 
-    public void Init()
-    {
-        // 直接从DataManager获取SO
-        var playerType = playerCore.GetPlayerType();
-        animationSO = DataManager.Instance.GetPlayerAnimationSO(playerType);
-
-        if (animationSO != null)
-        {
-            ApplyAnimationSet(currentSet);
-        }
-        else
-        {
-            Debug.LogError($"未找到玩家类型的动画数据: {playerType}");
-        }
-    }
-
     private void Update()
     {
         if (PauseManager.Instance.IsPaused) return;
@@ -53,6 +37,7 @@ public class PlayerAnimatorController : MonoBehaviour
         CheckPlayerState();
     }
 
+    #region 动画状态切换
     private void CheckPlayerState()
     {
         // 检测技能状态
@@ -85,6 +70,43 @@ public class PlayerAnimatorController : MonoBehaviour
         }
     }
 
+    private void SetShootingState(bool isShooting)
+    {
+        if (animator != null)
+        {
+            animator.SetBool(AnimationConstants.Player.Shooting, isShooting);
+        }
+    }
+    #endregion
+
+    #region PlayerCore相关
+    public void Initialize()
+    {
+        // 直接从DataManager获取SO
+        var playerType = playerCore.GetPlayerType();
+        animationSO = DataManager.Instance.GetPlayerAnimationSO(playerType);
+
+        if (animationSO != null)
+        {
+            ApplyAnimationSet(currentSet);
+        }
+        else
+        {
+            Debug.LogError($"未找到玩家类型的动画数据: {playerType}");
+        }
+    }
+
+    public void ResetToBaseStats()
+    {
+        // 重置到默认动画集
+        currentSet = AnimationSetType.Normal;
+        ApplyAnimationSet(currentSet);
+
+        // 重置所有动画参数
+        ResetAnimatorParameters();
+    }
+    #endregion
+
     private void ApplyAnimationSet(AnimationSetType setType)
     {
         var set = animationSO.GetSet(setType);
@@ -102,24 +124,6 @@ public class PlayerAnimatorController : MonoBehaviour
 
         overrideController[AnimationConstants.Base.PlayerIdle] = set.idle;
         overrideController[AnimationConstants.Base.PlayerShoot] = set.shoot;
-    }
-
-    private void SetShootingState(bool isShooting)
-    {
-        if (animator != null)
-        {
-            animator.SetBool(AnimationConstants.Player.Shooting, isShooting);
-        }
-    }
-
-    public void ResetToBaseStats()
-    {
-        // 重置到默认动画集
-        currentSet = AnimationSetType.Normal;
-        ApplyAnimationSet(currentSet);
-
-        // 重置所有动画参数
-        ResetAnimatorParameters();
     }
 
     private void ResetAnimatorParameters()

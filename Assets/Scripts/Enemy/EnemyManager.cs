@@ -16,7 +16,7 @@ public class EnemyManager : SingletonMono<EnemyManager>
 
     [Header("生成频率")]
     [SerializeField] private float spawnRateReductionFactor = 1f;
-    [SerializeField]private float _currentSpawnInterval;
+    [SerializeField] private float _currentSpawnInterval;
 
     [Header("鸟群算法配置")]
     [Tooltip("鸟群邻居检测半径，用于判断哪些敌人属于同一群体")]
@@ -56,7 +56,9 @@ public class EnemyManager : SingletonMono<EnemyManager>
         }
     }
 
-    // 同步敌人位置和速度列表
+    /// <summary>
+    /// 同步敌人位置和速度列表
+    /// </summary>
     private void UpdateEnemyPositionAndVelocityLists()
     {
         enemyPositions.Clear();
@@ -88,6 +90,7 @@ public class EnemyManager : SingletonMono<EnemyManager>
         EnemyEvent.OnDeath += OnEnemyDeath;
     }
 
+    #region 增长配置
     /// <summary>
     /// 初始化敌人基础属性表
     /// </summary>
@@ -111,20 +114,6 @@ public class EnemyManager : SingletonMono<EnemyManager>
         }
     }
 
-    private void OnEnemySpawned(EnemyCore enemy)
-    {
-        if (!activeEnemies.Contains(enemy))
-        {
-            activeEnemies.Add(enemy);
-        }
-    }
-
-    private void OnEnemyDeath(EnemyCore enemy, DamageSource source)
-    {
-        activeEnemies.Remove(enemy);
-        Debug.Log($"敌人死亡，当前剩余数量: {activeEnemies.Count}");
-    }
-
     /// <summary>
     /// 差异化增长配置
     /// </summary>
@@ -139,6 +128,42 @@ public class EnemyManager : SingletonMono<EnemyManager>
             }
         }
     }
+
+    /// <summary>
+    /// 特殊处理Boss弹道增长
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="wave"></param>
+    /// <returns></returns>
+    private int caculateBossProjectileCountBonus(EnemyType type, int wave)
+    {
+        int projectileBonus = 0;
+        if (type == EnemyType.Boss)
+        {
+            projectileBonus = Mathf.Min(
+                wave / WaveCounter.Instance.BossInterval * scalingConfig.bossProjectilesPerSpawn,
+                scalingConfig.maxBossProjectiles
+            );
+        }
+        return projectileBonus;
+    }
+    #endregion
+
+    #region EnemyEvent事件
+    private void OnEnemySpawned(EnemyCore enemy)
+    {
+        if (!activeEnemies.Contains(enemy))
+        {
+            activeEnemies.Add(enemy);
+        }
+    }
+
+    private void OnEnemyDeath(EnemyCore enemy, DamageSource source)
+    {
+        activeEnemies.Remove(enemy);
+        Debug.Log($"敌人死亡，当前剩余数量: {activeEnemies.Count}");
+    }
+    #endregion
 
     /// <summary>
     /// 应用敌人属性成长
@@ -213,25 +238,6 @@ public class EnemyManager : SingletonMono<EnemyManager>
     private EnemyBaseStats GetBaseStatsForType(EnemyType type)
     {
         return _baseStatsTable.TryGetValue(type, out var stats) ? stats : new EnemyBaseStats();
-    }
-
-    /// <summary>
-    /// 特殊处理Boss弹道增长
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="wave"></param>
-    /// <returns></returns>
-    private int caculateBossProjectileCountBonus(EnemyType type, int wave)
-    {
-        int projectileBonus = 0;
-        if (type == EnemyType.Boss)
-        {
-            projectileBonus = Mathf.Min(
-                wave / WaveCounter.Instance.BossInterval * scalingConfig.bossProjectilesPerSpawn,
-                scalingConfig.maxBossProjectiles
-            );
-        }
-        return projectileBonus;
     }
 
     #region 外部调用方法

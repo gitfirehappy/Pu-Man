@@ -22,12 +22,12 @@ MonoBehaviour:
     armor: 1
     healthRegen: 0
     dodgeChance: 0
-    collisionDamage: 3
+    collisionDamage: 4
     collisionImmunityDuration: 0.75
     cheatDeathInvincibleTime: 0
     hasCheatDeath: 0
   shootingConfig:
-    damage: 1
+    damage: 3
     fireRate: 1
     knockback: 0
     projectileCount: 1
