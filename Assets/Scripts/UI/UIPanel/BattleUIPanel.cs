@@ -53,6 +53,8 @@ public class BattleUIPanel : UIFormBase
             OnWaveChanged(WaveCounter.Instance.CurrentWave);
         }, 12);
 
+        EventQueueManager.AddStateEvent(GameState.GameOver, ForceHideBossUI, 1);
+
         EnemyEvent.OnBossStateChanged += HandleBossStateChange;
     }
 
@@ -64,7 +66,9 @@ public class BattleUIPanel : UIFormBase
 
         if (_bossUICoroutine != null)
             StopCoroutine(_bossUICoroutine);
+        _currentBoss = null;
     }
+
 
     private void Update()
     {
@@ -236,7 +240,8 @@ public class BattleUIPanel : UIFormBase
     /// </summary>
     private void UpdateBossHealthUI()
     {
-        if (_currentBoss == null || _currentBoss.IsDead) return;
+        if (_currentBoss == null || _currentBoss.IsDead || bossHealthFill == null || bossHealthText == null)
+            return;
 
         bossHealthFill.fillAmount = _currentBoss.CurrentHealth / _currentBoss.MaxHealth;
         bossHealthText.text = $"{_currentBoss.CurrentHealth:F0}/{_currentBoss.MaxHealth:F0}";
@@ -250,13 +255,42 @@ public class BattleUIPanel : UIFormBase
         if (_bossUICoroutine != null)
             StopCoroutine(_bossUICoroutine);
 
-        _bossUICoroutine = StartCoroutine(HideBossUIDelayed(0.5f));
+        if (gameObject.activeInHierarchy && enabled)
+        {
+            // 仅在对象激活时启动协程
+            _bossUICoroutine = StartCoroutine(HideBossUIDelayed(0.5f));
+        }
+        else
+        {
+            // 非激活状态下直接清理，不启动协程
+            bossUIGroup?.SetActive(false);
+            _currentBoss = null;
+        }
     }
 
     private IEnumerator HideBossUIDelayed(float delay)
     {
         yield return new WaitForSeconds(delay);
-        bossUIGroup.SetActive(false);
+        if (bossUIGroup != null)
+            bossUIGroup.SetActive(false);
+        _currentBoss = null;
+    }
+
+    /// <summary>
+    /// 强制关闭Boss UI（用于GameOver等特殊状态切换）
+    /// </summary>
+    private void ForceHideBossUI()
+    {
+        // 停止可能正在运行的协程
+        if (_bossUICoroutine != null)
+        {
+            StopCoroutine(_bossUICoroutine);
+            _bossUICoroutine = null;
+        }
+
+        // 直接隐藏UI并清空引用
+        if (bossUIGroup != null)
+            bossUIGroup.SetActive(false);
         _currentBoss = null;
     }
 

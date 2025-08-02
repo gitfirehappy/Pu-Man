@@ -16,7 +16,9 @@ public static class UIAnimation
         var cg = uIForm.gameObject.GetComponent<CanvasGroup>();
         if (cg != null)
         {
-            cg.DOFade(1, duration).OnComplete(() => onComplete?.Invoke());
+            cg.DOFade(1, duration)
+                .SetUpdate(true)  // 不受Time.timeScale影响
+                .OnComplete(() => onComplete?.Invoke());
         }
         else
         {
@@ -32,7 +34,7 @@ public static class UIAnimation
         var cg = uIForm.gameObject.GetComponent<CanvasGroup>();
         if (cg != null)
         {
-            cg.DOFade(0, duration).OnComplete(() =>
+            cg.DOFade(0, duration).SetUpdate(true).OnComplete(() =>
             {
                 uIForm.gameObject.SetActive(false);
                 onComplete?.Invoke();
@@ -56,7 +58,7 @@ public static class UIAnimation
     {
         FormActiveByType(uIForm);
         uIForm.transform.localScale = Vector3.zero;
-        uIForm.transform.DOScale(1, duration).OnComplete(() => onComplete?.Invoke());
+        uIForm.transform.DOScale(1, duration).SetUpdate(true).OnComplete(() => onComplete?.Invoke());
     }
 
     /// <summary>
@@ -64,7 +66,7 @@ public static class UIAnimation
     /// </summary>
     public static void ZoomOut(UIFormBase uIForm, Action onComplete = null, float duration = 0.5f)
     {
-        uIForm.transform.DOScale(0, duration).OnComplete(() =>
+        uIForm.transform.DOScale(0, duration).SetUpdate(true).OnComplete(() =>
         {
             uIForm.gameObject.SetActive(false);
             onComplete?.Invoke();
@@ -79,12 +81,12 @@ public static class UIAnimation
     {
         FormActiveByType(uIForm);
         uIForm.transform.localScale = Vector3.zero;
-        uIForm.transform.DOScale(1f, duration).SetEase(Ease.OutBack).OnComplete(() => onComplete?.Invoke());
+        uIForm.transform.DOScale(1f, duration).SetEase(Ease.OutBack).SetUpdate(true).OnComplete(() => onComplete?.Invoke());
     }
 
     public static void PopOut(UIFormBase uIForm, Action onComplete = null, float duration = 0.3f)
     {
-        uIForm.transform.DOScale(0f, duration).SetEase(Ease.InBack).OnComplete(() =>
+        uIForm.transform.DOScale(0f, duration).SetEase(Ease.InBack).SetUpdate(true).OnComplete(() =>
         {
             uIForm.gameObject.SetActive(false);
             onComplete?.Invoke();
@@ -101,7 +103,7 @@ public static class UIAnimation
         var t = uIForm.transform;
         Vector3 targetPos = ((UIFormBase)uIForm).originalLocalPos;
         t.localPosition = targetPos + fromOffset;
-        t.DOLocalMove(targetPos, duration).SetEase(Ease.OutCubic).OnComplete(() => onComplete?.Invoke());
+        t.DOLocalMove(targetPos, duration).SetEase(Ease.OutCubic).SetUpdate(true).OnComplete(() => onComplete?.Invoke());
     }
 
     public static void SlideOut(UIFormBase uIForm, Vector3 toOffset, Action onComplete = null, float duration = 0.5f)
@@ -109,7 +111,7 @@ public static class UIAnimation
         var t = uIForm.transform;
         Vector3 startPos = ((UIFormBase)uIForm).originalLocalPos; //使用缓存位置
         Vector3 targetPos = startPos + toOffset;
-        t.DOLocalMove(targetPos, duration).SetEase(Ease.InCubic).OnComplete(() =>
+        t.DOLocalMove(targetPos, duration).SetEase(Ease.InCubic).SetUpdate(true).OnComplete(() =>
         {
             uIForm.gameObject.SetActive(false);
             t.localPosition = startPos; //复位
@@ -133,7 +135,7 @@ public static class UIAnimation
         Sequence seq = DOTween.Sequence();
         seq.Join(cg.DOFade(1, duration));
         seq.Join(t.DOLocalMove(originalPos, duration).SetEase(Ease.OutQuad));
-        seq.OnComplete(() => onComplete?.Invoke());
+        seq.SetUpdate(true).OnComplete(() => onComplete?.Invoke());
     }
 
     #endregion

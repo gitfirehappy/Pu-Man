@@ -7,6 +7,12 @@ public class BuffManager : SingletonMono<BuffManager>
     [Header("已获得Buff")]
     [SerializeField]private Dictionary<BuffID, BuffSO> _acquiredBuffs = new Dictionary<BuffID, BuffSO>();
 
+    protected override void Init()
+    {
+        // 注册GameOver状态事件，在游戏结束时清空Buff列表
+        EventQueueManager.AddStateEvent(GameState.GameOver, ClearBuffs, 0);
+    }
+
     /// <summary>
     /// 应用Buff（外部调用，如 UI 选择 Buff 时）
     /// </summary>

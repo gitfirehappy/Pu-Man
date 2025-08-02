@@ -42,11 +42,13 @@ public class PauseManager : SingletonMono<PauseManager>
     private void OnGamePaused()
     {
         _isPaused = true;
+        Time.timeScale = 0;
     }
 
     private void OnGameResumed()
     {
         _isPaused = false;
+        Time.timeScale = 1;
     }
 
 }

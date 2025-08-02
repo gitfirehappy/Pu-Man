@@ -15,6 +15,7 @@ public class PlayerCore : MonoBehaviour
     private PlayerAnimatorController animatorController;
     public PlayerInput playerInput; // 统一管理输入
 
+    private Collider2D playerCollider;
 
     private void Awake()
     {
@@ -40,6 +41,7 @@ public class PlayerCore : MonoBehaviour
         movement = GetOrAddComponent<PlayerMovement>();
         abilities = GetOrAddComponent<PlayerAbilities>();
         animatorController = GetOrAddComponent<PlayerAnimatorController>();
+        playerCollider = GetComponent<CircleCollider2D>();
 
         // 初始化所有组件
         health.Initialize(playerData);
@@ -78,6 +80,10 @@ public class PlayerCore : MonoBehaviour
         // 注销事件
         if (health != null) health.OnDeath -= HandlePlayerDeath;
 
+        // 销毁前停止所有技能
+        abilities?.DisableAbilities();
+
+
         // 清理输入系统
         playerInput.Dispose();
 
@@ -104,6 +110,9 @@ public class PlayerCore : MonoBehaviour
         // 禁用输入（核心统一管理）
         playerInput.Disable();
 
+        if (playerCollider != null)
+            playerCollider.enabled = false;
+
         // 调用各组件内部的禁用逻辑
         health?.DisableHealth();
         shooting?.DisableShooting();
@@ -118,6 +127,9 @@ public class PlayerCore : MonoBehaviour
     {
         // 启用输入（核心统一管理）
         playerInput.Enable();
+
+        if (playerCollider != null)
+            playerCollider.enabled = true;
 
         // 调用各组件内部的启用逻辑
         health?.EnableHealth();
