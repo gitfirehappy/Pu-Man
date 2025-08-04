@@ -31,7 +31,7 @@ public class TestEnemyMovement : MonoBehaviour
         // 处理击退效果
         if (Time.time < knockbackEndTime)
         {
-            rb.velocity = knockbackDirection * knockbackForce;
+            rb.linearVelocity = knockbackDirection * knockbackForce;
             return;
         }
 
@@ -44,7 +44,7 @@ public class TestEnemyMovement : MonoBehaviour
     private void MoveTowardsPlayer()
     {
         Vector2 direction = (playerTransform.position - transform.position).normalized;
-        rb.velocity = direction * moveSpeed;
+        rb.linearVelocity = direction * moveSpeed;
     }
 
     /// <summary>
@@ -53,7 +53,7 @@ public class TestEnemyMovement : MonoBehaviour
     public void ApplyKnockback(Vector2 direction, float force)
     {
         // 1. 先清零速度
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
 
         // 2. 记录击退参数
         knockbackDirection = direction;

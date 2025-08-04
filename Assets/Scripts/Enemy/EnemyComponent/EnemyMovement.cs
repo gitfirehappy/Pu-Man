@@ -27,7 +27,7 @@ public class EnemyMovement : MonoBehaviour
         // 处理击退效果
         if (Time.time < knockbackEndTime)
         {
-            rb.velocity = knockbackDirection * knockbackForce;
+            rb.linearVelocity = knockbackDirection * knockbackForce;
             return;
         }
 
@@ -54,7 +54,7 @@ public class EnemyMovement : MonoBehaviour
     {
         if (rb != null)
         {
-            rb.velocity = Vector2.zero;
+            rb.linearVelocity = Vector2.zero;
         }
         knockbackEndTime = 0;
     }
@@ -73,7 +73,7 @@ public class EnemyMovement : MonoBehaviour
         int selfIndex = enemyManager.GetEnemyIndex(enemyCore);
         if (selfIndex == -1)
         {
-            rb.velocity = targetDirection * moveSpeed;
+            rb.linearVelocity = targetDirection * moveSpeed;
             return;
         }
 
@@ -106,7 +106,7 @@ public class EnemyMovement : MonoBehaviour
             transform.position,
             enemyManager.separationMinDistance // 使用管理器中的参数
         );
-        Vector2 alignment = BoidMath.CalculateAlignment(neighborVelocities, rb.velocity);
+        Vector2 alignment = BoidMath.CalculateAlignment(neighborVelocities, rb.linearVelocity);
 
         // 综合方向（使用管理器中的权重）
         Vector2 finalDirection =
@@ -116,7 +116,7 @@ public class EnemyMovement : MonoBehaviour
             (targetDirection * enemyManager.boidTargetWeight);
 
         // 应用移动
-        rb.velocity = finalDirection.normalized * moveSpeed;
+        rb.linearVelocity = finalDirection.normalized * moveSpeed;
     }
 
     #region 外部调用接口
@@ -126,7 +126,7 @@ public class EnemyMovement : MonoBehaviour
     public void ApplyKnockback(Vector2 direction, float force)
     {
         // 1. 先清零速度
-        rb.velocity = Vector2.zero;
+        rb.linearVelocity = Vector2.zero;
 
         // 2. 记录击退参数
         knockbackDirection = direction;
