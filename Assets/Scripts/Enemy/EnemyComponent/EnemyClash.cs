@@ -43,7 +43,7 @@ public class EnemyClash : MonoBehaviour
     {
         if (PauseManager.Instance.IsPaused)
         {
-            if (rb != null) rb.linearVelocity = Vector2.zero;
+            if (rb != null) rb.velocity = Vector2.zero;
             return;
         }
 
@@ -55,14 +55,14 @@ public class EnemyClash : MonoBehaviour
         // 在目标点附近结束冲撞
         if (distance < clashEndDistance)
         {
-            rb.linearVelocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
             EndClash();
             return;
         }
 
         // 继续向目标点移动
         Vector2 moveDirection = (clashTarget - (Vector2)transform.position).normalized;
-        rb.linearVelocity = moveDirection * clashSpeed;
+        rb.velocity = moveDirection * clashSpeed;
     }
 
     #region EnemyCore相关
@@ -97,7 +97,7 @@ public class EnemyClash : MonoBehaviour
 
         if (rb != null)
         {
-            rb.linearVelocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
         }
 
         if (movement != null)
@@ -134,7 +134,7 @@ public class EnemyClash : MonoBehaviour
     private void EndClash()
     {
         isClashing = false;
-        rb.linearVelocity = Vector2.zero;
+        rb.velocity = Vector2.zero;
 
         spriteRenderer.flipX = originalFlipX;
 

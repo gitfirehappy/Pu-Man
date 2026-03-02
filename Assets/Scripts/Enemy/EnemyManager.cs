@@ -70,7 +70,7 @@ public class EnemyManager : SingletonMono<EnemyManager>
             {
                 enemyPositions.Add(enemy.transform.position);
                 var rb = enemy.GetComponent<Rigidbody2D>();
-                enemyVelocities.Add(rb ? rb.linearVelocity : Vector2.zero);
+                enemyVelocities.Add(rb ? rb.velocity : Vector2.zero);
             }
         }
     }

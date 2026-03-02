@@ -56,14 +56,14 @@ public class TestEnemyClash : MonoBehaviour
         // 在目标点附近结束冲撞
         if (distance < clashEndDistance)
         {
-            rb.linearVelocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
             EndClash();
             return;
         }
 
         // 继续向目标点移动
         Vector2 moveDirection = (clashTarget - (Vector2)transform.position).normalized;
-        rb.linearVelocity = moveDirection * clashSpeed;
+        rb.velocity = moveDirection * clashSpeed;
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public class TestEnemyClash : MonoBehaviour
     private void EndClash()
     {
         isClashing = false;
-        rb.linearVelocity = Vector2.zero;
+        rb.velocity = Vector2.zero;
 
         // 重新启用普通移动
         if (movement != null)

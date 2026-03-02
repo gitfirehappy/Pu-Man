@@ -45,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
     public void DisableMovement()
     {
         if (rb != null)
-            rb.linearVelocity = Vector2.zero; // 立即停止移动
+            rb.velocity = Vector2.zero; // 立即停止移动
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void Move()
     {
-        rb.linearVelocity = new Vector2(inputDirection.x * currentRunSpeed, inputDirection.y * currentRunSpeed); // 四向
+        rb.velocity = new Vector2(inputDirection.x * currentRunSpeed, inputDirection.y * currentRunSpeed); // 四向
     }
 
 

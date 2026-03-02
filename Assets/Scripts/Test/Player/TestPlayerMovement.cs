@@ -30,7 +30,7 @@ public class TestPlayerMovement : MonoBehaviour
 
     public void Move()
     {
-        rb.linearVelocity = new Vector2(inputDirection.x * currentRunSpeed, inputDirection.y * currentRunSpeed); // 四向
+        rb.velocity = new Vector2(inputDirection.x * currentRunSpeed, inputDirection.y * currentRunSpeed); // 四向
     }
 
 }
